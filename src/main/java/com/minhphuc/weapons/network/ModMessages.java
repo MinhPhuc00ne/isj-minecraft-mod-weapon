@@ -39,12 +39,27 @@ public class ModMessages {
                 .consumerMainThread(com.minhphuc.weapons.content.infinitygauntlet.ServerboundCycleRealitySubModePacket::handle)
                 .add();
 
-        net.messageBuilder(com.minhphuc.weapons.content.raphael.ClientboundRaphaelHudTriggerPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
-                .decoder(com.minhphuc.weapons.content.raphael.ClientboundRaphaelHudTriggerPacket::new)
-                .encoder(com.minhphuc.weapons.content.raphael.ClientboundRaphaelHudTriggerPacket::encode)
-                .consumerMainThread(com.minhphuc.weapons.content.raphael.ClientboundRaphaelHudTriggerPacket::handle)
+        net.messageBuilder(com.minhphuc.weapons.network.ClientboundOpenSpaceTeleportScreenPacket.class, id(), NetworkDirection.PLAY_TO_CLIENT)
+                .decoder(com.minhphuc.weapons.network.ClientboundOpenSpaceTeleportScreenPacket::new)
+                .encoder(com.minhphuc.weapons.network.ClientboundOpenSpaceTeleportScreenPacket::encode)
+                .consumerMainThread(com.minhphuc.weapons.network.ClientboundOpenSpaceTeleportScreenPacket::handle)
+                .add();
+
+
+        net.messageBuilder(com.minhphuc.weapons.content.infinitygauntlet.ServerboundSpaceTeleportPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(com.minhphuc.weapons.content.infinitygauntlet.ServerboundSpaceTeleportPacket::new)
+                .encoder(com.minhphuc.weapons.content.infinitygauntlet.ServerboundSpaceTeleportPacket::encode)
+                .consumerMainThread(com.minhphuc.weapons.content.infinitygauntlet.ServerboundSpaceTeleportPacket::handle)
+                .add();
+
+        net.messageBuilder(com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket.class, id(), NetworkDirection.PLAY_TO_SERVER)
+                .decoder(com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket::new)
+                .encoder(com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket::encode)
+                .consumerMainThread(com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket::handle)
                 .add();
     }
+
+
 
     public static <MSG> void sendToServer(MSG message) {
         INSTANCE.sendToServer(message);

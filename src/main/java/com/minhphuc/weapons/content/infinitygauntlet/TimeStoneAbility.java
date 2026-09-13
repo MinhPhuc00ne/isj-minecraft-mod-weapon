@@ -22,13 +22,15 @@ import java.util.List;
 public class TimeStoneAbility {
 
     public static void executeTimeStone(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
-        int subMode = gauntlet.hasTag() ? gauntlet.getTag().getInt("TimeSubMode") : 0;
-        switch (subMode) {
-            case 0 -> executeTimeRewind(level, player, gauntlet);
-            case 1 -> executeAgeDecay(level, player, gauntlet);
-            case 2 -> executeTimeFreezeDomain(level, player, gauntlet);
+        if (player.isShiftKeyDown()) {
+            // Shift + Chuột phải: Tua Ngược Sinh Lực & Trạng Thái
+            executeTimeRewind(level, player, gauntlet);
+        } else {
+            // Chuột phải: Lãnh Địa Dừng Thời Gian (Time Freeze Domain)
+            executeTimeFreezeDomain(level, player, gauntlet);
         }
     }
+
 
     /**
      * Chế độ 1: ⌛ Time Rewind - Tua ngược thời gian, khôi phục 100% sinh lực & trạng thái tối thượng

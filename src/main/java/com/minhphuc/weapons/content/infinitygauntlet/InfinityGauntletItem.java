@@ -73,6 +73,11 @@ public class InfinityGauntletItem extends Item {
                 player.addEffect(new MobEffectInstance(MobEffects.SATURATION, duration, 4, false, false, true));
                 player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, duration, 4, false, false, true));
 
+                // Tick hiệu ứng Kết Giới Vương Cung Thành Trì của Đá Không Gian
+                if (level instanceof ServerLevel serverLevel) {
+                    SpaceStoneAbility.tickCitadelBarrier(serverLevel, player, stack);
+                }
+
                 // Frost Walker: Tự động đóng băng nước dưới chân khi ở Chế độ Frozen của Đá Thực Tại
                 int mode = stack.hasTag() ? stack.getTag().getInt(NBT_MODE) : 0;
                 int subMode = stack.hasTag() ? stack.getTag().getInt("RealitySubMode") : 0;
@@ -124,6 +129,14 @@ public class InfinityGauntletItem extends Item {
             return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
         }
 
+        if (mode == 2) {
+            // Space Stone Mode
+            if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
+                SpaceStoneAbility.executeSpaceStone(serverLevel, serverPlayer, stack);
+            }
+            return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+        }
+
         if (mode == 3) {
             // Reality Stone Mode
             if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
@@ -160,6 +173,12 @@ public class InfinityGauntletItem extends Item {
             // SNAP (6 Stones Mode)
             if (!level.isClientSide() && level instanceof ServerLevel serverLevel) {
                 ServerPlayer serverPlayer = (ServerPlayer) player;
+
+                // Nếu giữ Shift -> Bắn Chùm Laze Vũ Trụ 6 Sắc Màu
+                if (player.isShiftKeyDown()) {
+                    fireInfinityBeamArray(serverLevel, serverPlayer, stack);
+                    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+                }
 
                 // Sound effects for snap
                 serverLevel.playSound(
@@ -248,12 +267,75 @@ public class InfinityGauntletItem extends Item {
         // Individual stone actions can be added here in future
         if (!level.isClientSide()) {
             player.displayClientMessage(
-                Component.literal("§e[Găng Tay Vô Cực] Đã kích hoạt " + getModeName(mode) + "! (Tính năng viên đá lẻ sẽ cập nhật sau)"),
+                Component.literal("§e[Găng Tay Vô Cực] Đã kích hoạt " + getModeName(mode) + "!"),
                 true
             );
         }
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+    }
+
+    /**
+     * Bắn Chùm Laze Vũ Trụ 6 Sắc Màu Xoắn Quẩy (Mode 7 Shift + Chuột Phải)
+     */
+    private static void fireInfinityBeamArray(ServerLevel level, ServerPlayer player, ItemStack stack) {
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 1.0F, 1.2F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.0F, 1.8F);
+
+        net.minecraft.world.phys.Vec3 start = player.getEyePosition(1.0F);
+        net.minecraft.world.phys.Vec3 look = player.getLookAngle();
+        double maxDist = 80.0D;
+
+        java.util.Set<LivingEntity> killed = new java.util.HashSet<>();
+
+        for (double d = 0; d <= maxDist; d += 0.6D) {
+            net.minecraft.world.phys.Vec3 centerPos = start.add(look.scale(d));
+
+            // Bắn 6 chùm tia với 6 sắc màu hạt khác nhau xoắn tròn quanh trục
+            for (int i = 0; i < 6; i++) {
+                double angle = Math.toRadians((d * 40.0D) + (i * 60.0D));
+                double offsetRadius = 0.6D;
+                double ox = Math.cos(angle) * offsetRadius;
+                double oy = Math.sin(angle) * offsetRadius;
+
+                net.minecraft.core.particles.ParticleOptions particle = switch (i) {
+                    case 0 -> ParticleTypes.DRAGON_BREATH; // Purple (Power)
+                    case 1 -> ParticleTypes.PORTAL; // Blue (Space)
+                    case 2 -> ParticleTypes.CRIMSON_SPORE; // Red (Reality)
+                    case 3 -> ParticleTypes.SOUL_FIRE_FLAME; // Orange (Soul)
+                    case 4 -> ParticleTypes.HAPPY_VILLAGER; // Green (Time)
+                    default -> ParticleTypes.WAX_OFF; // Yellow (Mind)
+                };
+
+                level.sendParticles(particle, centerPos.x + ox, centerPos.y + oy, centerPos.z, 2, 0.04D, 0.04D, 0.04D, 0.01D);
+            }
+
+            if ((int)(d * 2) % 8 == 0) {
+                level.sendParticles(ParticleTypes.FLASH, centerPos.x, centerPos.y, centerPos.z, 1, 0, 0, 0, 0);
+            }
+
+            AABB hitBox = new AABB(
+                centerPos.x - 1.5D, centerPos.y - 1.5D, centerPos.z - 1.5D,
+                centerPos.x + 1.5D, centerPos.y + 1.5D, centerPos.z + 1.5D
+            );
+            List<LivingEntity> hitEntities = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
+
+            for (LivingEntity entity : hitEntities) {
+                if (!killed.contains(entity)) {
+                    entity.hurt(level.damageSources().genericKill(), 100000.0F);
+                    killed.add(entity);
+                }
+            }
+        }
+
+        player.displayClientMessage(
+            Component.literal("§6§l[INFINITY LAZER] §fBắn chùm laze vũ trụ 6 sắc màu! (Xóa sổ " + killed.size() + " sinh vật) ✦"),
+            true
+        );
+
+        player.getCooldowns().addCooldown(stack.getItem(), 15);
     }
 
     @Override
@@ -267,11 +349,14 @@ public class InfinityGauntletItem extends Item {
         tooltip.add(Component.literal("§7- §aFull hiệu ứng tích cực (Sức mạnh X, Hấp thụ, Tốc độ, Nhìn đêm, Nhanh nhẹn...)"));
         tooltip.add(Component.literal(""));
         tooltip.add(Component.literal("§7- Hướng dẫn: Nhấn phím §e[PgUp] §7để chọn chức năng."));
-        tooltip.add(Component.literal("§7- §d🔮 Đá Sức Mạnh (Power Stone)§7: Bắn laze hủy diệt. Nếu bị giam cầm trong không gian kín, chuột phải phát xung năng lượng giải thoát."));
-        tooltip.add(Component.literal("§7- §c🔴 Đá Thực Tại (Reality Stone)§7: Chuột trái đổi 3 chế độ (Normal / Frozen / Life). Nhìn lên trời + Chuột phải đổi thời tiết."));
-        tooltip.add(Component.literal("§7- §6💀 Đá Linh Hồn (Soul Stone)§7: Chuột trái đổi 4 chế độ (Harvest / Puppet / Extraction / Tử Linh Phục Sinh). Chuột phải kích hoạt."));
-        tooltip.add(Component.literal("§7- §a⌛ Đá Thời Gian (Time Stone)§7: Chuột trái đổi 3 chế độ (Time Rewind / Age Decay / Time Freeze Domain). Chuột phải kích hoạt."));
-        tooltip.add(Component.literal("§7- §e🧠 Đá Tâm Trí (Mind Stone)§7: Chuột trái đổi 3 chế độ (Vương Quyền Chi Phối / Telekinesis / Mind Beam Laser)."));
-        tooltip.add(Component.literal("§7- §6Sức mạnh 6 viên đá (Snap)§7: Chuột phải để búng tay diệt quái. Gõ trực tiếp mệnh lệnh trong chat để Gemini AI thực thi!"));
+        tooltip.add(Component.literal("§7- §d🔮 Đá Sức Mạnh (Power Stone)§7: Bắn laze hủy diệt / Bộc phát xung giải thoát không gian kín."));
+        tooltip.add(Component.literal("§7- §9🌌 Đá Không Gian (Space Stone)§7: Chuột phải: Kết Giới Vương Cung Thành Trì 3 blocks (Ngăn quái, nổ Creeper, tên & tiếng thét Warden) / Shift+Chuột phải: Menu Dịch Chuyển."));
+        tooltip.add(Component.literal("§7- §c🔴 Đá Thực Tại (Reality Stone)§7: Đóng băng địa hình & sinh vật (bị đánh vỡ vụn). Nhìn lên trời đổi thời tiết."));
+        tooltip.add(Component.literal("§7- §6💀 Đá Linh Hồn (Soul Stone)§7: Gặt hái linh hồn (Hồi 100% máu + gọi Tử Linh Phục Sinh từ item rớt). Shift+Chuột phải: Tách linh hồn."));
+        tooltip.add(Component.literal("§7- §a⌛ Đá Thời Gian (Time Stone)§7: Lãnh Địa Dừng Thời Gian (Tạm dừng 100% quái vật 30 blocks & tốc độ siêu tốc)."));
+        tooltip.add(Component.literal("§7- §e🧠 Đá Tâm Trí (Mind Stone)§7: Bắn Laze Tâm Trí Vision. Shift+Chuột phải: Telekinesis nhấc ném mục tiêu."));
+        tooltip.add(Component.literal("§7- §6✦ 6 Viên Đá (Snap)§7: Chuột phải búng tay diệt quái / Shift+Chuột phải bắn Laze Vũ Trụ 6 sắc màu. Gõ chat để Gemini AI thực thi!"));
     }
 }
+
+

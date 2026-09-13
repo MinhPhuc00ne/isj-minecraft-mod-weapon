@@ -21,12 +21,13 @@ import java.util.Set;
 public class PowerStoneAbility {
 
     public static void executePowerStone(ServerLevel level, ServerPlayer player, ItemStack stack) {
-        if (isTrappedInEnclosedSpace(level, player)) {
+        if (player.isShiftKeyDown() || isTrappedInEnclosedSpace(level, player)) {
             triggerEnergyBurst(level, player, stack);
         } else {
             firePowerLaser(level, player, stack);
         }
     }
+
 
     /**
      * Kiểm tra người chơi có đang bị giam cầm trong không gian kín hay bị ngạt thở không

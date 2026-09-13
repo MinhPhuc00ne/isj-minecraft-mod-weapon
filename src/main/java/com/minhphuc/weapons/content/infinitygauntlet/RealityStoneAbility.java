@@ -33,13 +33,10 @@ public class RealityStoneAbility {
             return;
         }
 
-        int subMode = gauntlet.hasTag() ? gauntlet.getTag().getInt("RealitySubMode") : 0;
-        switch (subMode) {
-            case 0 -> executeNormalMode(level, player, gauntlet);
-            case 1 -> executeFrozenMode(level, player, gauntlet);
-            case 2 -> executeLifeMode(level, player, gauntlet);
-        }
+        // Kích hoạt Chiêu chính: Đóng Băng Thực Tại & Biến Đổi Terrain
+        executeFrozenMode(level, player, gauntlet);
     }
+
 
     /**
      * Điều khiển thời tiết khi chuột phải nhìn lên trời

@@ -20,14 +20,16 @@ import java.util.List;
 public class SoulStoneAbility {
 
     public static void executeSoulStone(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
-        int subMode = gauntlet.hasTag() ? gauntlet.getTag().getInt("SoulSubMode") : 0;
-        switch (subMode) {
-            case 0 -> executeSoulHarvest(level, player, gauntlet);
-            case 1 -> executeSoulPuppet(level, player, gauntlet);
-            case 2 -> executeSoulExtraction(level, player, gauntlet);
-            case 3 -> executeSoulResurrection(level, player, gauntlet);
+        if (player.isShiftKeyDown()) {
+            // Shift + Chuột phải: Tách Linh Hồn Mục Tiêu
+            executeSoulExtraction(level, player, gauntlet);
+        } else {
+            // Chuột phải: Gặt Hái Linh Hồn & Tử Linh Phục Sinh
+            executeSoulHarvest(level, player, gauntlet);
+            executeSoulResurrection(level, player, gauntlet);
         }
     }
+
 
     /**
      * Chế độ 1: 🔥 Soul Harvest - Gặt hái linh hồn quái vật, hồi 100% máu & ban giáp ảo tối thượng

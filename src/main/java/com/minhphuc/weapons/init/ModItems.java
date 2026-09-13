@@ -45,10 +45,13 @@ public class ModItems {
             () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
 
     // ==========================================
-    // MODULE: WISDOM KING RAPHAEL (TENSURA)
+    // MODULE: TENSURA DEMON LORD EVOLUTION
     // ==========================================
-    public static final RegistryObject<Item> RAPHAEL_BOOK = ITEMS.register("raphael_book",
-            () -> new com.minhphuc.weapons.content.raphael.RaphaelBookItem(new Item.Properties()));
+    public static final RegistryObject<Item> DEMON_LORD_SEED = ITEMS.register("demon_lord_seed",
+            () -> new com.minhphuc.weapons.content.tensura.DemonLordSeedItem(new Item.Properties()));
+
+    public static final RegistryObject<Item> DEMON_LORD_SOUL = ITEMS.register("demon_lord_soul",
+            () -> new com.minhphuc.weapons.content.tensura.DemonLordSoulItem(new Item.Properties()));
 
     // ==========================================
     // CREATIVE TAB
@@ -65,9 +68,12 @@ public class ModItems {
                         output.accept(SOUL_STONE.get());
                         output.accept(TIME_STONE.get());
                         output.accept(MIND_STONE.get());
-                        output.accept(RAPHAEL_BOOK.get());
+                        output.accept(DEMON_LORD_SEED.get());
+                        output.accept(DEMON_LORD_SOUL.get());
                     })
                     .build());
+
+
 
     public static void register(IEventBus eventBus) {
         ITEMS.register(eventBus);

@@ -23,13 +23,15 @@ import java.util.Set;
 public class MindStoneAbility {
 
     public static void executeMindStone(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
-        int subMode = gauntlet.hasTag() ? gauntlet.getTag().getInt("MindSubMode") : 0;
-        switch (subMode) {
-            case 0 -> executeMindControl(level, player, gauntlet);
-            case 1 -> executeTelekinesis(level, player, gauntlet);
-            case 2 -> executeMindBeam(level, player, gauntlet);
+        if (player.isShiftKeyDown()) {
+            // Shift + Chuột phải: Telekinesis Thao Túng Vật Lý
+            executeTelekinesis(level, player, gauntlet);
+        } else {
+            // Chuột phải: Laze Tâm Trí Vision (Mind Beam)
+            executeMindBeam(level, player, gauntlet);
         }
     }
+
 
     /**
      * Chế độ 1: 👑 Vương Quyền Chi Phối - Tẩy não quái vật xung quanh thành tay sai phục tùng

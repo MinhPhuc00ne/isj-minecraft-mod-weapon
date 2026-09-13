@@ -20,7 +20,12 @@ public class ClientInputEvents {
                 mc.setScreen(new InfinityStoneSelectScreen());
             }
         }
+
+        if (ModKeyBindings.BEELZEBUTH_KEY.consumeClick()) {
+            com.minhphuc.weapons.network.ModMessages.sendToServer(new com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket());
+        }
     }
+
 
     @SubscribeEvent
     public static void onLeftClickEmpty(net.minecraftforge.event.entity.player.PlayerInteractEvent.LeftClickEmpty event) {
