@@ -17,6 +17,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import java.util.List;
 
 public class SpaceStoneAbility {
@@ -36,7 +37,7 @@ public class SpaceStoneAbility {
      */
     public static void executeSpaceCitadel(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         int duration = 600; // 30 giây bảo hộ
-        gauntlet.getOrCreateTag().putInt("SpaceCitadelActiveTicks", duration);
+        ItemStackDataHelper.putInt(gauntlet, "SpaceCitadelActiveTicks", duration);
 
         // Ban hiệu ứng bất tử 100% sát thương (Kháng sát thương tối cao, Kháng lửa)
         player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, 255, false, false, true));
@@ -63,11 +64,10 @@ public class SpaceStoneAbility {
      * Xử lý liên tục hạt Kết Giới 3 blocks & Đẩy văng sinh vật / Đạn bắn ra xa
      */
     public static void tickCitadelBarrier(ServerLevel level, net.minecraft.world.entity.player.Player player, ItemStack gauntlet) {
-        if (!gauntlet.hasTag()) return;
-        int ticks = gauntlet.getTag().getInt("SpaceCitadelActiveTicks");
+        int ticks = ItemStackDataHelper.getInt(gauntlet, "SpaceCitadelActiveTicks");
         if (ticks <= 0) return;
 
-        gauntlet.getTag().putInt("SpaceCitadelActiveTicks", ticks - 1);
+        ItemStackDataHelper.putInt(gauntlet, "SpaceCitadelActiveTicks", ticks - 1);
 
         double radius = 3.0D;
         Vec3 center = player.position().add(0, 1.0D, 0);

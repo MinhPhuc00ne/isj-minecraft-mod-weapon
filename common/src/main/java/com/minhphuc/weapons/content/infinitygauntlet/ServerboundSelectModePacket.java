@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import java.util.function.Supplier;
 
 public class ServerboundSelectModePacket {
@@ -37,7 +38,7 @@ public class ServerboundSelectModePacket {
             }
 
             if (heldStack.getItem() instanceof InfinityGauntletItem) {
-                heldStack.getOrCreateTag().putInt(InfinityGauntletItem.NBT_MODE, modeOrdinal);
+                ItemStackDataHelper.putInt(heldStack, InfinityGauntletItem.NBT_MODE, modeOrdinal);
                 String modeName = InfinityGauntletItem.getModeName(modeOrdinal);
 
                 player.displayClientMessage(

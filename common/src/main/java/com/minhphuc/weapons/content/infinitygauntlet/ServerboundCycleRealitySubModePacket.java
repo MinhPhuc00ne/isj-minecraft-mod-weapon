@@ -8,6 +8,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.item.ItemStack;
 
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import java.util.function.Supplier;
 
 public class ServerboundCycleRealitySubModePacket {
@@ -33,11 +34,11 @@ public class ServerboundCycleRealitySubModePacket {
             }
 
             if (heldStack.getItem() instanceof InfinityGauntletItem) {
-                int mainMode = heldStack.hasTag() ? heldStack.getTag().getInt(InfinityGauntletItem.NBT_MODE) : 0;
+                int mainMode = ItemStackDataHelper.getInt(heldStack, InfinityGauntletItem.NBT_MODE);
                 if (mainMode == 3) { // Đá Thực Tại (Reality Stone)
-                    int currentSubMode = heldStack.hasTag() ? heldStack.getTag().getInt("RealitySubMode") : 0;
+                    int currentSubMode = ItemStackDataHelper.getInt(heldStack, "RealitySubMode");
                     int nextSubMode = (currentSubMode + 1) % 3;
-                    heldStack.getOrCreateTag().putInt("RealitySubMode", nextSubMode);
+                    ItemStackDataHelper.putInt(heldStack, "RealitySubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
                         case 0 -> "§c[ĐÁ THỰC TẠI] §fChế độ phụ: §e1. Cấu Trúc Thực Tại (Normal)";
@@ -57,9 +58,9 @@ public class ServerboundCycleRealitySubModePacket {
                         1.0F, pitch
                     );
                 } else if (mainMode == 4) { // Đá Linh Hồn (Soul Stone)
-                    int currentSubMode = heldStack.hasTag() ? heldStack.getTag().getInt("SoulSubMode") : 0;
+                    int currentSubMode = ItemStackDataHelper.getInt(heldStack, "SoulSubMode");
                     int nextSubMode = (currentSubMode + 1) % 4;
-                    heldStack.getOrCreateTag().putInt("SoulSubMode", nextSubMode);
+                    ItemStackDataHelper.putInt(heldStack, "SoulSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
                         case 0 -> "§6[ĐÁ LINH HỒN] §fChế độ phụ: §e1. 🔥 Soul Harvest (Gặt Hái Linh Hồn)";
@@ -80,9 +81,9 @@ public class ServerboundCycleRealitySubModePacket {
                         1.0F, pitch
                     );
                 } else if (mainMode == 5) { // Đá Thời Gian (Time Stone)
-                    int currentSubMode = heldStack.hasTag() ? heldStack.getTag().getInt("TimeSubMode") : 0;
+                    int currentSubMode = ItemStackDataHelper.getInt(heldStack, "TimeSubMode");
                     int nextSubMode = (currentSubMode + 1) % 3;
-                    heldStack.getOrCreateTag().putInt("TimeSubMode", nextSubMode);
+                    ItemStackDataHelper.putInt(heldStack, "TimeSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
                         case 0 -> "§a[ĐÁ THỜI GIAN] §fChế độ phụ: §e1. ⌛ Time Rewind (Tua Ngược Thời Gian)";
@@ -102,9 +103,9 @@ public class ServerboundCycleRealitySubModePacket {
                         1.0F, pitch
                     );
                 } else if (mainMode == 6) { // Đá Tâm Trí (Mind Stone)
-                    int currentSubMode = heldStack.hasTag() ? heldStack.getTag().getInt("MindSubMode") : 0;
+                    int currentSubMode = ItemStackDataHelper.getInt(heldStack, "MindSubMode");
                     int nextSubMode = (currentSubMode + 1) % 3;
-                    heldStack.getOrCreateTag().putInt("MindSubMode", nextSubMode);
+                    ItemStackDataHelper.putInt(heldStack, "MindSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
                         case 0 -> "§e[ĐÁ TÂM TRÍ] §fChế độ phụ: §61. 👑 Vương Quyền Chi Phối (Hypnosis)";

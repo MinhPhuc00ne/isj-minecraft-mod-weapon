@@ -9,7 +9,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
 
 public class ModMessages {
-    private static final NetworkChannel CHANNEL = NetworkChannel.create(new ResourceLocation(WeaponsMod.MOD_ID, "messages"));
+    private static final NetworkChannel CHANNEL = NetworkChannel.create(ResourceLocation.fromNamespaceAndPath(WeaponsMod.MOD_ID, "messages"));
 
     public static void register() {
         CHANNEL.register(ServerboundSelectModePacket.class,

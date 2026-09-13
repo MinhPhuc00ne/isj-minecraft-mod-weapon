@@ -7,10 +7,10 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Rarity;
+import net.minecraft.world.item.Item.TooltipContext;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 
-import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class DemonLordSeedItem extends Item {
@@ -55,7 +55,7 @@ public class DemonLordSeedItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.literal("§d§lVật Phẩm Huyền Thoại Anime Tensura"));
         tooltip.add(Component.literal("§7Bằng chứng về tư chất trở thành kẻ thống trị thế giới."));
         tooltip.add(Component.literal(""));

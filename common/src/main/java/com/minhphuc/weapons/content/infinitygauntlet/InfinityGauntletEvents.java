@@ -4,6 +4,7 @@ import com.minhphuc.weapons.WeaponsMod;
 import com.minhphuc.weapons.ai.GeminiAIService;
 import com.minhphuc.weapons.config.AIGeminiConfig;
 import com.minhphuc.weapons.data.EntityDataHelper;
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.ChatEvent;
 import dev.architectury.event.events.common.EntityEvent;
@@ -88,7 +89,7 @@ public class InfinityGauntletEvents {
 
         if (!(heldStack.getItem() instanceof InfinityGauntletItem)) return EventResult.pass();
 
-        int mode = heldStack.hasTag() ? heldStack.getTag().getInt(InfinityGauntletItem.NBT_MODE) : 0;
+        int mode = ItemStackDataHelper.getInt(heldStack, InfinityGauntletItem.NBT_MODE);
         if (mode != 7) return EventResult.pass(); // Chỉ hoạt động ở Chế độ 6 viên đá (Mode 7)
 
         String prompt = rawText;

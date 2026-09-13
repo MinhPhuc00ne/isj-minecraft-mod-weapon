@@ -3,7 +3,7 @@
   "id": "weapons",
   "version": "${version}",
   "name": "Weapons Mod",
-  "description": "Mod Vu Khi (Weapons Mod) - Ho tro da nen tang Fabric va Forge",
+  "description": "Mod Vu Khi (Weapons Mod) cho Fabric 1.21.1",
   "authors": [
     "MinhPhuc00ne"
   ],
@@ -23,10 +23,10 @@
     "weapons-common.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.23",
-    "minecraft": "~1.20.1",
-    "java": ">=17",
-    "architectury": ">=9.2.14"
+    "fabricloader": ">=0.15.11",
+    "minecraft": ">=1.21 <=1.21.1",
+    "java": ">=21",
+    "architectury": ">=13.0.8"
   },
   "suggests": {
     "another-mod": "*"

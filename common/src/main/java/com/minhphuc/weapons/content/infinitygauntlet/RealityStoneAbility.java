@@ -115,9 +115,9 @@ public class RealityStoneAbility {
         Block block = state.getBlock();
 
         // Không biến đổi kính, cửa, bàn chế tạo, rương, lò nung, đe, bàn phù phép...
-        if (block instanceof GlassBlock || block instanceof StainedGlassBlock || block instanceof IronBarsBlock) return false;
+        if (block instanceof TransparentBlock || block instanceof StainedGlassBlock || block instanceof IronBarsBlock) return false;
         if (block instanceof DoorBlock || block instanceof TrapDoorBlock) return false;
-        if (block instanceof CraftingTableBlock || block instanceof AbstractChestBlock || block instanceof FurnaceBlock || block instanceof AnvilBlock || block instanceof EnchantmentTableBlock) return false;
+        if (block instanceof CraftingTableBlock || block instanceof AbstractChestBlock || block instanceof FurnaceBlock || block instanceof AnvilBlock || block instanceof EnchantingTableBlock) return false;
         if (level.getBlockEntity(pos) != null) return false;
 
         return true;

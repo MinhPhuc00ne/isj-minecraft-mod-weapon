@@ -6,6 +6,7 @@ import com.minhphuc.weapons.content.infinitygauntlet.ServerboundCycleRealitySubM
 import com.minhphuc.weapons.init.ModKeyBindings;
 import com.minhphuc.weapons.network.ModMessages;
 import com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket;
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,7 @@ public class ClientInputEvents {
 
             ItemStack heldStack = player.getItemInHand(hand);
             if (heldStack.getItem() instanceof InfinityGauntletItem) {
-                int mainMode = heldStack.hasTag() ? heldStack.getTag().getInt(InfinityGauntletItem.NBT_MODE) : 0;
+                int mainMode = ItemStackDataHelper.getInt(heldStack, InfinityGauntletItem.NBT_MODE);
                 if (mainMode == 3 || mainMode == 4 || mainMode == 5 || mainMode == 6) {
                     ModMessages.sendToServer(new ServerboundCycleRealitySubModePacket());
                 }

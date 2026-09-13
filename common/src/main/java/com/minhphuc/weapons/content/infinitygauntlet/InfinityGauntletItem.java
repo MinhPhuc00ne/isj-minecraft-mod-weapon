@@ -21,7 +21,8 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 
-import org.jetbrains.annotations.Nullable;
+import com.minhphuc.weapons.data.ItemStackDataHelper;
+import net.minecraft.world.item.Item.TooltipContext;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
@@ -79,8 +80,8 @@ public class InfinityGauntletItem extends Item {
                 }
 
                 // Frost Walker: Tự động đóng băng nước dưới chân khi ở Chế độ Frozen của Đá Thực Tại
-                int mode = stack.hasTag() ? stack.getTag().getInt(NBT_MODE) : 0;
-                int subMode = stack.hasTag() ? stack.getTag().getInt("RealitySubMode") : 0;
+                int mode = ItemStackDataHelper.getInt(stack, NBT_MODE);
+                int subMode = ItemStackDataHelper.getInt(stack, "RealitySubMode");
                 if (mode == 3 && subMode == 1 && player.onGround()) {
                     net.minecraft.core.BlockPos feet = player.blockPosition();
                     net.minecraft.core.BlockPos below = feet.below();
@@ -102,7 +103,7 @@ public class InfinityGauntletItem extends Item {
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
-        int mode = stack.hasTag() ? stack.getTag().getInt(NBT_MODE) : 0;
+        int mode = ItemStackDataHelper.getInt(stack, NBT_MODE);
 
         if (mode == 0) {
             if (!level.isClientSide()) {
@@ -339,8 +340,8 @@ public class InfinityGauntletItem extends Item {
     }
 
     @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> tooltip, TooltipFlag flag) {
-        int mode = stack.hasTag() ? stack.getTag().getInt(NBT_MODE) : 0;
+    public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        int mode = ItemStackDataHelper.getInt(stack, NBT_MODE);
         tooltip.add(Component.literal("§7Chế độ hiện tại: " + getModeName(mode)));
         tooltip.add(Component.literal(""));
         tooltip.add(Component.literal("§e⚡ Sức Mạnh Thường Trực Khi Cầm:"));
