@@ -1,0 +1,14 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.minhphuc.weapons.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "MixinEntity",
+    "MixinPlayer"
+  ],
+  "client": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
