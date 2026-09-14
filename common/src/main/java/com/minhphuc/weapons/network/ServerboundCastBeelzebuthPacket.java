@@ -47,7 +47,7 @@ public class ServerboundCastBeelzebuthPacket {
                 }
             } else {
                 player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cThông báo. Cá thể chưa thức tỉnh thành Chân Ma Vương! Hãy kích hoạt Hạt Giống Ma Vương, thu thập đủ 64 Linh Hồn và Đi Ngủ để mở khóa Bạo Thực Vương Beelzebuth."),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cBáo cáo. Cá thể chưa thức tỉnh thành Chân Ma Vương!"),
                     true
                 );
             }

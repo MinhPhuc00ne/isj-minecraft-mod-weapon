@@ -51,7 +51,7 @@ public class ServerboundCycleSkillPacket {
                             : "§c§l2. Bạo Thực Vương: Hủ Hóa & Bạo Liệt (Corrosion)";
 
                     player.displayClientMessage(
-                        Component.literal("§d§l[CHÂN MA VƯƠNG] §fKỹ năng được chọn: " + skillName + " §7(Chuột Phải để thi triển)"),
+                        Component.literal("§d§l[CHÂN MA VƯƠNG] §fBáo cáo. Kỹ năng được chọn: " + skillName + " §7(Chuột Phải để thi triển)"),
                         true
                     );
 
@@ -60,7 +60,7 @@ public class ServerboundCycleSkillPacket {
                             SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, pitch);
                 } else {
                     player.displayClientMessage(
-                        Component.literal("§c§l[THÔNG BÁO] §fBạn chưa thức tỉnh thành Chân Ma Vương hoặc chưa cầm Nguyệt Quang Thần Tế Kiếm!"),
+                        Component.literal("§c§l[THÔNG BÁO] §fBáo cáo. Cá thể chưa thức tỉnh thành Chân Ma Vương hoặc chưa cầm Nguyệt Quang Thần Tế Kiếm!"),
                         true
                     );
                 }

@@ -69,10 +69,8 @@ public class TensuraEvents {
         EntityDataHelper.getCustomData(player).putInt("TensuraCollectedSouls", 0);
     }
 
-    public static EventResult onLivingDeath(LivingEntity victim, DamageSource source) {
-        if (victim.level().isClientSide()) return EventResult.pass();
-        if (!(source.getEntity() instanceof ServerPlayer player)) return EventResult.pass();
-        if (victim instanceof Player) return EventResult.pass(); // Không tính khi chết người chơi
+    public static void handleMobDeathDrop(ServerPlayer player, LivingEntity victim) {
+        if (player == null || victim == null || victim instanceof Player) return;
 
         ServerLevel level = (ServerLevel) player.level();
         CompoundTag playerData = EntityDataHelper.getCustomData(player);
@@ -87,11 +85,12 @@ public class TensuraEvents {
             );
             level.addFreshEntity(seedDrop);
 
-            VoiceOfTheWorld.announce(player, "Báo cáo. Cá thể vừa tiêu diệt sinh vật và phát hiện §d§l[HẠT GIỐNG MA VƯƠNG (Demon Lord Seed)]§f! Hãy nhặt và nhấn §aChuột Phải §fđể dung hợp vào linh hồn!");
-            return EventResult.pass();
+            VoiceOfTheWorld.announce(player, "Báo cáo. Cá thể vừa thu nhận được hạt giống ma vương");
+            return;
         }
 
         // 2. Thu thập Linh Hồn Ma Vương nếu đã kích hoạt Hạt Giống (chưa thành Chân Ma Vương)
+        // Áp dụng cho MỌI LOẠI VŨ KHÍ (Kiếm, Cung, Nỏ, Rìu, Găng tay, Búng tay SNAP...)
         if (hasSeed && !isTrueDemonLord) {
             // Rớt ra vật phẩm Linh Hồn Ma Vương dưới chân quái tử trận
             ItemEntity soulDrop = new ItemEntity(
@@ -106,12 +105,29 @@ public class TensuraEvents {
                 playerData.putInt("TensuraCollectedSouls", nbtSouls);
                 int totalAfter = getAvailableSouls(player);
 
-                if (totalAfter >= 64) {
-                    VoiceOfTheWorld.announce(player, "§aBáo cáo. Đã thu thập đủ §664/64 Linh Hồn Ma Vương§a! Điều kiện thức tỉnh hoàn tất! Vui lòng leo lên giường §d§lĐI NGỦ §ađể khởi động Lễ Hội Thức Tỉnh!");
-                } else if (totalAfter % 10 == 0) {
-                    VoiceOfTheWorld.announce(player, "Tiến độ thu thập Linh Hồn Ma Vương: §6" + totalAfter + "/64§f.");
+                if (totalAfter % 10 == 0) {
+                    VoiceOfTheWorld.announce(player, "Báo cáo. Tiến độ thu thập Linh Hồn Ma Vương: " + totalAfter + "/64.");
                 }
             }
+        }
+    }
+
+    public static EventResult onLivingDeath(LivingEntity victim, DamageSource source) {
+        if (victim.level().isClientSide()) return EventResult.pass();
+        if (victim instanceof Player) return EventResult.pass(); // Không tính khi chết người chơi
+
+        ServerPlayer player = null;
+        if (source.getEntity() instanceof ServerPlayer sp) {
+            player = sp;
+        } else if (source.getDirectEntity() instanceof ServerPlayer sp) {
+            player = sp;
+        } else if (victim.getLastHurtByMob() instanceof ServerPlayer sp) {
+            // Bao gồm quái bị người chơi đánh trúng rồi chết bởi cháy, rơi, hiệu ứng đòn quét...
+            player = sp;
+        }
+
+        if (player != null) {
+            handleMobDeathDrop(player, victim);
         }
         return EventResult.pass();
     }
@@ -129,18 +145,34 @@ public class TensuraEvents {
 
         // Đủ Hạt Giống + ít nhất 64 Linh Hồn -> Kích hoạt Lễ Hội Thức Tỉnh Ma Vương khi thức dậy!
         if (hasSeed && totalSouls >= 64) {
-            // Tiêu hao Hạt Giống nếu vẫn còn dưới dạng item trong túi đồ
-            consumeSeedItemIfPresent(player);
-            playerData.putBoolean("TensuraHasSeed", true);
-
-            // Tiêu thụ sạch toàn bộ Linh Hồn (cả trong NBT và trên tay/túi đồ)
-            consumeAllSouls(player);
-
-            // Thức tỉnh thành Chân Ma Vương
-            playerData.putBoolean("TensuraTrueDemonLord", true);
-
-            // Phát thông báo tiến hóa Chân Ma Vương & mở khóa Kỹ Năng Tối Thượng Beelzebuth
-            VoiceOfTheWorld.announceEvolutionSuccess(player);
+            triggerDemonLordEvolution(player);
+        } else if (totalSouls >= 64 && !hasSeed) {
+            VoiceOfTheWorld.announce(player, "§cBáo cáo. Cá thể đã thu thập đủ §664 Linh Hồn §cnhưng §eCHƯA CÓ HẠT GIỐNG MA VƯƠNG§c! Cần sở hữu Hạt Giống Ma Vương để làm mầm mống thức tỉnh!");
+        } else if (hasSeed && totalSouls > 0 && totalSouls < 64) {
+            VoiceOfTheWorld.announce(player, "§7Báo cáo. Tiến độ thức tỉnh của cá thể chưa hoàn tất: §6" + totalSouls + "/64 Linh Hồn§7. Hãy tiêu diệt thêm cá thể để tích đủ!");
         }
+    }
+
+    public static boolean triggerDemonLordEvolution(ServerPlayer player) {
+        CompoundTag playerData = EntityDataHelper.getCustomData(player);
+        boolean isTrueDemonLord = playerData.getBoolean("TensuraTrueDemonLord");
+        if (isTrueDemonLord || HarvestFestival.isPlayerInRitual(player)) return false;
+
+        boolean hasSeed = playerData.getBoolean("TensuraHasSeed") || hasSeedItemInInventory(player);
+        int totalSouls = getAvailableSouls(player);
+
+        if (!hasSeed) {
+            VoiceOfTheWorld.announce(player, "§cBáo cáo. Cá thể chưa sở hữu Hạt Giống Ma Vương, không thể tiến hóa!");
+            return false;
+        }
+
+        if (totalSouls < 64) {
+            VoiceOfTheWorld.announce(player, "§cBáo cáo. Chưa đủ Linh Hồn! Hiện có: §6" + totalSouls + "/64§c.");
+            return false;
+        }
+
+        // Bắt đầu Lễ Hội Thu Hoạch 4 giai đoạn kịch tính & hoành tráng!
+        HarvestFestival.start(player);
+        return true;
     }
 }

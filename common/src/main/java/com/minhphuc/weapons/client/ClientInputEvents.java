@@ -31,9 +31,9 @@ public class ClientInputEvents {
             }
         });
 
-        // Chuột phải vào không khí khi tay không: Thi triển Kỹ Năng Tối Thượng của Chân Ma Vương
+        // Chuột phải vào không khí khi tay không: Thi triển Kỹ Năng Tối Thượng của Chân Ma Vương (chỉ gửi từ tay chính)
         InteractionEvent.CLIENT_RIGHT_CLICK_AIR.register((player, hand) -> {
-            if (player == null) return;
+            if (player == null || hand != net.minecraft.world.InteractionHand.MAIN_HAND) return;
 
             ItemStack heldStack = player.getItemInHand(hand);
             if (heldStack.isEmpty()) {

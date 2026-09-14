@@ -34,7 +34,7 @@ public class DemonLordSoulItem extends Item {
 
             if (isTrueDemonLord) {
                 player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §aThông báo. Cá thể đã là Chân Ma Vương tối cao, không cần hấp thu thêm Linh Hồn."),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §fBáo cáo. Cá thể đã thức tỉnh thành Chân Ma Vương không thể dung nạp thêm linh hồn"),
                     true
                 );
                 return InteractionResultHolder.pass(stack);
@@ -42,15 +42,21 @@ public class DemonLordSoulItem extends Item {
 
             if (!hasSeed) {
                 player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cThông báo. Cá thể chưa kích hoạt Hạt Giống Ma Vương, không thể hấp thu Linh Hồn! (Hãy click Chuột Phải vào Hạt Giống Ma Vương trước)"),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cBáo cáo. Cá thể chưa sở hữu Hạt Giống Ma Vương!"),
                     false
                 );
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.VILLAGER_NO, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
                 return InteractionResultHolder.fail(stack);
             }
 
-            int toAbsorb = player.isShiftKeyDown() ? stack.getCount() : 1;
             int currentSouls = data.getInt("TensuraCollectedSouls");
+            if (currentSouls >= 64 && hasSeed) {
+                // Đã đủ 64 linh hồn và bấm chuột phải -> Khởi động nghi thức thức tỉnh ngay lập tức!
+                TensuraEvents.triggerDemonLordEvolution(serverPlayer);
+                return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+            }
+
+            int toAbsorb = player.isShiftKeyDown() ? stack.getCount() : 1;
             int needed = Math.max(0, 64 - currentSouls);
             int actualAbsorbed = Math.min(toAbsorb, needed > 0 ? needed : toAbsorb);
 
@@ -65,14 +71,10 @@ public class DemonLordSoulItem extends Item {
                 serverLevel.sendParticles(net.minecraft.core.particles.ParticleTypes.SOUL, player.getX(), player.getY() + 1.0D, player.getZ(), 10, 0.2D, 0.4D, 0.2D, 0.05D);
             }
 
-            if (newTotal >= 64) {
-                VoiceOfTheWorld.announce(serverPlayer, "§aBáo cáo. Đã nạp đủ §664/64 Linh Hồn Ma Vương§a! Hãy lên giường §d§lĐI NGỦ §ađể khởi động Lễ Hội Thức Tỉnh!");
-            } else {
-                player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §aĐã dung nạp " + actualAbsorbed + " Linh Hồn. Tiến độ hiện tại: §6" + newTotal + "/64§a."),
-                    true
-                );
-            }
+            player.displayClientMessage(
+                Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §aBáo cáo. Đã dung nạp " + actualAbsorbed + " Linh Hồn. Tiến độ hiện tại: §6" + newTotal + "/64§a."),
+                true
+            );
         }
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());

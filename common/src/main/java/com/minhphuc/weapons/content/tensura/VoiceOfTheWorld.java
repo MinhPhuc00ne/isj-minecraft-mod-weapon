@@ -41,16 +41,16 @@ public class VoiceOfTheWorld {
 
         player.sendSystemMessage(
             Component.literal("§e§l==================================================\n" +
-                    "§e§l[GIỌNG NÓI THẾ GIỚI] §d§lBÁO CÁO. LỄ HỘI THỨC TỈNH (HARVEST FESTIVAL) HOÀN TẤT!\n" +
-                    "§fToàn bộ 64 Linh Hồn đã được hiến tế thành công.\n" +
-                    "§fCá thể đã chính thức thức tỉnh và tiến hóa thành §d§l[CHÂN MA VƯƠNG (TRUE DEMON LORD)]§f!\n" +
-                    "§aMở khóa Kỹ Năng Tối Thượng (Ultimate Skill): §6§lBẠO THỰC VƯƠNG BEELZEBUTH§a!\n" +
-                    "§e⚡ Hướng dẫn: §fKhông cần cầm Hạt Giống, bạn có thể nhấn phím §6§l[Z] §fbất cứ lúc nào để thi triển Beelzebuth!\n" +
+                    "§e§l[GIỌNG NÓI THẾ GIỚI] §d§lBÁO CÁO. §fĐã đủ số lượng linh hồn cần thiết để cá thể tiến hóa thành ma vương sau đây LỄ HỘI thu hoạch sẽ được bắt đầu\n" +
+                    "§fToàn bộ 64 Linh Hồn đã được thu nạp thành công\n" +
+                    "§fCá thể đã tiến hóa từ nhân tộc thành demon lord\n" +
+                    "§fHai phần nhục thể và linh thể giờ đây đã có thể biến đổi tự do theo tinh thần mong muốn\n\n" +
+                    "§aĐã thức tỉnh Kỹ Năng Tối Thượng: §6§lBẠO THỰC VƯƠNG BEELZEBUTH§a!\n" +
                     "§e§l==================================================")
         );
 
         player.displayClientMessage(
-            Component.literal("§d§l[CHÂN MA VƯƠNG THỨC TỈNH] §aĐã mở khóa Bạo Thực Vương Beelzebuth (Nhấn phím Z)!"),
+            Component.literal("§d§l[CHÂN MA VƯƠNG] §aBáo cáo. Cá thể đã thức tỉnh thành công Bạo Thực Vương Beelzebuth!"),
             true
         );
 

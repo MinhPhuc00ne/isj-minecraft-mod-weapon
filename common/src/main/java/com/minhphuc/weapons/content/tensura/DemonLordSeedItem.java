@@ -36,7 +36,7 @@ public class DemonLordSeedItem extends Item {
             if (isTrueDemonLord) {
                 // Đã là Chân Ma Vương
                 player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cThông báo. Cá thể đã thức tỉnh thành §d§lChân Ma Vương tối cao§c! Bản nguyên ma pháp đã hoàn thiện, không thể và không cần dung nạp thêm Hạt Giống Ma Vương."),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §fThông báo. Cá thể đã thức tỉnh thành Chân Ma Vương không thể dung nạp thêm hạt giống"),
                     false
                 );
                 level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.VILLAGER_NO, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -46,12 +46,17 @@ public class DemonLordSeedItem extends Item {
             if (hasSeed) {
                 // Đã dung nạp hạt giống từ trước
                 int souls = TensuraEvents.getAvailableSouls((net.minecraft.server.level.ServerPlayer) player);
-                player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cThông báo. Bản thể cá thể đã dung hợp §d§lHạt Giống Ma Vương§c từ trước, không thể kích hoạt thêm!\n§7Tiến độ Linh Hồn hiện tại: §6" + souls + "/64§7. Khi tích đủ 64 linh hồn hãy leo lên giường §aĐI NGỦ §7để thức tỉnh."),
-                    false
-                );
-                level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.VILLAGER_NO, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
-                return InteractionResultHolder.fail(stack);
+                if (souls >= 64) {
+                    TensuraEvents.triggerDemonLordEvolution((net.minecraft.server.level.ServerPlayer) player);
+                    return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
+                } else {
+                    player.displayClientMessage(
+                        Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §fThông báo. cá thể đã sỡ hữu Hạt Giống Ma Vương\n§7Tiến độ Linh Hồn hiện tại: §6" + souls + "/64."),
+                        false
+                    );
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(), net.minecraft.sounds.SoundEvents.VILLAGER_NO, net.minecraft.sounds.SoundSource.PLAYERS, 1.0F, 1.0F);
+                    return InteractionResultHolder.fail(stack);
+                }
             }
 
             // Kích hoạt thành công: Tiêu hao hạt giống (biến mất khỏi tay)
@@ -70,12 +75,9 @@ public class DemonLordSeedItem extends Item {
             }
 
             player.displayClientMessage(
-                Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §aBáo cáo. Cá thể đã kích hoạt và dung hợp thành công §d§l[HẠT GIỐNG MA VƯƠNG (Demon Lord Seed)]§a!\n" +
-                        "§fHạt giống ma thuật đã hòa tan vào bản nguyên linh hồn (Hạt giống đã biến mất khỏi tay).\n" +
-                        "§e⚡ Nhiệm vụ tiếp theo: §fTiêu diệt sinh vật tích lũy đủ §664 Linh Hồn Ma Vương§f, sau đó lên giường §d§lĐI NGỦ §fđể khởi động Lễ Hội Thức Tỉnh (Harvest Festival)!"),
+                Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §aBáo cáo đã đủ điều ban đầu để thức tỉnh thành ma vương cần bổ sung 64 linh hồn để hoàn tất điều kiện thức tỉnh"),
                 false
             );
-            player.displayClientMessage(Component.literal("§aĐã kích hoạt Hạt Giống Ma Vương!"), true);
         }
 
         return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
