@@ -31,6 +31,11 @@ public class ModMessages {
                 ServerboundSpaceTeleportPacket::encode,
                 ServerboundSpaceTeleportPacket::new,
                 ServerboundSpaceTeleportPacket::handle);
+
+        CHANNEL.register(ServerboundCastBeelzebuthPacket.class,
+                ServerboundCastBeelzebuthPacket::encode,
+                ServerboundCastBeelzebuthPacket::new,
+                ServerboundCastBeelzebuthPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {

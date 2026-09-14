@@ -51,7 +51,13 @@ public class InfinityGauntletEvents {
                     );
                     serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, living.getX(), living.getY() + 1.0D, living.getZ(), 20, 0.3D, 0.5D, 0.3D, 0.05D);
 
-                    living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                    ServerPlayer attackerPlayer = damageSource.getEntity() instanceof ServerPlayer sp ? sp : null;
+                    if (attackerPlayer != null) {
+                        com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(attackerPlayer, living);
+                        living.hurt(serverLevel.damageSources().playerAttack(attackerPlayer), 100000.0F);
+                    } else {
+                        living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                    }
                     if (living.isAlive()) {
                         living.discard();
                     }

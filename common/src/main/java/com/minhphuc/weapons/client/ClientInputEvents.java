@@ -5,6 +5,7 @@ import com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneSelectScreen;
 import com.minhphuc.weapons.content.infinitygauntlet.ServerboundCycleRealitySubModePacket;
 import com.minhphuc.weapons.init.ModKeyBindings;
 import com.minhphuc.weapons.network.ModMessages;
+import com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket;
 import com.minhphuc.weapons.data.ItemStackDataHelper;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.InteractionEvent;
@@ -22,6 +23,10 @@ public class ClientInputEvents {
                 if (mc.screen == null) {
                     mc.setScreen(new InfinityStoneSelectScreen());
                 }
+            }
+
+            if (ModKeyBindings.BEELZEBUTH_KEY.consumeClick()) {
+                ModMessages.sendToServer(new ServerboundCastBeelzebuthPacket());
             }
         });
 
