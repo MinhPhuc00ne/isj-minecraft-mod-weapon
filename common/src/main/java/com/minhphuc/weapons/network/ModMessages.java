@@ -36,6 +36,11 @@ public class ModMessages {
                 ServerboundCastBeelzebuthPacket::encode,
                 ServerboundCastBeelzebuthPacket::new,
                 ServerboundCastBeelzebuthPacket::handle);
+
+        CHANNEL.register(ServerboundCycleSkillPacket.class,
+                ServerboundCycleSkillPacket::encode,
+                ServerboundCycleSkillPacket::new,
+                ServerboundCycleSkillPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {

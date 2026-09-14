@@ -44,13 +44,13 @@ public class RealityStoneAbility {
     public static void toggleWeather(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         if (level.isThundering()) {
             level.setWeatherParameters(6000, 0, false, false);
-            player.displayClientMessage(Component.literal("§e[ĐÁ THỰC TẠI] Đã biến mưa bão thành TRỜI NẮNG! ☀️"), true);
+            player.displayClientMessage(Component.literal("§e[ĐÁ THỰC TẠI] §fBáo cáo. Đã biến mưa bão thành TRỜI NẮNG! ☀️"), true);
         } else if (level.isRaining()) {
             level.setWeatherParameters(0, 6000, true, true);
-            player.displayClientMessage(Component.literal("§c[ĐÁ THỰC TẠI] Đã biến mưa thành MƯA BÃO SẤM SÉT! ⚡"), true);
+            player.displayClientMessage(Component.literal("§c[ĐÁ THỰC TẠI] §fBáo cáo. Đã biến mưa thành MƯA BÃO SẤM SÉT! ⚡"), true);
         } else {
             level.setWeatherParameters(0, 6000, true, false);
-            player.displayClientMessage(Component.literal("§9[ĐÁ THỰC TẠI] Đã biến trời nắng thành TRỜI MƯA! 🌧️"), true);
+            player.displayClientMessage(Component.literal("§9[ĐÁ THỰC TẠI] §fBáo cáo. Đã biến trời nắng thành TRỜI MƯA! 🌧️"), true);
         }
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -67,7 +67,7 @@ public class RealityStoneAbility {
         ItemStack offhand = player.getOffhandItem();
         if (!(offhand.getItem() instanceof BlockItem blockItem)) {
             player.displayClientMessage(
-                Component.literal("§c[ĐÁ THỰC TẠI - NORMAL] Hãy cầm 1 khối vật liệu ở tay trái (Offhand) để biến đổi thực tại!"),
+                Component.literal("§c[ĐÁ THỰC TẠI - NORMAL] §fBáo cáo. Hãy cầm 1 khối vật liệu ở tay trái (Offhand) để biến đổi thực tại!"),
                 true
             );
             return;
@@ -85,7 +85,7 @@ public class RealityStoneAbility {
                     if (center.distSqr(targetPos) <= radius * radius) {
                         BlockState state = level.getBlockState(targetPos);
                         if (canTransformInNormalMode(level, targetPos, state)) {
-                            level.setBlock(targetPos, targetState, 3);
+                            level.setBlock(targetPos, targetState, 2);
                             count++;
                         }
                     }
@@ -99,11 +99,11 @@ public class RealityStoneAbility {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 1.0F, 1.0F);
 
-        level.sendParticles(ParticleTypes.DRAGON_BREATH, player.getX(), player.getY() + 1.0D, player.getZ(), 30, 1.5D, 1.5D, 1.5D, 0.05D);
+        level.sendParticles(ParticleTypes.DRAGON_BREATH, player.getX(), player.getY() + 1.0D, player.getZ(), 15, 1.0D, 1.0D, 1.0D, 0.05D);
         level.sendParticles(ParticleTypes.FLASH, player.getX(), player.getY() + 1.0D, player.getZ(), 1, 0, 0, 0, 0);
 
         player.displayClientMessage(
-            Component.literal("§c[ĐÁ THỰC TẠI - NORMAL] Đã biến đổi " + count + " khối xung quanh thành " + targetState.getBlock().getName().getString() + "!"),
+            Component.literal("§c[ĐÁ THỰC TẠI - NORMAL] §fBáo cáo. Đã biến đổi " + count + " khối xung quanh thành " + targetState.getBlock().getName().getString() + "!"),
             true
         );
 
@@ -124,11 +124,11 @@ public class RealityStoneAbility {
     }
 
     /**
-     * Chế độ 2: Frozen - Đóng băng địa hình xung quanh trong bán kính 15 blocks (Giữ sinh vật sống bình thường)
+     * Chế độ 2: Frozen - Đóng băng địa hình xung quanh trong bán kính 10 blocks (dùng flag 2 tránh chain light/block update)
      */
     private static void executeFrozenMode(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         BlockPos center = player.blockPosition();
-        int radius = 15;
+        int radius = 10;
         int countBlocks = 0;
 
         for (int x = -radius; x <= radius; x++) {
@@ -138,10 +138,10 @@ public class RealityStoneAbility {
                     if (center.distSqr(targetPos) <= radius * radius) {
                         BlockState state = level.getBlockState(targetPos);
                         if (state.is(Blocks.WATER)) {
-                            level.setBlock(targetPos, Blocks.ICE.defaultBlockState(), 3);
+                            level.setBlock(targetPos, Blocks.ICE.defaultBlockState(), 2);
                             countBlocks++;
                         } else if (canFreezeBlock(level, targetPos, state)) {
-                            level.setBlock(targetPos, Blocks.PACKED_ICE.defaultBlockState(), 3);
+                            level.setBlock(targetPos, Blocks.PACKED_ICE.defaultBlockState(), 2);
                             countBlocks++;
                         }
                     }
@@ -150,8 +150,8 @@ public class RealityStoneAbility {
         }
 
         // Hạt tuyết đóng băng bao quanh khu vực
-        level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 1.0D, player.getZ(), 40, 2.0D, 1.0D, 2.0D, 0.05D);
-        level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0D, player.getZ(), 10, 1.0D, 0.5D, 1.0D, 0.02D);
+        level.sendParticles(ParticleTypes.SNOWFLAKE, player.getX(), player.getY() + 1.0D, player.getZ(), 20, 1.5D, 1.0D, 1.5D, 0.05D);
+        level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.0D, player.getZ(), 6, 0.8D, 0.5D, 0.8D, 0.02D);
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 1.5F, 0.8F);
@@ -159,7 +159,7 @@ public class RealityStoneAbility {
                 SoundEvents.PLAYER_HURT_FREEZE, SoundSource.PLAYERS, 1.5F, 1.0F);
 
         player.displayClientMessage(
-            Component.literal("§b[ĐÁ THỰC TẠI - FROZEN] Đã đóng băng " + countBlocks + " khối địa hình trong phạm vi 15 blocks! ❄️"),
+            Component.literal("§b[ĐÁ THỰC TẠI - FROZEN] §fBáo cáo. Đã đóng băng " + countBlocks + " khối địa hình trong phạm vi 10 blocks! ❄️"),
             true
         );
 
@@ -179,7 +179,7 @@ public class RealityStoneAbility {
      */
     private static void executeLifeMode(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         BlockPos center = player.blockPosition();
-        int radius = 25;
+        int radius = 12;
         int cleanedCobwebs = 0;
 
         for (int x = -radius; x <= radius; x++) {
@@ -189,14 +189,14 @@ public class RealityStoneAbility {
                     if (center.distSqr(targetPos) <= radius * radius) {
                         BlockState state = level.getBlockState(targetPos);
                         if (state.is(Blocks.COBWEB)) {
-                            level.removeBlock(targetPos, false);
+                            level.setBlock(targetPos, Blocks.AIR.defaultBlockState(), 2);
                             cleanedCobwebs++;
                         } else if (state.is(Blocks.MOSSY_COBBLESTONE)) {
-                            level.setBlock(targetPos, Blocks.COBBLESTONE.defaultBlockState(), 3);
+                            level.setBlock(targetPos, Blocks.COBBLESTONE.defaultBlockState(), 2);
                         } else if (state.is(Blocks.MOSSY_STONE_BRICKS)) {
-                            level.setBlock(targetPos, Blocks.STONE_BRICKS.defaultBlockState(), 3);
+                            level.setBlock(targetPos, Blocks.STONE_BRICKS.defaultBlockState(), 2);
                         } else if (state.is(Blocks.INFESTED_COBBLESTONE)) {
-                            level.setBlock(targetPos, Blocks.COBBLESTONE.defaultBlockState(), 3);
+                            level.setBlock(targetPos, Blocks.COBBLESTONE.defaultBlockState(), 2);
                         }
                     }
                 }
@@ -232,7 +232,7 @@ public class RealityStoneAbility {
         level.sendParticles(ParticleTypes.HEART, player.getX(), player.getY() + 1.5D, player.getZ(), 15, 1.5D, 1.0D, 1.5D, 0.05D);
 
         player.displayClientMessage(
-            Component.literal("§a[ĐÁ THỰC TẠI - LIFE] Khôi phục sự sống: Dọn " + cleanedCobwebs + " mạng nhện, gọi Dân Làng/Người Sắt, hồi 100% máu cho " + healedCount + " sinh vật! 🌿"),
+            Component.literal("§a[ĐÁ THỰC TẠI - LIFE] §fBáo cáo. Khôi phục sự sống: Dọn " + cleanedCobwebs + " mạng nhện, gọi Dân Làng/Người Sắt, hồi 100% máu cho " + healedCount + " cá thể! 🌿"),
             true
         );
 

@@ -42,15 +42,15 @@ public class ServerboundSelectModePacket {
                 String modeName = InfinityGauntletItem.getModeName(modeOrdinal);
 
                 player.displayClientMessage(
-                    Component.literal("§a[Găng Tay Vô Cực] Đã chọn chế độ: §e" + modeName),
+                    Component.literal("§a[Găng Tay Vô Cực] §fBáo cáo. Đã chọn chế độ: §e" + modeName),
                     true
                 );
 
                 if (modeOrdinal == 7) {
                     player.sendSystemMessage(
-                        Component.literal("§d§l[GĂNG TAY VÔ CỰC - GEMINI AI] §fTrí tuệ 6 viên đá đã kích hoạt!\n" +
-                                "§e💡 Bất kỳ tin nhắn nào bạn gõ trong chat lúc này đều sẽ trở thành mệnh lệnh cho Gemini AI thực thi!\n" +
-                                "§7(Ví dụ: xóa sổ các sinh vật, cho trời mưa, tạo nhà kim cương, triệu hồi 5 rồng ender...)")
+                        Component.literal("§d§l[GĂNG TAY VÔ CỰC - GEMINI AI] §fBáo cáo. Trí tuệ 6 viên đá đã kích hoạt!\n" +
+                                "§e💡 Bất kỳ tin nhắn nào cá thể gõ trong chat lúc này đều sẽ trở thành mệnh lệnh cho Gemini AI thực thi!\n" +
+                                "§7(Ví dụ: xóa sổ các cá thể quái vật, cho trời mưa, tạo nhà kim cương, triệu hồi 5 rồng ender...)")
                     );
                 }
 
