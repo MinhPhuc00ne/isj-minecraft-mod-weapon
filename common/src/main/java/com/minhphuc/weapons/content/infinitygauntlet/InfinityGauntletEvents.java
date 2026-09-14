@@ -68,7 +68,7 @@ public class InfinityGauntletEvents {
         ItemStack heldStack = player.getItemInHand(hand);
         if (heldStack.getItem() instanceof InfinityGauntletItem) {
             player.displayClientMessage(
-                Component.literal("§7[Găng Tay Vô Cực] Nhấn §e[PgUp] §7để chọn viên đá. Chuột Phải để dùng Chiêu Chính, Shift+Chuột Phải để dùng Chiêu Phụ!"),
+                Component.literal("§7[Găng Tay Vô Cực] §fBáo cáo. Nhấn §e[PgUp] §7để chọn viên đá. Chuột Phải để dùng Chiêu Chính, Shift+Chuột Phải để dùng Chiêu Phụ!"),
                 true
             );
             return EventResult.interruptFalse();
@@ -94,17 +94,17 @@ public class InfinityGauntletEvents {
 
         String prompt = rawText;
         if (prompt.isEmpty()) {
-            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] Vui lòng nhập mệnh lệnh cho Gemini AI!"));
+            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fBáo cáo. Vui lòng nhập mệnh lệnh cho Gemini AI!"));
             return EventResult.interruptFalse();
         }
 
         if (!AIGeminiConfig.isApiKeyValid()) {
-            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fChưa có API Key! Hãy dán API Key vào file:\n§e" + AIGeminiConfig.getConfigAbsolutePath()));
+            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fBáo cáo. Chưa có API Key! Hãy dán API Key vào file:\n§e" + AIGeminiConfig.getConfigAbsolutePath()));
             return EventResult.interruptFalse();
         }
 
         // Thông báo cho người chơi AI đang xử lý
-        player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §fĐang lắng nghe và biến mệnh lệnh §e\"" + prompt + "\" §fthành thực tại..."));
+        player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §fBáo cáo. Đang lắng nghe và biến mệnh lệnh của cá thể §e\"" + prompt + "\" §fthành thực tại..."));
 
         ServerLevel level = (ServerLevel) player.level();
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -147,7 +147,7 @@ public class InfinityGauntletEvents {
                 }
 
                 // Hiển thị lời đáp của Gemini AI
-                player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §a" + response.getReply() + " §7(Đã thực thi " + executedCount + " lệnh)"));
+                player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §aBáo cáo. " + response.getReply() + " §7(Đã thực thi " + executedCount + " lệnh)"));
             });
         });
 
