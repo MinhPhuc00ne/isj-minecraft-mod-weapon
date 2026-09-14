@@ -27,6 +27,7 @@ public class WeaponsMod {
         // Đăng ký các sự kiện Gameplay đa nền tảng
         InfinityGauntletEvents.register();
         TensuraEvents.register();
+        com.minhphuc.weapons.content.divine.DivineWeaponEvents.register();
 
         LOGGER.info("Weapons Mod (Cross-Platform) initialized successfully!");
     }
