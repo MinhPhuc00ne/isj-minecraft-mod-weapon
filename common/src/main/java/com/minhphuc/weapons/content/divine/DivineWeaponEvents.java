@@ -26,6 +26,15 @@ public class DivineWeaponEvents {
     public static void register() {
         EntityEvent.LIVING_HURT.register(DivineWeaponEvents::onLivingHurt);
 
+        // Tick cập nhật các Thánh Giới Linh Tử Băng Hoại đang kích hoạt
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(SanctuaryDisintegrationAbility::tickSanctuaries);
+
+        // Tick cập nhật Đầu Rồng Hư Không Bạo Thực Vương Beelzebuth
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(BeelzebuthAbility::tickDragons);
+
+        // Tick cập nhật Lễ Hội Thu Hoạch Thức Tỉnh Chân Ma Vương (Harvest Festival)
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.tensura.HarvestFestival::tickRituals);
+
         // Chuột phải vào sinh vật khi tay không: Thi triển Kỹ Năng Chân Ma Vương
         InteractionEvent.INTERACT_ENTITY.register((player, target, hand) -> {
             if (player.level().isClientSide()) return EventResult.pass();

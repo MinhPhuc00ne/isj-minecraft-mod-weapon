@@ -5,7 +5,9 @@
   "compatibilityLevel": "JAVA_21",
   "mixins": [
     "MixinEntity",
-    "MixinPlayer"
+    "MixinPlayer",
+    "DisplayAccessor",
+    "ItemDisplayAccessor"
   ],
   "client": [],
   "injectors": {

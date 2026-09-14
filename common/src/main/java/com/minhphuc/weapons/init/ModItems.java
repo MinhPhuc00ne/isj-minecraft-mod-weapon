@@ -91,6 +91,15 @@ public class ModItems {
     public static final RegistrySupplier<Item> MOONLIGHT_SWORD = ITEMS.register("moonlight_sword",
             () -> new com.minhphuc.weapons.content.divine.MoonlightSwordItem(new Item.Properties()));
 
+    public static final RegistrySupplier<Item> DISINTEGRATION_MAGIC_CIRCLE = ITEMS.register("disintegration_magic_circle",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> BEELZEBUTH_MAGIC_CIRCLE = ITEMS.register("beelzebuth_magic_circle",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> BEELZEBUTH_DRAGON_MAW = ITEMS.register("beelzebuth_dragon_maw",
+            () -> new Item(new Item.Properties()));
+
     // ==========================================
     // CREATIVE TAB
     // ==========================================
