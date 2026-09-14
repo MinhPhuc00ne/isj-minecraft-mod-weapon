@@ -80,7 +80,7 @@ public class MindStoneAbility {
         level.sendParticles(ParticleTypes.INSTANT_EFFECT, player.getX(), player.getY() + 1.0D, player.getZ(), 30, 1.5D, 1.0D, 1.5D, 0.05D);
 
         player.displayClientMessage(
-            Component.literal("§e§l[ĐÁ TÂM TRÍ - VƯƠNG QUYỀN CHI PHỐI] §fĐã tẩy não & chi phối " + mobs.size() + " quái vật thành tay sai! 👑"),
+            Component.literal("§e§l[ĐÁ TÂM TRÍ - VƯƠNG QUYỀN CHI PHỐI] §fBáo cáo. Đã tẩy não & chi phối " + mobs.size() + " cá thể quái vật thành tay sai! 👑"),
             true
         );
 
@@ -103,7 +103,7 @@ public class MindStoneAbility {
 
         if (targets.isEmpty()) {
             player.displayClientMessage(
-                Component.literal("§e[ĐÁ TÂM TRÍ - TELEKINESIS] Không tìm thấy mục tiêu sinh vật phía trước!"),
+                Component.literal("§e[ĐÁ TÂM TRÍ - TELEKINESIS] Báo cáo. Không tìm thấy mục tiêu cá thể phía trước!"),
                 true
             );
             return;
@@ -130,7 +130,7 @@ public class MindStoneAbility {
                 SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 1.0F, 1.4F);
 
         player.displayClientMessage(
-            Component.literal("§e[ĐÁ TÂM TRÍ - TELEKINESIS] Đã thao túng & ném " + target.getName().getString() + " bay xa! 🌀"),
+            Component.literal("§e[ĐÁ TÂM TRÍ - TELEKINESIS] §fBáo cáo. Đã thao túng & ném cá thể " + target.getName().getString() + " bay xa! 🌀"),
             true
         );
 
@@ -153,36 +153,45 @@ public class MindStoneAbility {
 
         Set<LivingEntity> killedEntities = new HashSet<>();
 
-        for (double d = 0; d <= maxDistance; d += step) {
-            Vec3 currentVec = start.add(look.scale(d));
+        Vec3 end = start.add(look.scale(maxDistance));
+        AABB beamBox = new AABB(start, end).inflate(2.0D);
+        List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, beamBox, e -> e != player && e.isAlive());
 
-            // Hạt laze vàng kim rực rỡ
-            level.sendParticles(ParticleTypes.INSTANT_EFFECT, currentVec.x, currentVec.y, currentVec.z, 2, 0.08D, 0.08D, 0.08D, 0.01D);
-            level.sendParticles(ParticleTypes.WAX_OFF, currentVec.x, currentVec.y, currentVec.z, 1, 0.04D, 0.04D, 0.04D, 0.02D);
-
-            if ((int) (d * 2) % 10 == 0) {
-                level.sendParticles(ParticleTypes.FLASH, currentVec.x, currentVec.y, currentVec.z, 1, 0, 0, 0, 0);
-            }
-
-            // Gây sát thương chí mạng cho sinh vật trúng laze
-            AABB hitBox = new AABB(
-                currentVec.x - 1.2D, currentVec.y - 1.2D, currentVec.z - 1.2D,
-                currentVec.x + 1.2D, currentVec.y + 1.2D, currentVec.z + 1.2D
-            );
-            List<LivingEntity> hitEntities = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
-
-            for (LivingEntity entity : hitEntities) {
-                if (!killedEntities.contains(entity)) {
-                    entity.hurt(level.damageSources().genericKill(), 100000.0F);
-                    entity.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200, 0));
-                    entity.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1));
-                    killedEntities.add(entity);
+        // 1. Quét tiêu diệt các sinh vật dọc chùm tia (1 query duy nhất thay vì 120 queries)
+        for (LivingEntity target : targets) {
+            Vec3 targetVec = target.position().add(0, target.getBbHeight() * 0.5D, 0).subtract(start);
+            double proj = targetVec.dot(look);
+            if (proj >= 0 && proj <= maxDistance) {
+                double distSq = targetVec.lengthSqr() - (proj * proj);
+                if (distSq <= 2.25D) { // Bán kính 1.5 blocks
+                    com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, target);
+                    target.hurt(level.damageSources().playerAttack(player), 100000.0F);
+                    if (target.isAlive()) {
+                        target.discard();
+                    }
+                    target.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 200, 0));
+                    target.addEffect(new MobEffectInstance(MobEffects.CONFUSION, 200, 1));
+                    killedEntities.add(target);
                 }
             }
         }
 
+        // 2. Hiệu ứng hạt laze vàng kim thanh thoát (step = 1.0m)
+        for (double d = 0; d <= maxDistance; d += 1.0D) {
+            Vec3 currentVec = start.add(look.scale(d));
+
+            level.sendParticles(ParticleTypes.INSTANT_EFFECT, currentVec.x, currentVec.y, currentVec.z, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+            if ((int) d % 2 == 0) {
+                level.sendParticles(ParticleTypes.WAX_OFF, currentVec.x, currentVec.y, currentVec.z, 1, 0.04D, 0.04D, 0.04D, 0.02D);
+            }
+
+            if ((int) d % 10 == 0) {
+                level.sendParticles(ParticleTypes.FLASH, currentVec.x, currentVec.y, currentVec.z, 1, 0, 0, 0, 0);
+            }
+        }
+
         player.displayClientMessage(
-            Component.literal("§e[ĐÁ TÂM TRÍ - MIND BEAM] Bắn chùm laze tâm trí Vision hủy diệt! (Tiêu diệt " + killedEntities.size() + " sinh vật) ⚡"),
+            Component.literal("§e[ĐÁ TÂM TRÍ - MIND BEAM] §fBáo cáo. Bắn chùm laze tâm trí Vision hủy diệt! (Tiêu diệt " + killedEntities.size() + " cá thể) ⚡"),
             true
         );
 

@@ -37,7 +37,7 @@ public class SpaceStoneAbility {
      */
     public static void executeSpaceCitadel(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         int duration = 600; // 30 giây bảo hộ
-        ItemStackDataHelper.putInt(gauntlet, "SpaceCitadelActiveTicks", duration);
+        com.minhphuc.weapons.data.EntityDataHelper.getCustomData(player).putInt("SpaceCitadelActiveTicks", duration);
 
         // Ban hiệu ứng bất tử 100% sát thương (Kháng sát thương tối cao, Kháng lửa)
         player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, 255, false, false, true));
@@ -53,7 +53,7 @@ public class SpaceStoneAbility {
         pulseCitadelBarrier(level, player);
 
         player.displayClientMessage(
-            Component.literal("§9§l[ĐÁ KHÔNG GIAN - VƯƠNG CUNG THÀNH TRÌ] §fKích hoạt Kết Giới Không Gian Bất Khả Xâm Phạm! 🛡️"),
+            Component.literal("§9§l[ĐÁ KHÔNG GIAN - VƯƠNG CUNG THÀNH TRÌ] §fBáo cáo. Đã kích hoạt Kết Giới Không Gian Bất Khả Xâm Phạm bảo vệ cá thể! 🛡️"),
             true
         );
 
@@ -63,29 +63,31 @@ public class SpaceStoneAbility {
     /**
      * Xử lý liên tục hạt Kết Giới 3 blocks & Đẩy văng sinh vật / Đạn bắn ra xa
      */
-    public static void tickCitadelBarrier(ServerLevel level, net.minecraft.world.entity.player.Player player, ItemStack gauntlet) {
-        int ticks = ItemStackDataHelper.getInt(gauntlet, "SpaceCitadelActiveTicks");
+    public static void tickCitadelBarrier(ServerLevel level, net.minecraft.world.entity.player.Player player) {
+        net.minecraft.nbt.CompoundTag data = com.minhphuc.weapons.data.EntityDataHelper.getCustomData(player);
+        int ticks = data.getInt("SpaceCitadelActiveTicks");
         if (ticks <= 0) return;
 
-        ItemStackDataHelper.putInt(gauntlet, "SpaceCitadelActiveTicks", ticks - 1);
+        data.putInt("SpaceCitadelActiveTicks", ticks - 1);
 
         double radius = 3.0D;
         Vec3 center = player.position().add(0, 1.0D, 0);
 
-        // Render Hào Quang Kết Giới Xanh Dương Nhạt bao quanh 3 blocks
-        if (level.getGameTime() % 2 == 0) {
-            for (int i = 0; i < 360; i += 20) {
+        // Render Hào Quang Kết Giới Xanh Dương Nhạt bao quanh 3 blocks (giảm tải hạt)
+        if (level.getGameTime() % 4 == 0) {
+            for (int i = 0; i < 360; i += 30) {
                 double rad = Math.toRadians(i);
                 double x = center.x + Math.cos(rad) * radius;
                 double z = center.z + Math.sin(rad) * radius;
 
                 level.sendParticles(ParticleTypes.PORTAL, x, center.y, z, 1, 0.05D, 0.2D, 0.05D, 0.02D);
                 level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, x, center.y - 0.5D, z, 1, 0.02D, 0.1D, 0.02D, 0.01D);
-                level.sendParticles(ParticleTypes.END_ROD, x, center.y + 0.5D, z, 1, 0.02D, 0.1D, 0.02D, 0.01D);
             }
         }
 
-        pulseCitadelBarrier(level, player);
+        if (level.getGameTime() % 2 == 0) {
+            pulseCitadelBarrier(level, player);
+        }
     }
 
     private static void pulseCitadelBarrier(ServerLevel level, net.minecraft.world.entity.player.Player player) {
