@@ -128,6 +128,64 @@ public class BeelzebuthAbility {
     }
 
     /**
+     * Kỹ Năng Tối Thượng: Bạo Thực Vương Beelzebuth - Phân nhánh 2: Hủ Hóa & Bạo Liệt (Corrosion & Disintegration)
+     * Phóng thích chùm hắc hỏa rồng tím ăn mòn cực đại, phân rã và thiêu hủy mọi sinh vật phía trước.
+     */
+    public static void executeCorrosion(ServerLevel level, ServerPlayer player) {
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.EVOKER_CAST_SPELL, SoundSource.PLAYERS, 2.0F, 0.7F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 1.8F, 0.6F);
+
+        Vec3 eyePos = player.getEyePosition(1.0F);
+        Vec3 look = player.getLookAngle();
+        double maxDist = 20.0D;
+
+        Set<LivingEntity> hitEntities = new HashSet<>();
+
+        for (double d = 1.0D; d <= maxDist; d += 0.5D) {
+            Vec3 centerPos = eyePos.add(look.scale(d));
+            double spread = 0.8D + (d * 0.15D);
+
+            for (int i = 0; i < 6; i++) {
+                double ox = (level.random.nextDouble() - 0.5D) * spread * 2;
+                double oy = (level.random.nextDouble() - 0.5D) * spread * 2;
+                double oz = (level.random.nextDouble() - 0.5D) * spread * 2;
+
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, centerPos.x + ox, centerPos.y + oy, centerPos.z + oz, 2, 0.05D, 0.05D, 0.05D, 0.02D);
+                level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, centerPos.x + ox, centerPos.y + oy, centerPos.z + oz, 1, 0.05D, 0.05D, 0.05D, 0.03D);
+                level.sendParticles(ParticleTypes.WITCH, centerPos.x + ox, centerPos.y + oy, centerPos.z + oz, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+            }
+
+            AABB hitBox = new AABB(
+                centerPos.x - spread, centerPos.y - spread, centerPos.z - spread,
+                centerPos.x + spread, centerPos.y + spread, centerPos.z + spread
+            );
+
+            List<LivingEntity> victims = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive() && !hitEntities.contains(e));
+            for (LivingEntity victim : victims) {
+                hitEntities.add(victim);
+                victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 200, 4));
+                victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 200, 3));
+                victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WEAKNESS, 200, 3));
+
+                // Sát thương ăn mòn cực đại
+                victim.hurt(level.damageSources().magic(), 120.0F);
+
+                level.sendParticles(ParticleTypes.SOUL, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 10, 0.3D, 0.5D, 0.3D, 0.05D);
+                level.sendParticles(ParticleTypes.DRAGON_BREATH, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 15, 0.4D, 0.4D, 0.4D, 0.08D);
+            }
+        }
+
+        player.displayClientMessage(
+            Component.literal("§c§l[BẠO THỰC VƯƠNG - HỦ HÓA] §fĐã phóng thích luồng hắc hỏa rồng tím ăn mòn và phân hủy " + hitEntities.size() + " sinh vật phía trước! ☠"),
+            true
+        );
+
+        player.getCooldowns().addCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get(), 30); // 1.5s cooldown
+    }
+
+    /**
      * Kiểm tra có phải căn nhà kín 4 bức tường hay không
      */
     private static boolean isVillagerHouseStructure(ServerLevel level, BlockPos center) {

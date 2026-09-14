@@ -28,14 +28,26 @@ public class ServerboundCastBeelzebuthPacket {
             if (player == null) return;
 
             boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
-            boolean hasSeedItem = player.getMainHandItem().getItem() instanceof com.minhphuc.weapons.content.tensura.DemonLordSeedItem
-                    || player.getOffhandItem().getItem() instanceof com.minhphuc.weapons.content.tensura.DemonLordSeedItem;
 
-            if (isTrueDemonLord || hasSeedItem) {
-                BeelzebuthAbility.executeBeelzebuth((ServerLevel) player.level(), player);
+            if (isTrueDemonLord) {
+                // Kiểm tra hồi chiêu kỹ năng (1.5 giây)
+                if (player.getCooldowns().isOnCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get())) {
+                    return;
+                }
+                
+                int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
+                ServerLevel serverLevel = (ServerLevel) player.level();
+                
+                if (selectedSkill == 1) {
+                    // Chiêu 2: Bạo Thực Vương - Hủ Hóa & Bạo Liệt
+                    BeelzebuthAbility.executeCorrosion(serverLevel, player);
+                } else {
+                    // Chiêu 1: Bạo Thực Vương - Thôn Phệ (Mặc định)
+                    BeelzebuthAbility.executeBeelzebuth(serverLevel, player);
+                }
             } else {
                 player.displayClientMessage(
-                    Component.literal("§c[BEELZEBUTH] Bạn chưa thức tỉnh thành Chân Ma Vương! (Cần Hạt Giống Ma Vương + 64 Linh Hồn & Đi Ngủ)"),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cThông báo. Cá thể chưa thức tỉnh thành Chân Ma Vương! Hãy kích hoạt Hạt Giống Ma Vương, thu thập đủ 64 Linh Hồn và Đi Ngủ để mở khóa Bạo Thực Vương Beelzebuth."),
                     true
                 );
             }
