@@ -52,23 +52,27 @@ public class InfinityGauntletItem extends Item {
             boolean isHolding = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
 
             if (isHolding) {
-                // 1. Instant Health Recovery when health is missing
+                // 1. Khôi phục sinh lực tức thì khi bị mất máu
                 if (player.getHealth() < player.getMaxHealth()) {
                     player.setHealth(player.getMaxHealth());
                 }
 
-                // Extinguish fire and refill air supply underwater
-                player.clearFire();
-                player.setAirSupply(player.getMaxAirSupply());
+                // Dập lửa và làm đầy thanh dưỡng khí khi cần
+                if (player.isOnFire()) {
+                    player.clearFire();
+                }
+                if (player.getAirSupply() < player.getMaxAirSupply()) {
+                    player.setAirSupply(player.getMaxAirSupply());
+                }
 
-                // 2. Grant optimal beneficial potion effects seamlessly (Tránh spam gói tin & chống chớp màn hình)
-                applyOrRefreshNightVision(player);
+                // 2. Chỉ cấp/làm mới hiệu ứng mỗi giây (20 ticks), tránh spam 200 packets/s
                 if (player.tickCount % 20 == 0) {
-                    int duration = 240; // 12 giây buffer
+                    int duration = 240; // 12 giây bộ đệm
                     applyOrRefreshEffect(player, MobEffects.DAMAGE_RESISTANCE, duration, 4);
                     applyOrRefreshEffect(player, MobEffects.REGENERATION, duration, 4);
                     applyOrRefreshEffect(player, MobEffects.FIRE_RESISTANCE, duration, 0);
                     applyOrRefreshEffect(player, MobEffects.WATER_BREATHING, duration, 0);
+                    applyOrRefreshNightVision(player); // Vĩnh cửu 999999 ticks, không bao giờ nhấp nháy màn hình
                     applyOrRefreshEffect(player, MobEffects.DAMAGE_BOOST, duration, 9);
                     applyOrRefreshEffect(player, MobEffects.DIG_SPEED, duration, 4);
                     applyOrRefreshEffect(player, MobEffects.MOVEMENT_SPEED, duration, 1);
@@ -78,7 +82,7 @@ public class InfinityGauntletItem extends Item {
 
                 // Tick hiệu ứng Kết Giới Vương Cung Thành Trì của Đá Không Gian
                 if (level instanceof ServerLevel serverLevel) {
-                    SpaceStoneAbility.tickCitadelBarrier(serverLevel, player, stack);
+                    SpaceStoneAbility.tickCitadelBarrier(serverLevel, player);
                 }
 
                 // Frost Walker: Tự động đóng băng nước dưới chân khi ở Chế độ Frozen của Đá Thực Tại (kiểm tra mỗi 4 ticks, dùng flag 2)
