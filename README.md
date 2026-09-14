@@ -1,4 +1,4 @@
-# ⚔️ Weapons Mod - Minecraft 1.20.1 Forge/fabric 
+# ⚔️ Weapons Mod - Minecraft 1.20.1 Forge
 
 [![Minecraft Version](https://img.shields.io/badge/Minecraft-1.20.1-brightgreen.svg)](https://minecraft.net)
 [![Forge Version](https://img.shields.io/badge/Forge-47.4.23+-orange.svg)](https://files.minecraftforge.net/)

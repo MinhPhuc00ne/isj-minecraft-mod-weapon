@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "weapons",
+  "version": "${version}",
+  "name": "Weapons Mod",
+  "description": "Mod Vu Khi (Weapons Mod) cho Fabric 1.21.1",
+  "authors": [
+    "MinhPhuc00ne"
+  ],
+  "contact": {},
+  "license": "MIT",
+  "icon": "assets/weapons/textures/item/infinity_gauntlet.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.minhphuc.weapons.fabric.WeaponsModFabric"
+    ],
+    "client": [
+      "com.minhphuc.weapons.fabric.WeaponsModFabricClient"
+    ]
+  },
+  "mixins": [
+    "weapons-common.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": ">=1.21 <=1.21.1",
+    "java": ">=21",
+    "architectury": ">=13.0.8"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
