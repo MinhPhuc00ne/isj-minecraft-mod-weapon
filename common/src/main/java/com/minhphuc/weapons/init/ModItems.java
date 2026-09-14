@@ -44,6 +44,21 @@ public class ModItems {
             () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
 
     // ==========================================
+    // MODULE: TENSURA DEMON LORD EVOLUTION
+    // ==========================================
+    public static final RegistrySupplier<Item> DEMON_LORD_SEED = ITEMS.register("demon_lord_seed",
+            () -> new com.minhphuc.weapons.content.tensura.DemonLordSeedItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DEMON_LORD_SOUL = ITEMS.register("demon_lord_soul",
+            () -> new com.minhphuc.weapons.content.tensura.DemonLordSoulItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> BEELZEBUTH_DRAGON_MAW = ITEMS.register("beelzebuth_dragon_maw",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> BEELZEBUTH_MAGIC_CIRCLE = ITEMS.register("beelzebuth_magic_circle",
+            () -> new Item(new Item.Properties()));
+
+    // ==========================================
     // CREATIVE TAB
     // ==========================================
     public static final RegistrySupplier<CreativeModeTab> WEAPONS_TAB = CREATIVE_MODE_TABS.register("weapons_tab",
@@ -58,6 +73,8 @@ public class ModItems {
                         output.accept(SOUL_STONE.get());
                         output.accept(TIME_STONE.get());
                         output.accept(MIND_STONE.get());
+                        output.accept(DEMON_LORD_SEED.get());
+                        output.accept(DEMON_LORD_SOUL.get());
                     })
             ));
 

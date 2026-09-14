@@ -43,7 +43,8 @@ public class SoulStoneAbility {
 
         int harvestedCount = 0;
         for (LivingEntity entity : entities) {
-            entity.hurt(level.damageSources().genericKill(), 100000.0F);
+            com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, entity);
+            entity.hurt(level.damageSources().playerAttack(player), 100000.0F);
             if (entity.isAlive()) {
                 entity.discard();
             }
@@ -67,7 +68,7 @@ public class SoulStoneAbility {
         level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, player.getX(), player.getY() + 1.0D, player.getZ(), 40, 1.5D, 1.0D, 1.5D, 0.05D);
 
         player.displayClientMessage(
-            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL HARVEST] §fĐã gặt hái linh hồn của " + harvestedCount + " sinh vật, hồi 100% máu & ban giáp ảo tối thượng! 🔥"),
+            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL HARVEST] §fBáo cáo. Đã gặt hái linh hồn của " + harvestedCount + " cá thể, hồi 100% máu & ban giáp ảo tối thượng! 🔥"),
             true
         );
 
@@ -104,7 +105,7 @@ public class SoulStoneAbility {
                 SoundEvents.SOUL_SAND_BREAK, SoundSource.PLAYERS, 1.5F, 1.0F);
 
         player.displayClientMessage(
-            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL PUPPET] §fĐã chiêu hồn " + mobs.size() + " sinh vật thành Binh Đoàn Hồn Ma Phụ Tá! 👻"),
+            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL PUPPET] §fBáo cáo. Đã chiêu hồn " + mobs.size() + " cá thể thành Binh Đoàn Hồn Ma Phụ Tá! 👻"),
             true
         );
 
@@ -127,14 +128,15 @@ public class SoulStoneAbility {
 
         if (targets.isEmpty()) {
             player.displayClientMessage(
-                Component.literal("§6[ĐÁ LINH HỒN - SOUL EXTRACTION] Không tìm thấy mục tiêu sinh vật phía trước!"),
+                Component.literal("§6[ĐÁ LINH HỒN - SOUL EXTRACTION] Báo cáo. Không tìm thấy mục tiêu cá thể phía trước!"),
                 true
             );
             return;
         }
 
         LivingEntity target = targets.get(0);
-        target.hurt(level.damageSources().genericKill(), 100000.0F);
+        com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, target);
+        target.hurt(level.damageSources().playerAttack(player), 100000.0F);
         if (target.isAlive()) {
             target.discard();
         }
@@ -146,7 +148,7 @@ public class SoulStoneAbility {
                 SoundEvents.WITHER_DEATH, SoundSource.PLAYERS, 1.0F, 1.2F);
 
         player.displayClientMessage(
-            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL EXTRACTION] Đã tách và thiêu rụi linh hồn của " + target.getName().getString() + "! 💥"),
+            Component.literal("§6§l[ĐÁ LINH HỒN - SOUL EXTRACTION] §fBáo cáo. Đã tách và thiêu rụi linh hồn của cá thể " + target.getName().getString() + "! 💥"),
             true
         );
 
@@ -169,7 +171,7 @@ public class SoulStoneAbility {
 
         if (itemEntities.isEmpty()) {
             player.displayClientMessage(
-                Component.literal("§6[ĐÁ LINH HỒN - TỬ LINH PHỤC SINH] Không tìm thấy vật phẩm/sinh vật tử trận trong 10 blocks!"),
+                Component.literal("§6[ĐÁ LINH HỒN - TỬ LINH PHỤC SINH] Báo cáo. Không tìm thấy vật phẩm/cá thể tử trận trong 10 blocks!"),
                 true
             );
             return;
@@ -214,7 +216,7 @@ public class SoulStoneAbility {
                 SoundEvents.ZOMBIE_VILLAGER_CURE, SoundSource.PLAYERS, 1.0F, 1.2F);
 
         player.displayClientMessage(
-            Component.literal("§6§l[ĐÁ LINH HỒN] §fKỹ năng: Tử linh phục sinh! Đã hồi sinh " + resurrectedCount + " sinh vật từ vật phẩm rớt ra! 🧟✨"),
+            Component.literal("§6§l[ĐÁ LINH HỒN] §fBáo cáo. Kỹ năng: Tử linh phục sinh! Đã hồi sinh " + resurrectedCount + " cá thể từ vật phẩm rớt ra! 🧟✨"),
             true
         );
 

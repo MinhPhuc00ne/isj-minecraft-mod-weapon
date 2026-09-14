@@ -242,7 +242,9 @@ public class InfinityGauntletItem extends Item {
                             if (!entity.isAlive() && !(entity instanceof ItemEntity)) continue;
 
                             if (entity instanceof LivingEntity living && entity != player) {
-                                living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                                // Xử lý rơi Linh Hồn Ma Vương cho cú búng tay SNAP
+                                com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(serverPlayer, living);
+                                living.hurt(serverLevel.damageSources().playerAttack(serverPlayer), 100000.0F);
                                 if (living.isAlive()) {
                                     living.discard();
                                 }
@@ -347,7 +349,11 @@ public class InfinityGauntletItem extends Item {
 
             for (LivingEntity entity : hitEntities) {
                 if (!killed.contains(entity)) {
-                    entity.hurt(level.damageSources().genericKill(), 100000.0F);
+                    com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, entity);
+                    entity.hurt(level.damageSources().playerAttack(player), 100000.0F);
+                    if (entity.isAlive()) {
+                        entity.discard();
+                    }
                     killed.add(entity);
                 }
             }
