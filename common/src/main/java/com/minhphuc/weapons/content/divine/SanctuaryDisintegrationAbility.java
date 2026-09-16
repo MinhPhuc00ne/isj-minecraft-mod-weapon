@@ -11,14 +11,17 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Display;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.AABB;
@@ -28,9 +31,7 @@ import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class SanctuaryDisintegrationAbility {
 
@@ -38,29 +39,50 @@ public class SanctuaryDisintegrationAbility {
         public final ServerLevel level;
         public final ServerPlayer caster;
         public final Vec3 center;
-        public final Display.ItemDisplay displayEntity;
+        public final Display.ItemDisplay baseDisplay;
+        public final Display.ItemDisplay midDisplay;
+        public final Display.ItemDisplay topDisplay;
         public int ticksRemaining;
         public final int totalTicks;
         public float currentAngleDegrees;
+        public final Set<UUID> trappedVictimUuids = new HashSet<>();
 
-        public ActiveSanctuary(ServerLevel level, ServerPlayer caster, Vec3 center, Display.ItemDisplay displayEntity, int durationTicks) {
+        public ActiveSanctuary(ServerLevel level, ServerPlayer caster, Vec3 center,
+                               Display.ItemDisplay baseDisplay,
+                               Display.ItemDisplay midDisplay,
+                               Display.ItemDisplay topDisplay,
+                               int durationTicks) {
             this.level = level;
             this.caster = caster;
             this.center = center;
-            this.displayEntity = displayEntity;
+            this.baseDisplay = baseDisplay;
+            this.midDisplay = midDisplay;
+            this.topDisplay = topDisplay;
             this.ticksRemaining = durationTicks;
             this.totalTicks = durationTicks;
             this.currentAngleDegrees = 0.0F;
+        }
+
+        public void cleanupDisplays() {
+            if (baseDisplay != null && baseDisplay.isAlive()) {
+                baseDisplay.discard();
+            }
+            if (midDisplay != null && midDisplay.isAlive()) {
+                midDisplay.discard();
+            }
+            if (topDisplay != null && topDisplay.isAlive()) {
+                topDisplay.discard();
+            }
         }
     }
 
     private static final List<ActiveSanctuary> ACTIVE_SANCTUARIES = new ArrayList<>();
 
     /**
-     * Kích hoạt tuyệt kĩ: Thánh Giới Linh Tử Băng Hoại (Sanctuary Disintegration)
+     * Kích hoạt tuyệt kĩ: Tam Trọng Thánh Giới - Linh Tử Băng Hoại (Multi-Tier Sanctuary Disintegration)
      */
     public static void cast(ServerLevel level, ServerPlayer player, ItemStack sword) {
-        // 1. Dò tìm mục tiêu: Quái vật hoặc Khối đất phía trước trong tầm 22 blocks (tối ưu gọn gàng)
+        // 1. Dò tìm mục tiêu: Quái vật hoặc Khối đất phía trước trong tầm 22 blocks
         Vec3 eyePos = player.getEyePosition(1.0F);
         Vec3 lookVec = player.getLookAngle();
         Vec3 traceEnd = eyePos.add(lookVec.scale(22.0D));
@@ -81,10 +103,43 @@ public class SanctuaryDisintegrationAbility {
             targetCenter = new Vec3(groundPos.getX() + 0.5D, groundPos.getY(), groundPos.getZ() + 0.5D);
         }
 
-        // 2. Tạo thực thể ItemDisplay hiển thị Ma Pháp Trận sắc nét nằm phẳng trên mặt đất
+        // 2. Tạo 3 thực thể ItemDisplay tạo nên Tam Trọng Thánh Giới (Đa Tầng Lập Thể)
+        // Tầng 1: Địa Trận (Y + 0.05, Vàng Hoàng Kim 0xFFD700, Scale 12m)
+        Display.ItemDisplay baseDisplay = createMagicCircleDisplay(level, targetCenter, 0.05D, 0.1F, 0xFFD700);
+        // Tầng 2: Trung Trận (Y + 2.80, Bạch Kim Thánh Quang 0xFFFFFF, Scale 9.5m)
+        Display.ItemDisplay midDisplay = createMagicCircleDisplay(level, targetCenter, 2.80D, 0.1F, 0xFFFFFF);
+        // Tầng 3: Thiên Trận (Y + 5.80, Hoàng Kim Rực Rỡ 0xFFEE33, Scale 7.5m)
+        Display.ItemDisplay topDisplay = createMagicCircleDisplay(level, targetCenter, 5.80D, 0.1F, 0xFFEE33);
+
+        ActiveSanctuary sanctuary = new ActiveSanctuary(level, player, targetCenter, baseDisplay, midDisplay, topDisplay, 90);
+        ACTIVE_SANCTUARIES.add(sanctuary);
+
+        // Âm thanh thánh tích hình thành chấn động
+        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
+                SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 3.0F, 1.3F);
+        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
+                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 3.0F, 1.1F);
+        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
+                SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.PLAYERS, 2.5F, 1.6F);
+
+        // Khóa mục tiêu ban đầu ngay tại tick 0
+        lockAndAnchorVictimsEveryTick(sanctuary);
+
+        player.displayClientMessage(
+            Component.literal("§e§l[TAM TRỌNG THÁNH GIỚI] §fBáo cáo. Phát Động Linh Tử Băng Hoại✨"),
+            true
+        );
+
+        player.getCooldowns().addCooldown(sword.getItem(), 140); // 7 giây hồi chiêu
+    }
+
+    /**
+     * Tạo thực thể ItemDisplay hiển thị Ma Pháp Trận sắc nét tại tọa độ và độ cao chỉ định
+     */
+    private static Display.ItemDisplay createMagicCircleDisplay(ServerLevel level, Vec3 center, double yOffset, float initialScale, int glowColor) {
         Display.ItemDisplay display = EntityType.ITEM_DISPLAY.create(level);
         if (display != null) {
-            display.moveTo(targetCenter.x, targetCenter.y + 0.05D, targetCenter.z, 0.0F, 0.0F);
+            display.moveTo(center.x, center.y + yOffset, center.z, 0.0F, 0.0F);
             ItemDisplayAccessor itemDisplayAcc = (ItemDisplayAccessor) display;
             DisplayAccessor displayAcc = (DisplayAccessor) display;
 
@@ -92,40 +147,38 @@ public class SanctuaryDisintegrationAbility {
             itemDisplayAcc.weapons$setItemTransform(ItemDisplayContext.FIXED);
             displayAcc.weapons$setBillboardConstraints(Display.BillboardConstraints.FIXED);
             display.setGlowingTag(true);
-            displayAcc.weapons$setGlowColorOverride(0xFFEE66); // Vàng kim thánh điện
-            displayAcc.weapons$setViewRange(2.0F);
+            displayAcc.weapons$setGlowColorOverride(glowColor);
+            displayAcc.weapons$setViewRange(2.5F);
 
-            // Xoay 90 độ quanh trục X để nằm phẳng trên mặt đất (Scale gọn 11m)
-            float initialScale = 11.0F;
             Quaternionf rotation = new Quaternionf().rotateX((float) Math.toRadians(90.0F));
             displayAcc.weapons$setTransformation(new Transformation(
-                    new Vector3f(0.0F, 0.02F, 0.0F),
+                    new Vector3f(0.0F, 0.0F, 0.0F),
                     rotation,
                     new Vector3f(initialScale, initialScale, 0.01F),
                     null
             ));
 
             level.addFreshEntity(display);
-
-            // Đăng ký thánh giới hoạt động trong 90 ticks (4.5 giây)
-            ACTIVE_SANCTUARIES.add(new ActiveSanctuary(level, player, targetCenter, display, 90));
         }
+        return display;
+    }
 
-        // Âm thanh thánh tích hình thành
-        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
-                SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.5F, 1.4F);
-        level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
-                SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.5F, 1.2F);
+    /**
+     * Cập nhật kích thước và góc xoay cho từng tầng ma pháp trận
+     */
+    private static void updateDisplayTransformation(Display.ItemDisplay display, float scale, float angleDeg) {
+        if (display != null && display.isAlive()) {
+            Quaternionf rotation = new Quaternionf()
+                    .rotateX((float) Math.toRadians(90.0F))
+                    .rotateZ((float) Math.toRadians(angleDeg));
 
-        // Khóa mục tiêu ban đầu
-        lockTargetsInSanctuary(level, targetCenter, 5.5D, player);
-
-        player.displayClientMessage(
-            Component.literal("§e§l[NGUYỆT QUANG KIẾM] §fBáo cáo. Khởi động Thánh Giới Linh Tử Băng Hoại! Đang khóa kết giới cá thể... ⚔️✨"),
-            true
-        );
-
-        player.getCooldowns().addCooldown(sword.getItem(), 140); // 7 giây hồi chiêu
+            ((DisplayAccessor) display).weapons$setTransformation(new Transformation(
+                    new Vector3f(0.0F, 0.0F, 0.0F),
+                    rotation,
+                    new Vector3f(scale, scale, 0.01F),
+                    null
+            ));
+        }
     }
 
     /**
@@ -144,134 +197,178 @@ public class SanctuaryDisintegrationAbility {
 
             // Tốc độ xoay ma pháp trận tăng dần theo giai đoạn tích tụ linh lực
             float rotationSpeed = 3.5F;
-            if (elapsed > 70) {
-                rotationSpeed = 10.0F; // Giai đoạn 3: Bùng nổ cực đại
+            if (elapsed > 75) {
+                rotationSpeed = 12.0F; // Giai đoạn 3: Bùng nổ cực đại
             } else if (elapsed > 25) {
-                rotationSpeed = 6.0F;  // Giai đoạn 2: Tụ năng lượng
+                rotationSpeed = 6.5F;  // Giai đoạn 2: Tụ năng lượng
             }
             s.currentAngleDegrees += rotationSpeed;
 
-            // 1. Cập nhật thực thể Display ma pháp trận
-            if (s.displayEntity != null && s.displayEntity.isAlive()) {
-                float scale = 11.0F;
-                // 15 ticks đầu: Ma pháp trận bung nở mượt mà từ tâm ra ngoài (0 -> 11)
-                if (elapsed < 16) {
-                    scale = (elapsed / 15.0F) * 11.0F;
-                }
+            // 1. Cập nhật chuyển động xoay & bung nở của 3 tầng ma pháp trận
+            // Tầng 1 (Địa Trận): Bung nở 0 -> 12m trong 15 ticks đầu, xoay thuận kim đồng hồ
+            float baseScale = Math.min(1.0F, elapsed / 15.0F) * 12.0F;
+            updateDisplayTransformation(s.baseDisplay, baseScale, s.currentAngleDegrees);
 
-                Quaternionf rotation = new Quaternionf()
-                        .rotateX((float) Math.toRadians(90.0F))
-                        .rotateZ((float) Math.toRadians(s.currentAngleDegrees));
+            // Tầng 2 (Trung Trận): Xuất hiện từ tick 4..18 (Scale 9.5m), xoay NGƯỢC chiều kim đồng hồ
+            float midScale = elapsed < 4 ? 0.01F : Math.min(1.0F, (elapsed - 4) / 14.0F) * 9.5F;
+            updateDisplayTransformation(s.midDisplay, midScale, -s.currentAngleDegrees * 1.5F);
 
-                ((DisplayAccessor) s.displayEntity).weapons$setTransformation(new Transformation(
-                        new Vector3f(0.0F, 0.02F, 0.0F),
-                        rotation,
-                        new Vector3f(scale, scale, 0.01F),
-                        null
-                ));
-            }
+            // Tầng 3 (Thiên Trận): Xuất hiện từ tick 8..22 (Scale 7.5m), xoay cùng chiều siêu tốc
+            float topScale = elapsed < 8 ? 0.01F : Math.min(1.0F, (elapsed - 8) / 14.0F) * 7.5F;
+            updateDisplayTransformation(s.topDisplay, topScale, s.currentAngleDegrees * 2.2F);
 
-            // 2. GIAI ĐOẠN 1 (0..25 ticks): 7 Thánh Trụ Ánh Sáng vươn cao dựng thành kết giới (Bán kính 5.0m)
-            double radius = 5.0D;
+            // 2. GIAI ĐOẠN 1 (0..25 ticks): 8 Thánh Trụ Ánh Sáng phóng thẳng từ đất lên trời nối 3 tầng
+            double pillarRadius = 5.2D;
             if (elapsed <= 25) {
-                if (s.ticksRemaining % 4 == 0) {
-                    double pillarHeight = (elapsed / 25.0D) * 4.5D;
-                    for (int i = 0; i < 7; i++) {
-                        double rad = Math.toRadians((i * (360.0D / 7.0D)) + s.currentAngleDegrees);
-                        double px = s.center.x + Math.cos(rad) * radius;
-                        double pz = s.center.z + Math.sin(rad) * radius;
+                double pillarHeight = Math.min(6.0D, (elapsed / 25.0D) * 6.0D);
+                if (s.ticksRemaining % 2 == 0) {
+                    for (int i = 0; i < 8; i++) {
+                        double rad = Math.toRadians((i * 45.0D) + s.currentAngleDegrees * 0.5D);
+                        double px = s.center.x + Math.cos(rad) * pillarRadius;
+                        double pz = s.center.z + Math.sin(rad) * pillarRadius;
 
-                        s.level.sendParticles(ParticleTypes.END_ROD, px, s.center.y + pillarHeight, pz, 1, 0.01D, 0.05D, 0.01D, 0.01D);
+                        for (double y = s.center.y; y <= s.center.y + pillarHeight; y += 1.5D) {
+                            s.level.sendParticles(ParticleTypes.END_ROD, px, y, pz, 1, 0.01D, 0.02D, 0.01D, 0.005D);
+                        }
                     }
                 }
             }
 
-            // 3. GIAI ĐOẠN 2 (25..75 ticks): Linh Tử Hội Tụ (Inward Convergence) & Vòng Thánh Quang Nâng Cao
+            // 3. GIAI ĐOẠN 2 (25..75 ticks): Lồng Giam Hoàn Tất & Linh Tử Hội Tụ Xoáy Ốc Nén Ép
             if (elapsed > 25 && elapsed <= 75) {
-                // 7 Thánh trụ duy trì phát sáng nhẹ mỗi 4 ticks
-                if (s.ticksRemaining % 4 == 0) {
-                    for (int i = 0; i < 7; i++) {
-                        double rad = Math.toRadians((i * (360.0D / 7.0D)) + s.currentAngleDegrees);
-                        double px = s.center.x + Math.cos(rad) * radius;
-                        double pz = s.center.z + Math.sin(rad) * radius;
-                        s.level.sendParticles(ParticleTypes.END_ROD, px, s.center.y + 0.8D, pz, 1, 0.01D, 0.2D, 0.01D, 0.01D);
+                // Duy trì 8 Thánh Trụ kết giới nối dọc 3 tầng
+                if (s.ticksRemaining % 3 == 0) {
+                    for (int i = 0; i < 8; i++) {
+                        double rad = Math.toRadians((i * 45.0D) + s.currentAngleDegrees * 0.5D);
+                        double px = s.center.x + Math.cos(rad) * pillarRadius;
+                        double pz = s.center.z + Math.sin(rad) * pillarRadius;
 
-                        // Hạt linh tử ánh sáng bay xoáy ốc hội tụ vào tâm
-                        Vec3 toCenter = s.center.subtract(new Vec3(px, s.center.y + 1.2D, pz)).normalize().scale(0.35D);
-                        s.level.sendParticles(ParticleTypes.WAX_OFF, px, s.center.y + 1.2D, pz, 0, toCenter.x, 0.03D, toCenter.z, 0.2D);
+                        s.level.sendParticles(ParticleTypes.END_ROD, px, s.center.y + 1.0D, pz, 1, 0.01D, 0.1D, 0.01D, 0.005D);
+                        s.level.sendParticles(ParticleTypes.END_ROD, px, s.center.y + 3.0D, pz, 1, 0.01D, 0.1D, 0.01D, 0.005D);
+                        s.level.sendParticles(ParticleTypes.END_ROD, px, s.center.y + 5.5D, pz, 1, 0.01D, 0.1D, 0.01D, 0.005D);
+
+                        // Hạt linh tử ánh sáng từ 8 thánh trụ bắn xoáy ốc vào tâm giam cầm
+                        Vec3 lockPos = new Vec3(s.center.x, s.center.y + 1.8D, s.center.z);
+                        Vec3 toCenter = lockPos.subtract(new Vec3(px, s.center.y + 2.0D, pz)).normalize().scale(0.35D);
+                        s.level.sendParticles(ParticleTypes.WAX_OFF, px, s.center.y + 2.0D, pz, 0, toCenter.x, 0.02D, toCenter.z, 0.22D);
                     }
                 }
 
-                // Vòng tròn thánh quang nâng dần từ mặt đất lên độ cao 4m
-                double ringY = s.center.y + ((elapsed - 25) / 50.0D) * 4.0D;
-                double ringRadius = 4.8D - ((elapsed - 25) / 50.0D) * 2.5D; // Thu hẹp dần
-                if (s.ticksRemaining % 5 == 0) {
-                    for (int a = 0; a < 360; a += 60) {
-                        double aRad = Math.toRadians(a + s.currentAngleDegrees * 2);
+                // Vòng nén thánh quang co thắt dần xung quanh nạn nhân (từ bán kính 4.5m xuống 1.5m)
+                double compressionProgress = (elapsed - 25) / 50.0D;
+                double ringRadius = 4.5D - compressionProgress * 3.0D;
+                if (s.ticksRemaining % 4 == 0) {
+                    for (int a = 0; a < 360; a += 45) {
+                        double aRad = Math.toRadians(a + s.currentAngleDegrees * 2.5D);
                         double rx = s.center.x + Math.cos(aRad) * ringRadius;
                         double rz = s.center.z + Math.sin(aRad) * ringRadius;
-                        s.level.sendParticles(ParticleTypes.END_ROD, rx, ringY, rz, 1, 0, 0, 0, 0);
+                        s.level.sendParticles(ParticleTypes.END_ROD, rx, s.center.y + 1.8D, rz, 1, 0, 0, 0, 0);
                     }
                 }
 
-                // Âm thanh thánh tích tích tụ năng lượng mỗi 12 ticks
-                if (elapsed % 12 == 0) {
-                    float pitch = 0.8F + ((elapsed - 25) / 50.0F) * 1.2F;
-                    s.level.playSound(null, s.center.x, s.center.y, s.center.z,
-                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.5F, pitch);
+                // Âm thanh thánh tích nén năng lượng theo tần số tăng dần
+                if (elapsed % 10 == 0) {
+                    float pitch = 0.8F + (float) compressionProgress * 1.2F;
+                    s.level.playSound(null, s.center.x, s.center.y + 1.8D, s.center.z,
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.8F, pitch);
                 }
             }
 
-            // 4. GIAI ĐOẠN 3 (75..90 ticks): Bầu Trời Tích Tụ Quang Năng Chuẩn Bị Giáng Phạt
+            // 4. GIAI ĐOẠN 3 (75..90 ticks): Thiên Trận Tụ Quang Sấm Sét Giáng Phạt
             if (elapsed > 75 && elapsed < 90) {
-                // Hạt ánh sáng cực quang trên đỉnh trời chuẩn bị đánh xuống
-                double skyY = s.center.y + 20.0D;
-                s.level.sendParticles(ParticleTypes.FLASH, s.center.x, skyY, s.center.z, 1, 0.2D, 0.2D, 0.2D, 0);
-                s.level.sendParticles(ParticleTypes.END_ROD, s.center.x, skyY, s.center.z, 2, 0.8D, 0.8D, 0.8D, 0.08D);
+                double topY = s.center.y + 6.0D;
+                s.level.sendParticles(ParticleTypes.FLASH, s.center.x, topY, s.center.z, 2, 0.2D, 0.2D, 0.2D, 0);
+                s.level.sendParticles(ParticleTypes.END_ROD, s.center.x, topY, s.center.z, 3, 0.5D, 0.5D, 0.5D, 0.08D);
+
+                // Tia chớp định vị mục tiêu ở tâm
+                s.level.sendParticles(ParticleTypes.ELECTRIC_SPARK, s.center.x, s.center.y + 1.8D, s.center.z, 5, 0.3D, 0.5D, 0.3D, 0.05D);
 
                 if (elapsed == 80) {
                     s.level.playSound(null, s.center.x, s.center.y, s.center.z,
-                            SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 1.0F, 1.8F);
+                            SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 1.5F, 1.8F);
                 }
             }
 
-            // Khóa cứng chuyển động toàn bộ kẻ địch trong thánh trận mỗi 10 ticks (0.5s)
-            if (s.ticksRemaining % 10 == 0) {
-                lockTargetsInSanctuary(s.level, s.center, 5.5D, s.caster);
-            }
+            // KHÓA MỤC TIÊU TUYỆT ĐỐI MỖI TICK (0.05s) - KHÔNG THỂ THOÁT RA!
+            lockAndAnchorVictimsEveryTick(s);
 
-            // 5. KẾT THÚC: Cột Thiên Phạt Cực Quang giáng lâm & Phân Rã Linh Tử!
+            // 5. KẾT THÚC: Cột Thiên Phạt Cực Quang giáng lâm & Phân Rã Toàn Bộ Linh Tử!
             if (s.ticksRemaining <= 0) {
-                executeDisintegrationStrike(s.level, s.center, 5.5D, s.caster);
-
-                // Xóa thực thể ma pháp trận
-                if (s.displayEntity != null && s.displayEntity.isAlive()) {
-                    s.displayEntity.discard();
-                }
-
+                executeDisintegrationStrike(s.level, s.center, 6.0D, s.caster);
+                s.cleanupDisplays();
                 it.remove();
             }
         }
     }
 
     /**
-     * Khóa cứng mọi chuyển động của sinh vật bên trong kết giới
+     * Khóa mục tiêu tuyệt đối mỗi tick (0.05s) - Triệt tiêu di chuyển, nhảy, đẩy lùi, lơ lửng và chặn dịch chuyển
      */
-    private static void lockTargetsInSanctuary(ServerLevel level, Vec3 center, double radius, ServerPlayer caster) {
+    private static void lockAndAnchorVictimsEveryTick(ActiveSanctuary s) {
+        double radius = 5.8D;
         AABB box = new AABB(
-                center.x - radius, center.y - 2.0D, center.z - radius,
-                center.x + radius, center.y + 6.0D, center.z + radius
+                s.center.x - radius, s.center.y - 2.0D, s.center.z - radius,
+                s.center.x + radius, s.center.y + 8.5D, s.center.z + radius
         );
 
-        List<LivingEntity> victims = level.getEntitiesOfClass(LivingEntity.class, box, e -> e != caster && e.isAlive());
-        for (LivingEntity v : victims) {
-            double distSq = v.position().distanceToSqr(center);
+        // 1. Dò tìm và đăng ký các mục tiêu mới lọt vào vùng thánh giới
+        List<LivingEntity> inArea = s.level.getEntitiesOfClass(LivingEntity.class, box, e -> e != s.caster && e.isAlive());
+        for (LivingEntity e : inArea) {
+            double distSq = e.position().distanceToSqr(s.center);
             if (distSq <= radius * radius) {
-                v.setDeltaMovement(0, 0, 0);
-                v.hasImpulse = true;
-                v.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 255, false, false, true));
-                v.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 40, 255, false, false, true));
-                v.addEffect(new MobEffectInstance(MobEffects.GLOWING, 40, 0, false, false, true));
+                s.trappedVictimUuids.add(e.getUUID());
+            }
+        }
+
+        if (s.trappedVictimUuids.isEmpty()) return;
+
+        Vec3 lockCenter = new Vec3(s.center.x, s.center.y + 1.8D, s.center.z);
+        Iterator<UUID> uuidIt = s.trappedVictimUuids.iterator();
+        while (uuidIt.hasNext()) {
+            UUID uuid = uuidIt.next();
+            Entity entity = s.level.getEntity(uuid);
+            if (!(entity instanceof LivingEntity victim) || !victim.isAlive() || victim.isRemoved()) {
+                continue;
+            }
+
+            Vec3 victimPos = victim.position();
+            double horizontalDist = Math.sqrt(
+                    Math.pow(victimPos.x - s.center.x, 2) + Math.pow(victimPos.z - s.center.z, 2)
+            );
+            double verticalDist = Math.abs(victimPos.y - (s.center.y + 1.8D));
+
+            // CHỐNG ĐÀO THOÁT BẰNG DỊCH CHUYỂN TỨC THỜI (Anti-Teleport Snap-Back)
+            // Nếu mục tiêu đã bị đánh dấu phong ấn cố dịch chuyển hoặc bị văng ra xa -> Giật ngược về tâm lơ lửng!
+            if (horizontalDist > 5.5D || verticalDist > 4.0D) {
+                victim.teleportTo(lockCenter.x, lockCenter.y, lockCenter.z);
+                victim.setDeltaMovement(0, 0, 0);
+                s.level.sendParticles(ParticleTypes.REVERSE_PORTAL, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.05D);
+            } else {
+                // Lực hút chân không linh tử giữ mục tiêu lơ lửng ổn định ở tâm tầng 2
+                Vec3 pullVec = lockCenter.subtract(victimPos);
+                double pullDist = pullVec.length();
+                if (pullDist > 0.15D) {
+                    victim.setDeltaMovement(pullVec.normalize().scale(Math.min(pullDist * 0.3D, 0.35D)));
+                } else {
+                    victim.setDeltaMovement(0, 0, 0);
+                }
+            }
+
+            victim.hasImpulse = true;
+            victim.fallDistance = 0.0F;
+
+            // Áp dụng các hiệu ứng khóa chuyển động và vô hiệu hóa năng lực
+            victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 255, false, false, true));
+            victim.addEffect(new MobEffectInstance(MobEffects.JUMP, 30, -255, false, false, true)); // Negative Jump Boost triệt tiêu nhảy
+            victim.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30, 255, false, false, true));
+            victim.addEffect(new MobEffectInstance(MobEffects.DIG_SLOWDOWN, 30, 255, false, false, true));
+            victim.addEffect(new MobEffectInstance(MobEffects.GLOWING, 30, 0, false, false, true));
+
+            // Nếu nạn nhân là Player: Khóa Ender Pearl & Chorus Fruit để ngăn chặn đào thoát
+            if (victim instanceof ServerPlayer playerVictim) {
+                playerVictim.getCooldowns().addCooldown(Items.ENDER_PEARL, 40);
+                playerVictim.getCooldowns().addCooldown(Items.CHORUS_FRUIT, 40);
+                playerVictim.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 30, 0, false, false, false));
             }
         }
     }
@@ -282,40 +379,47 @@ public class SanctuaryDisintegrationAbility {
     private static void executeDisintegrationStrike(ServerLevel level, Vec3 center, double radius, ServerPlayer caster) {
         // 1. Âm thanh thiên phạt chấn động thế giới
         level.playSound(null, center.x, center.y, center.z,
-                SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 3.0F, 0.9F);
+                SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 3.5F, 0.85F);
         level.playSound(null, center.x, center.y, center.z,
-                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.5F, 1.2F);
+                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 3.0F, 1.1F);
         level.playSound(null, center.x, center.y, center.z,
-                SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 3.0F, 0.6F);
+                SoundEvents.AMETHYST_BLOCK_BREAK, SoundSource.PLAYERS, 3.5F, 0.5F);
+        level.playSound(null, center.x, center.y, center.z,
+                SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 2.5F, 1.4F);
         level.playSound(null, center.x, center.y, center.z,
                 SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 2.5F, 1.5F);
 
-        // 2. Cột ánh sáng cực quang linh tử giáng từ trời cao xuống tâm trận (Chỉ ~6 hạt, 0% lag)
-        for (double y = center.y; y <= center.y + 18.0D; y += 3.0D) {
-            level.sendParticles(ParticleTypes.FLASH, center.x, y, center.z, 1, 0, 0, 0, 0);
-            level.sendParticles(ParticleTypes.END_ROD, center.x, y, center.z, 1, 0.2D, 0.1D, 0.2D, 0.03D);
+        // 2. Cột ánh sáng cực quang linh tử giáng từ thiên đỉnh xuyên qua 3 tầng ma pháp trận
+        for (double y = center.y; y <= center.y + 24.0D; y += 1.5D) {
+            level.sendParticles(ParticleTypes.FLASH, center.x, y, center.z, 2, 0.2D, 0.2D, 0.2D, 0);
+            level.sendParticles(ParticleTypes.END_ROD, center.x, y, center.z, 3, 0.4D, 0.2D, 0.4D, 0.05D);
         }
 
-        // Vụ nổ ánh sáng linh tử bao phủ toàn bộ thánh trận
-        level.sendParticles(ParticleTypes.FLASH, center.x, center.y + 1.0D, center.z, 1, 0.2D, 0.2D, 0.2D, 0);
-        level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, center.x, center.y + 1.0D, center.z, 8, 1.5D, 0.8D, 1.5D, 0.08D);
+        // Vụ nổ ánh sáng linh tử & sóng xung kích vàng kim bao phủ toàn bộ thánh trận
+        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, center.x, center.y + 1.8D, center.z, 2, 0, 0, 0, 0);
+        level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, center.x, center.y + 1.8D, center.z, 50, 2.5D, 2.0D, 2.5D, 0.2D);
+        level.sendParticles(ParticleTypes.WAX_OFF, center.x, center.y + 1.8D, center.z, 30, 2.0D, 1.5D, 2.0D, 0.1D);
 
         // 3. Tiêu diệt và phân rã linh tử vạn vật trong thánh trận
         AABB box = new AABB(
                 center.x - radius, center.y - 2.0D, center.z - radius,
-                center.x + radius, center.y + 7.0D, center.z + radius
+                center.x + radius, center.y + 9.0D, center.z + radius
         );
 
         List<LivingEntity> targets = level.getEntitiesOfClass(LivingEntity.class, box, e -> e != caster);
         List<String> victimNames = new ArrayList<>();
         int destroyedCount = 0;
+        DamageSource dmgSource = (caster != null) ? level.damageSources().playerAttack(caster) : level.damageSources().genericKill();
+
         for (LivingEntity target : targets) {
             double distSq = target.position().distanceToSqr(center);
             if (distSq <= radius * radius) {
                 victimNames.add("cá thể " + target.getDisplayName().getString());
-                com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(caster, target);
-                level.sendParticles(ParticleTypes.SOUL, target.getX(), target.getY() + 1.0D, target.getZ(), 2, 0.1D, 0.2D, 0.1D, 0.02D);
-                target.hurt(level.damageSources().playerAttack(caster), 100000.0F);
+                if (caster != null) {
+                    com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(caster, target);
+                }
+                level.sendParticles(ParticleTypes.SOUL, target.getX(), target.getY() + 1.0D, target.getZ(), 5, 0.2D, 0.3D, 0.2D, 0.02D);
+                target.hurt(dmgSource, 100000.0F);
                 if (target.isAlive()) {
                     target.discard(); // Tiêu diệt triệt để cả Boss (Rồng Ender, Wither, Warden...)
                 }
@@ -332,16 +436,16 @@ public class SanctuaryDisintegrationAbility {
         if (caster != null) {
             String killMessage;
             if (destroyedCount == 1) {
-                killMessage = "Báo cáo: Cá thể " + victimNames.get(0).substring(7) + " đã bị tiêu diệt";
+                killMessage = "Báo cáo: Cá thể " + victimNames.get(0).substring(7) + " đã bị tiêu diệt và phân rã bởi linh tử ⚡✨";
             } else if (destroyedCount > 1 && destroyedCount <= 3) {
-                killMessage = "Báo cáo: " + String.join(", ", victimNames) + " đã bị tiêu diệt";
+                killMessage = "Báo cáo: " + String.join(", ", victimNames) + " đã bị tiêu diệt và phân rã linh tử hoàn toàn! ⚡✨";
             } else if (destroyedCount > 3) {
-                killMessage = "Báo cáo: " + victimNames.get(0) + " và " + (destroyedCount - 1) + " cá thể khác đã bị tiêu diệt";
+                killMessage = "Báo cáo: " + victimNames.get(0) + " và " + (destroyedCount - 1) + " cá thể khác đã bị tiêu diệt và phân rã linh tử hoàn toàn! ⚡✨";
             } else {
-                killMessage = "Báo cáo: Không có cá thể nào trong phạm vi";
+                killMessage = "Báo cáo: Không có cá thể nào trong phạm vi thánh trận";
             }
             caster.displayClientMessage(
-                Component.literal("§e§l[THÁNH GIỚI] §f" + killMessage),
+                Component.literal("§e§l[TAM TRỌNG THÁNH GIỚI] §f" + killMessage),
                 true
             );
         }
