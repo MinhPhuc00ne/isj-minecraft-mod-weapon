@@ -101,12 +101,6 @@ public class InfinityGauntletItem extends Item {
                         }
                     }
                 }
-            } else {
-                // Khi không còn cầm găng tay, thu hồi Night Vision vĩnh cửu
-                MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
-                if (nv != null && nv.getDuration() > 60000) {
-                    player.removeEffect(MobEffects.NIGHT_VISION);
-                }
             }
         }
         super.inventoryTick(stack, level, entity, slotId, isSelected);
@@ -114,8 +108,8 @@ public class InfinityGauntletItem extends Item {
 
     private void applyOrRefreshNightVision(Player player) {
         MobEffectInstance current = player.getEffect(MobEffects.NIGHT_VISION);
-        if (current == null || current.getDuration() <= 10000) {
-            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, 999999, 0, false, false, false));
+        if (current == null || !current.isInfiniteDuration()) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, MobEffectInstance.INFINITE_DURATION, 0, false, false, false));
         }
     }
 

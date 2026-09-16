@@ -9,6 +9,7 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.ChatEvent;
 import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +30,7 @@ public class InfinityGauntletEvents {
         EntityEvent.LIVING_HURT.register(InfinityGauntletEvents::onLivingHurt);
         InteractionEvent.LEFT_CLICK_BLOCK.register(InfinityGauntletEvents::onLeftClickBlock);
         ChatEvent.RECEIVED.register(InfinityGauntletEvents::onServerChat);
+        TickEvent.PLAYER_POST.register(InfinityGauntletEvents::onPlayerTick);
     }
 
     public static EventResult onLivingHurt(LivingEntity living, DamageSource damageSource, float amount) {
@@ -160,8 +164,31 @@ public class InfinityGauntletEvents {
         return EventResult.interruptFalse();
     }
 
-    private static boolean isHoldingGauntlet(Player player) {
+    public static boolean isHoldingGauntlet(Player player) {
         return player.getMainHandItem().getItem() instanceof InfinityGauntletItem
                 || player.getOffhandItem().getItem() instanceof InfinityGauntletItem;
+    }
+
+    public static void onPlayerTick(Player player) {
+        if (player == null || player.level().isClientSide()) return;
+
+        boolean isHolding = isHoldingGauntlet(player);
+        boolean hadGauntletNV = EntityDataHelper.getCustomData(player).getBoolean("GauntletNightVision");
+
+        if (isHolding) {
+            MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
+            if (nv == null || !nv.isInfiniteDuration()) {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, MobEffectInstance.INFINITE_DURATION, 0, false, false, false));
+                EntityDataHelper.getCustomData(player).putBoolean("GauntletNightVision", true);
+            }
+        } else {
+            MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
+            if (hadGauntletNV || (nv != null && nv.isInfiniteDuration())) {
+                if (nv != null) {
+                    player.removeEffect(MobEffects.NIGHT_VISION);
+                }
+                EntityDataHelper.getCustomData(player).remove("GauntletNightVision");
+            }
+        }
     }
 }
