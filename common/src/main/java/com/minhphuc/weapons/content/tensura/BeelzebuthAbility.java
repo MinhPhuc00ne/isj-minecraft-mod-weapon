@@ -11,6 +11,9 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Display;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
@@ -34,6 +37,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+/**
+ * Kỹ Năng Tối Thượng: Bạo Thực Vương Beelzebuth (Gluttonous King Beelzebuth - 暴食之王)
+ * Triệu hồi Đầu Rồng Hư Không Voxel 3D khổng lồ (3D Dragon Maw) với mõm dài, hàm há ngoác,
+ * răng nanh sắc bén, mắt trắng phát quang và râu rồng tím vươn dài.
+ * Lao vút theo góc nhìn 3D của người chơi, tạo lực hút chân không nuốt chửng vạn vật và táp hàm kết liễu.
+ */
 public class BeelzebuthAbility {
 
     public static class ActiveBeelzebuthDragon {
@@ -41,15 +50,20 @@ public class BeelzebuthAbility {
         public final ServerPlayer caster;
         public final Vec3 startPos;
         public final Vec3 lookVec;
+        public final float yaw;
+        public final float pitch;
         public final Display.ItemDisplay displayEntity;
         public int ticksRemaining;
         public final int totalTicks;
 
-        public ActiveBeelzebuthDragon(ServerLevel level, ServerPlayer caster, Vec3 startPos, Vec3 lookVec, Display.ItemDisplay displayEntity, int durationTicks) {
+        public ActiveBeelzebuthDragon(ServerLevel level, ServerPlayer caster, Vec3 startPos, Vec3 lookVec,
+                                      float yaw, float pitch, Display.ItemDisplay displayEntity, int durationTicks) {
             this.level = level;
             this.caster = caster;
             this.startPos = startPos;
             this.lookVec = lookVec;
+            this.yaw = yaw;
+            this.pitch = pitch;
             this.displayEntity = displayEntity;
             this.ticksRemaining = durationTicks;
             this.totalTicks = durationTicks;
@@ -58,43 +72,52 @@ public class BeelzebuthAbility {
 
     public static final List<ActiveBeelzebuthDragon> ACTIVE_DRAGONS = new ArrayList<>();
 
+    /**
+     * Kích hoạt Bạo Thực Vương: Triệu hồi Đầu Rồng 3D Voxel lao vút về phía trước
+     */
     public static void executeBeelzebuth(ServerLevel level, ServerPlayer player) {
         // Âm thanh Đầu Rồng Hư Không Bạo Thực Vương gầm thét vồ mồi
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 2.5F, 0.6F);
+                SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 3.0F, 0.6F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.0F, 0.7F);
+                SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.5F, 0.7F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.0F, 0.5F);
+                SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.2F, 0.5F);
 
         Vec3 start = player.getEyePosition(1.0F);
         Vec3 look = player.getLookAngle();
-        double maxDist = 14.0D; // Tối ưu tầm vươn 14m (gọn trong 1 chunk), triệt tiêu hoàn toàn lag
+        float yaw = player.getYRot();
+        float pitch = player.getXRot();
+        double maxDist = 14.0D;
 
-        // Triệu hồi Đầu Rồng Hư Không Bạo Thực Vương (Display Entity 0% lag, Billboard CENTER)
+        // Triệu hồi Đầu Rồng Hư Không Bạo Thực Vương (3D Model Display Entity, FIXED orientation)
         Display.ItemDisplay display = EntityType.ITEM_DISPLAY.create(level);
         if (display != null) {
             Vec3 spawnPos = start.add(look.scale(2.0D));
-            display.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, player.getYRot(), player.getXRot());
+            display.moveTo(spawnPos.x, spawnPos.y, spawnPos.z, yaw, pitch);
+            display.setYRot(yaw);
+            display.setXRot(pitch);
+
             ItemDisplayAccessor itemDisplayAcc = (ItemDisplayAccessor) display;
             DisplayAccessor displayAcc = (DisplayAccessor) display;
 
             itemDisplayAcc.weapons$setItemStack(new ItemStack(ModItems.BEELZEBUTH_DRAGON_MAW.get()));
             itemDisplayAcc.weapons$setItemTransform(ItemDisplayContext.FIXED);
-            displayAcc.weapons$setBillboardConstraints(Display.BillboardConstraints.CENTER);
+            displayAcc.weapons$setBillboardConstraints(Display.BillboardConstraints.FIXED); // Khối 3D cố định theo góc nhìn
             display.setGlowingTag(true);
-            displayAcc.weapons$setGlowColorOverride(0x9900FF); // Hào quang tím đen ma vương
-            displayAcc.weapons$setViewRange(2.0F);
+            displayAcc.weapons$setGlowColorOverride(0xAA00FF); // Hào quang tím neon ma vương
+            displayAcc.weapons$setViewRange(10.0F);
 
+            // Kích thước 3D ban đầu: rộng 3.5m, cao 3.5m, dài 4.2m
             displayAcc.weapons$setTransformation(new Transformation(
                     new Vector3f(0.0F, 0.0F, 0.0F),
-                    null,
-                    new Vector3f(4.0F, 4.0F, 0.01F),
+                    new Quaternionf(),
+                    new Vector3f(3.5F, 3.5F, 4.2F),
                     null
             ));
 
             level.addFreshEntity(display);
-            ACTIVE_DRAGONS.add(new ActiveBeelzebuthDragon(level, player, start, look, display, 20)); // 1.0 giây
+            ACTIVE_DRAGONS.add(new ActiveBeelzebuthDragon(level, player, start, look, yaw, pitch, display, 24)); // 1.2 giây
         }
 
         int devouredEntities = 0;
@@ -102,9 +125,7 @@ public class BeelzebuthAbility {
         int devouredExplosives = 0;
         int devouredBlocks = 0;
 
-        Set<Entity> processedEntities = new HashSet<>();
-
-        // 1. Tạo Chùm Xoáy Rồng Hư Không Tím (Tối ưu step 2.0m, chỉ ~20 hạt, 0% lag)
+        // 1. Tạo Chùm Xoáy Rồng Hư Không Tím dọc đường bay
         for (double d = 1.0D; d <= maxDist; d += 2.0D) {
             Vec3 centerPos = start.add(look.scale(d));
             double coneRadius = 0.5D + (d * 0.18D);
@@ -127,7 +148,7 @@ public class BeelzebuthAbility {
             }
         }
 
-        // 2. Kéo & Nuốt Chửng Sinh Vật (1 truy vấn AABB duy nhất)
+        // 2. Kéo & Nuốt Chửng Sinh Vật Ban Đầu
         Vec3 end = start.add(look.scale(maxDist));
         double maxConeRadius = 0.5D + (maxDist * 0.18D);
         AABB coneBox = new AABB(start, end).inflate(maxConeRadius + 0.5D);
@@ -143,30 +164,32 @@ public class BeelzebuthAbility {
                 double coneRadiusAtDist = 0.7D + (distAlongLook * 0.22D);
 
                 if (perpDistSq <= coneRadiusAtDist * coneRadiusAtDist) {
-                    // Lực hút vầng xoáy kéo mục tiêu về phía người chơi
+                    // Lực hút vầng xoáy kéo mục tiêu về phía họng rồng
                     Vec3 pullVec = start.subtract(entity.position()).normalize().scale(1.1D);
                     entity.setDeltaMovement(pullVec.x, 0.25D, pullVec.z);
                     entity.hasImpulse = true;
 
                     if (entity instanceof LivingEntity living) {
                         // Sinh vật dưới 50% máu -> Bị Beelzebuth nuốt chửng mất tích hoàn toàn!
-                        if (living.getHealth() <= living.getMaxHealth() * 0.5F) {
+                        if (living.getHealth() <= living.getMaxHealth() * 0.5F || !(living.getMaxHealth() >= 100.0F)) {
                             level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
                             level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
 
-                            living.discard(); // Nuốt chửng không rớt đồ
+                            TensuraEvents.handleMobDeathDrop(player, living);
+                            living.discard(); // Nuốt chửng
                             devouredEntities++;
+                        } else {
+                            // Boss hoặc quái lớn: Cắn rách 200 sát thương và Wither
+                            living.hurt(level.damageSources().playerAttack(player), 200.0F);
+                            living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
                         }
                     } else if (entity instanceof ItemEntity itemEntity) {
-                        // Hấp thụ item rớt dưới đất
                         itemEntity.discard();
                         devouredItems++;
                     } else if (entity instanceof PrimedTnt tnt) {
-                        // Nuốt chửng khối TNT đang nổ
                         tnt.discard();
                         devouredExplosives++;
                     } else if (entity instanceof Creeper creeper) {
-                        // Nuốt chửng Creeper đang chuẩn bị nổ
                         if (creeper.isIgnited() || creeper.getSwellDir() > 0) {
                             creeper.discard();
                             devouredExplosives++;
@@ -176,15 +199,15 @@ public class BeelzebuthAbility {
             }
         }
 
-        // 3. Nuốt chửng Căn Nhà Dân Làng (Nuốt toàn bộ khối kiến trúc kín, tối ưu tầm 3 blocks)
+        // 3. Nuốt chửng Căn Nhà Dân Làng
         BlockPos targetBlockPos = player.blockPosition().relative(player.getDirection(), 3);
         if (isVillagerHouseStructure(level, targetBlockPos)) {
             devouredBlocks = devourHouseBlocks(level, targetBlockPos);
         }
 
         player.displayClientMessage(
-            Component.literal("§d§l[BẠO THỰC VƯƠNG BEELZEBUTH] §fBáo cáo. Đã nuốt chửng " + devouredEntities + " cá thể (<50% HP), "
-                    + devouredItems + " vật phẩm, " + devouredExplosives + " đạn nổ và " + devouredBlocks + " khối nhà dân! 🌀"),
+            Component.literal("§d§l[BẠO THỰC VƯƠNG BEELZEBUTH] §fBáo cáo. Đầu Rồng Hư Không 3D đã nuốt chửng " + devouredEntities + " cá thể, "
+                    + devouredItems + " vật phẩm, " + devouredExplosives + " đạn nổ và " + devouredBlocks + " khối nhà dân! 🐲🌀"),
             true
         );
 
@@ -192,7 +215,7 @@ public class BeelzebuthAbility {
     }
 
     /**
-     * Cập nhật Đầu Rồng Hư Không Bạo Thực Vương đang lao về phía trước và nuốt chửng vạn vật
+     * Cập nhật Đầu Rồng Hư Không 3D đang lao về phía trước, há ngoác mồm và nuốt chửng vạn vật
      */
     public static void tickDragons(ServerLevel serverLevel) {
         if (ACTIVE_DRAGONS.isEmpty()) return;
@@ -204,51 +227,87 @@ public class BeelzebuthAbility {
 
             d.ticksRemaining--;
             int elapsed = d.totalTicks - d.ticksRemaining;
+            float progress = (float) elapsed / d.totalTicks;
 
-            // Đầu rồng lao vút về phía trước theo hướng nhìn (2m -> 11m)
-            double distance = 2.0D + ((double) elapsed / d.totalTicks) * 9.0D;
+            // 1. Đầu rồng 3D lao vút về phía trước theo góc nhìn (2m -> 14m)
+            double distance = 2.0D + (progress * 12.0D);
             Vec3 currentPos = d.startPos.add(d.lookVec.scale(distance));
 
-            // Kích thước miệng rồng nở to dần (4m -> 8.5m)
-            float scale = 4.0F + ((float) elapsed / d.totalTicks) * 4.5F;
-            if (d.ticksRemaining < 4) {
-                scale = (d.ticksRemaining / 4.0F) * 8.5F; // Cắn sập miệng lại biến mất
+            // 2. Kích thước 3D nở to dần theo đà lao (3.5m -> 5.5m), 4 tick cuối miệng táp sập lại
+            float baseScale = 3.5F + (progress * 2.0F);
+            float scaleX = baseScale;
+            float scaleY = baseScale;
+            float scaleZ = baseScale * 1.2F;
+
+            if (d.ticksRemaining <= 4) {
+                // Cú táp hàm cực đại: Chiều cao Y ép nhanh xuống (miệng cắn sập)
+                float snap = Math.max(0.2F, d.ticksRemaining / 4.0F);
+                scaleY = baseScale * snap;
             }
 
             if (d.displayEntity != null && d.displayEntity.isAlive()) {
-                d.displayEntity.setPos(currentPos.x, currentPos.y, currentPos.z);
+                d.displayEntity.moveTo(currentPos.x, currentPos.y, currentPos.z, d.yaw, d.pitch);
+                d.displayEntity.setYRot(d.yaw);
+                d.displayEntity.setXRot(d.pitch);
 
                 ((DisplayAccessor) d.displayEntity).weapons$setTransformation(new Transformation(
                         new Vector3f(0.0F, 0.0F, 0.0F),
-                        null,
-                        new Vector3f(scale, scale, 0.01F),
+                        new Quaternionf(),
+                        new Vector3f(scaleX, scaleY, scaleZ),
                         null
                 ));
             }
 
-            // Hạt khói đen tối ưu nhẹ nhàng
-            d.level.sendParticles(ParticleTypes.DRAGON_BREATH, currentPos.x, currentPos.y, currentPos.z, 1, 0.3D, 0.3D, 0.3D, 0.02D);
-            if (elapsed % 6 == 0) {
-                d.level.sendParticles(ParticleTypes.PORTAL, currentPos.x, currentPos.y, currentPos.z, 2, 0.3D, 0.3D, 0.3D, 0.03D);
+            // 3. Hạt rồng hư không tím cuốn theo phía sau đầu rồng
+            d.level.sendParticles(ParticleTypes.DRAGON_BREATH, currentPos.x, currentPos.y, currentPos.z, 3, 0.4D, 0.4D, 0.4D, 0.03D);
+            d.level.sendParticles(ParticleTypes.PORTAL, currentPos.x, currentPos.y, currentPos.z, 2, 0.3D, 0.3D, 0.3D, 0.02D);
+            if (elapsed % 4 == 0) {
+                d.level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, currentPos.x, currentPos.y, currentPos.z, 2, 0.2D, 0.2D, 0.2D, 0.02D);
             }
 
-            // Lực hút kéo vào miệng rồng (kiểm tra mỗi 4 ticks, bán kính 3.5m)
-            if (d.ticksRemaining % 4 == 0) {
-                AABB pullBox = new AABB(currentPos.x - 3.5D, currentPos.y - 2.5D, currentPos.z - 3.5D,
-                        currentPos.x + 3.5D, currentPos.y + 3.0D, currentPos.z + 3.5D);
-                List<Entity> pullTargets = d.level.getEntities((Entity) null, pullBox, e -> e != d.caster && e.isAlive());
-                for (Entity e : pullTargets) {
-                    Vec3 pull = currentPos.subtract(e.position()).normalize().scale(0.7D);
-                    e.setDeltaMovement(pull.x, pull.y * 0.4D + 0.1D, pull.z);
-                    e.hasImpulse = true;
+            // 4. Lực hút chân không ma vương kéo sinh vật vào miệng rồng (bán kính 4.5m)
+            AABB pullBox = new AABB(currentPos.x - 4.5D, currentPos.y - 3.5D, currentPos.z - 4.5D,
+                    currentPos.x + 4.5D, currentPos.y + 4.0D, currentPos.z + 4.5D);
+            List<Entity> pullTargets = d.level.getEntities((Entity) null, pullBox, e -> e != d.caster && e.isAlive());
+            for (Entity e : pullTargets) {
+                Vec3 pull = currentPos.subtract(e.position()).normalize().scale(0.85D);
+                e.setDeltaMovement(pull.x, pull.y * 0.4D + 0.15D, pull.z);
+                e.hasImpulse = true;
+
+                // Nuốt chửng khi chạm vào khoang miệng rồng (bán kính 3m)
+                if (e.position().distanceToSqr(currentPos) <= 9.0D) {
+                    if (e instanceof LivingEntity living) {
+                        if (living.getHealth() <= living.getMaxHealth() * 0.5F || !(living.getMaxHealth() >= 100.0F)) {
+                            d.level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
+                            d.level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
+                            if (d.caster != null) {
+                                TensuraEvents.handleMobDeathDrop(d.caster, living);
+                            }
+                            living.discard();
+                        } else {
+                            DamageSource dmgSource = (d.caster != null) ? d.level.damageSources().playerAttack(d.caster) : d.level.damageSources().magic();
+                            living.hurt(dmgSource, 150.0F);
+                            living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
+                            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 4));
+                        }
+                    } else if (e instanceof ItemEntity || e instanceof PrimedTnt || e instanceof Creeper) {
+                        e.discard();
+                    }
                 }
             }
 
-            // Kết thúc cú táp: Âm thanh chấn động hư không
+            // 5. Kết thúc cú táp: Âm thanh chấn động hư không & nổ tung sóng xung kích
             if (d.ticksRemaining <= 0) {
-                d.level.sendParticles(ParticleTypes.FLASH, currentPos.x, currentPos.y, currentPos.z, 1, 0, 0, 0, 0);
+                d.level.sendParticles(ParticleTypes.FLASH, currentPos.x, currentPos.y, currentPos.z, 3, 0.4D, 0.4D, 0.4D, 0);
+                d.level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, currentPos.x, currentPos.y, currentPos.z, 2, 0, 0, 0, 0);
+                d.level.sendParticles(ParticleTypes.DRAGON_BREATH, currentPos.x, currentPos.y, currentPos.z, 25, 1.0D, 1.0D, 1.0D, 0.1D);
+
                 d.level.playSound(null, currentPos.x, currentPos.y, currentPos.z,
-                        SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.0F, 0.6F);
+                        SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.5F, 0.6F);
+                d.level.playSound(null, currentPos.x, currentPos.y, currentPos.z,
+                        SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 2.0F, 0.7F);
+                d.level.playSound(null, currentPos.x, currentPos.y, currentPos.z,
+                        SoundEvents.ENDER_DRAGON_GROWL, SoundSource.PLAYERS, 2.5F, 0.6F);
 
                 if (d.displayEntity != null && d.displayEntity.isAlive()) {
                     d.displayEntity.discard();
@@ -270,7 +329,7 @@ public class BeelzebuthAbility {
 
         Vec3 eyePos = player.getEyePosition(1.0F);
         Vec3 look = player.getLookAngle();
-        double maxDist = 14.0D; // Giảm từ 20m xuống 14m để cực kỳ nhẹ và tập trung trong 1 chunk
+        double maxDist = 14.0D;
 
         Set<LivingEntity> hitEntities = new HashSet<>();
 
@@ -338,7 +397,7 @@ public class BeelzebuthAbility {
                 if (!level.getBlockState(p2).isAir()) solidCount++;
             }
         }
-        return solidCount >= 14; // Có kiến trúc tường khối đặc xung quanh
+        return solidCount >= 14;
     }
 
     /**
@@ -355,7 +414,7 @@ public class BeelzebuthAbility {
                     BlockState state = level.getBlockState(p);
 
                     if (!state.isAir() && !state.is(Blocks.BEDROCK) && !state.is(Blocks.BARRIER)) {
-                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 2); // Xóa khối nhanh, không kích hoạt chuỗi physics updates
+                        level.setBlock(p, Blocks.AIR.defaultBlockState(), 2);
                         destroyed++;
 
                         if (level.random.nextInt(8) == 0) {
