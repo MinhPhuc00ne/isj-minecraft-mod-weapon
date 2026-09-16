@@ -1,6 +1,6 @@
 {
   "parent": "item/handheld",
   "textures": {
-    "layer0": "weapons:item/infinity_gauntlet"
+    "layer0": "weapons:item/empty_infinity_gauntlet"
   }
 }
