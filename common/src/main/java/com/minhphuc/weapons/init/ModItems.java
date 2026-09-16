@@ -134,7 +134,7 @@ public class ModItems {
     // ==========================================
     public static final RegistrySupplier<CreativeModeTab> WEAPONS_TAB = CREATIVE_MODE_TABS.register("weapons_tab",
             () -> CreativeTabRegistry.create(builder -> builder
-                    .title(Component.literal("§6§lVũ Khí & Găng Tay Vô Cực"))
+                    .title(Component.translatable("itemGroup.weapons.weapons_tab"))
                     .icon(() -> new ItemStack(INFINITY_GAUNTLET.get()))
                     .displayItems((parameters, output) -> {
                         output.accept(EMPTY_INFINITY_GAUNTLET.get());
