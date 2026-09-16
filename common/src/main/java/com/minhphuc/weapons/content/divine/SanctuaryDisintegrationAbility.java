@@ -47,11 +47,14 @@ public class SanctuaryDisintegrationAbility {
         public float currentAngleDegrees;
         public final Set<UUID> trappedVictimUuids = new HashSet<>();
 
+        public final SkillPowerRoll powerRoll;
+
         public ActiveSanctuary(ServerLevel level, ServerPlayer caster, Vec3 center,
                                Display.ItemDisplay baseDisplay,
                                Display.ItemDisplay midDisplay,
                                Display.ItemDisplay topDisplay,
-                               int durationTicks) {
+                               int durationTicks,
+                               SkillPowerRoll powerRoll) {
             this.level = level;
             this.caster = caster;
             this.center = center;
@@ -61,6 +64,7 @@ public class SanctuaryDisintegrationAbility {
             this.ticksRemaining = durationTicks;
             this.totalTicks = durationTicks;
             this.currentAngleDegrees = 0.0F;
+            this.powerRoll = powerRoll;
         }
 
         public void cleanupDisplays() {
@@ -111,7 +115,11 @@ public class SanctuaryDisintegrationAbility {
         // Tầng 3: Thiên Trận (Y + 5.80, Hoàng Kim Rực Rỡ 0xFFEE33, Scale 7.5m)
         Display.ItemDisplay topDisplay = createMagicCircleDisplay(level, targetCenter, 5.80D, 0.1F, 0xFFEE33);
 
-        ActiveSanctuary sanctuary = new ActiveSanctuary(level, player, targetCenter, baseDisplay, midDisplay, topDisplay, 90);
+        // Gieo xúc xắc xuất lực ngẫu nhiên
+        SkillPowerRoll roll = SkillPowerRoll.roll();
+        roll.announceAndPlayEffects(player, "Tam Trọng Thánh Giới - Linh Tử Băng Hoại");
+
+        ActiveSanctuary sanctuary = new ActiveSanctuary(level, player, targetCenter, baseDisplay, midDisplay, topDisplay, 90, roll);
         ACTIVE_SANCTUARIES.add(sanctuary);
 
         // Âm thanh thánh tích hình thành chấn động
@@ -124,11 +132,6 @@ public class SanctuaryDisintegrationAbility {
 
         // Khóa mục tiêu ban đầu ngay tại tick 0
         lockAndAnchorVictimsEveryTick(sanctuary);
-
-        player.displayClientMessage(
-            Component.literal("§e§l[TAM TRỌNG THÁNH GIỚI] §fBáo cáo. Phát Động Linh Tử Băng Hoại✨"),
-            true
-        );
 
         player.getCooldowns().addCooldown(sword.getItem(), 140); // 7 giây hồi chiêu
     }
@@ -294,7 +297,7 @@ public class SanctuaryDisintegrationAbility {
 
             // 5. KẾT THÚC: Cột Thiên Phạt Cực Quang giáng lâm & Phân Rã Toàn Bộ Linh Tử!
             if (s.ticksRemaining <= 0) {
-                executeDisintegrationStrike(s.level, s.center, 6.0D, s.caster);
+                executeDisintegrationStrike(s.level, s.center, 6.0D, s.caster, s.powerRoll);
                 s.cleanupDisplays();
                 it.remove();
             }
@@ -337,6 +340,17 @@ public class SanctuaryDisintegrationAbility {
             );
             double verticalDist = Math.abs(victimPos.y - (s.center.y + 1.8D));
 
+            // Nếu xuất lực thấp (hụt lực), chỉ làm chậm nhẹ chứ không giam giữ đơ cứng hoàn toàn
+            if (s.powerRoll.isLow()) {
+                victim.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 2, false, false, true));
+                Vec3 pullVec = lockCenter.subtract(victimPos);
+                if (pullVec.length() > 0.5D) {
+                    victim.setDeltaMovement(pullVec.normalize().scale(0.12D));
+                    victim.hasImpulse = true;
+                }
+                continue;
+            }
+
             // CHỐNG ĐÀO THOÁT BẰNG DỊCH CHUYỂN TỨC THỜI (Anti-Teleport Snap-Back)
             // Nếu mục tiêu đã bị đánh dấu phong ấn cố dịch chuyển hoặc bị văng ra xa -> Giật ngược về tâm lơ lửng!
             if (horizontalDist > 5.5D || verticalDist > 4.0D) {
@@ -374,9 +388,9 @@ public class SanctuaryDisintegrationAbility {
     }
 
     /**
-     * Cột Thiên Phạt Linh Tử Băng Hoại giáng xuống xóa sổ toàn bộ mục tiêu
+     * Cột Thiên Phạt Linh Tử Băng Hoại giáng xuống xóa sổ toàn bộ mục tiêu theo cấp độ xuất lực
      */
-    private static void executeDisintegrationStrike(ServerLevel level, Vec3 center, double radius, ServerPlayer caster) {
+    private static void executeDisintegrationStrike(ServerLevel level, Vec3 center, double radius, ServerPlayer caster, SkillPowerRoll roll) {
         // 1. Âm thanh thiên phạt chấn động thế giới
         level.playSound(null, center.x, center.y, center.z,
                 SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 3.5F, 0.85F);
@@ -419,9 +433,22 @@ public class SanctuaryDisintegrationAbility {
                     com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(caster, target);
                 }
                 level.sendParticles(ParticleTypes.SOUL, target.getX(), target.getY() + 1.0D, target.getZ(), 5, 0.2D, 0.3D, 0.2D, 0.02D);
-                target.hurt(dmgSource, 100000.0F);
-                if (target.isAlive()) {
-                    target.discard(); // Tiêu diệt triệt để cả Boss (Rồng Ender, Wither, Warden...)
+
+                if (roll != null && roll.isOverdrive()) {
+                    // BẠO KÍCH CỰC HẠN (20%): Phân rã 100% linh tử, tất sát cả Boss
+                    target.hurt(dmgSource, 100000.0F);
+                    if (target.isAlive()) {
+                        target.discard();
+                    }
+                } else if (roll != null && roll.isNormal()) {
+                    // XUẤT LỰC CHUẨN (50%): 550 sát thương * multiplier, quái thường bốc hơi, Boss rút máu nặng
+                    float damage = 550.0F * roll.multiplier;
+                    target.hurt(dmgSource, damage);
+                } else {
+                    // ĐẦU RA THẤP (30%): 90 sát thương * multiplier, làm choáng và thiêu đốt
+                    float damage = 90.0F * (roll != null ? roll.multiplier : 0.35F);
+                    target.hurt(dmgSource, damage);
+                    target.setRemainingFireTicks(100);
                 }
                 destroyedCount++;
             }
@@ -436,11 +463,11 @@ public class SanctuaryDisintegrationAbility {
         if (caster != null) {
             String killMessage;
             if (destroyedCount == 1) {
-                killMessage = "Báo cáo: Cá thể " + victimNames.get(0).substring(7) + " đã bị tiêu diệt và phân rã bởi linh tử ⚡✨";
+                killMessage = "Báo cáo: Cá thể " + victimNames.get(0).substring(7) + " đã bị ảnh hưởng bởi Linh Tử Băng Hoại! ⚡✨";
             } else if (destroyedCount > 1 && destroyedCount <= 3) {
-                killMessage = "Báo cáo: " + String.join(", ", victimNames) + " đã bị tiêu diệt và phân rã linh tử hoàn toàn! ⚡✨";
+                killMessage = "Báo cáo: " + String.join(", ", victimNames) + " đã bị phân rã bởi Linh Tử Băng Hoại! ⚡✨";
             } else if (destroyedCount > 3) {
-                killMessage = "Báo cáo: " + victimNames.get(0) + " và " + (destroyedCount - 1) + " cá thể khác đã bị tiêu diệt và phân rã linh tử hoàn toàn! ⚡✨";
+                killMessage = "Báo cáo: " + victimNames.get(0) + " và " + (destroyedCount - 1) + " cá thể khác đã bị đánh trúng! ⚡✨";
             } else {
                 killMessage = "Báo cáo: Không có cá thể nào trong phạm vi thánh trận";
             }
