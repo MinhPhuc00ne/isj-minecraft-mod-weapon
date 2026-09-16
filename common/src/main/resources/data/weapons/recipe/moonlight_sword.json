@@ -1,0 +1,32 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "DND",
+    "EAE",
+    "GSG"
+  ],
+  "key": {
+    "D": {
+      "item": "minecraft:diamond"
+    },
+    "N": {
+      "item": "minecraft:nether_star"
+    },
+    "E": {
+      "item": "minecraft:ender_eye"
+    },
+    "A": {
+      "item": "minecraft:golden_apple"
+    },
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "S": {
+      "item": "minecraft:diamond_sword"
+    }
+  },
+  "result": {
+    "id": "weapons:moonlight_sword",
+    "count": 1
+  }
+}
