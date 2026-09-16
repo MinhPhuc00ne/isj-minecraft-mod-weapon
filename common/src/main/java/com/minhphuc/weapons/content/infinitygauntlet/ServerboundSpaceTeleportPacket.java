@@ -88,7 +88,7 @@ public class ServerboundSpaceTeleportPacket {
                     };
 
                     player.displayClientMessage(
-                        Component.literal("§9§l[ĐÁ KHÔNG GIAN] §fĐã xé rách chiều không gian mở cổng đến §e" + destName + "! 🌌"),
+                        Component.literal("§9§l[ĐÁ KHÔNG GIAN] §fBáo cáo. Đã xé rách chiều không gian mở cổng đưa cá thể đến §e" + destName + "! 🌌"),
                         true
                     );
                 }
@@ -131,19 +131,19 @@ public class ServerboundSpaceTeleportPacket {
 
                             String structName = (destinationId == 3) ? "Làng Dân Làng (Village)" : "Thành Phố Cổ Warden (Ancient City)";
                             player.displayClientMessage(
-                                Component.literal("§9§l[ĐÁ KHÔNG GIAN] §fĐã tìm thấy & dịch chuyển đến §e" + structName + "! 🌌"),
+                                Component.literal("§9§l[ĐÁ KHÔNG GIAN] §fBáo cáo. Đã tìm thấy & dịch chuyển cá thể đến §e" + structName + "! 🌌"),
                                 true
                             );
                         } else {
                             player.displayClientMessage(
-                                Component.literal("§c[ĐÁ KHÔNG GIAN] Không tìm thấy cấu trúc trong phạm vi 100 chunks!"),
+                                Component.literal("§c[ĐÁ KHÔNG GIAN] Báo cáo. Không tìm thấy cấu trúc trong phạm vi 100 chunks!"),
                                 true
                             );
                         }
                     }
                 } catch (Exception e) {
                     player.displayClientMessage(
-                        Component.literal("§c[ĐÁ KHÔNG GIAN] Không thể định vị địa danh!"),
+                        Component.literal("§c[ĐÁ KHÔNG GIAN] Báo cáo. Không thể định vị địa danh!"),
                         true
                     );
                 }

@@ -4,7 +4,10 @@
   "package": "com.minhphuc.weapons.mixin",
   "compatibilityLevel": "JAVA_21",
   "mixins": [
-    "MixinEntity"
+    "MixinEntity",
+    "MixinPlayer",
+    "DisplayAccessor",
+    "ItemDisplayAccessor"
   ],
   "client": [],
   "injectors": {

@@ -41,9 +41,9 @@ public class ServerboundCycleRealitySubModePacket {
                     ItemStackDataHelper.putInt(heldStack, "RealitySubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
-                        case 0 -> "§c[ĐÁ THỰC TẠI] §fChế độ phụ: §e1. Cấu Trúc Thực Tại (Normal)";
-                        case 1 -> "§c[ĐÁ THỰC TẠI] §fChế độ phụ: §b2. Đóng Băng Thực Tại (Frozen)";
-                        case 2 -> "§c[ĐÁ THỰC TẠI] §fChế độ phụ: §a3. Phục Hồi Sự Sống (Life)";
+                        case 0 -> "§c[ĐÁ THỰC TẠI] §fBáo cáo. Chế độ phụ: §e1. Cấu Trúc Thực Tại (Normal)";
+                        case 1 -> "§c[ĐÁ THỰC TẠI] §fBáo cáo. Chế độ phụ: §b2. Đóng Băng Thực Tại (Frozen)";
+                        case 2 -> "§c[ĐÁ THỰC TẠI] §fBáo cáo. Chế độ phụ: §a3. Phục Hồi Sự Sống (Life)";
                         default -> "";
                     };
 
@@ -63,10 +63,10 @@ public class ServerboundCycleRealitySubModePacket {
                     ItemStackDataHelper.putInt(heldStack, "SoulSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
-                        case 0 -> "§6[ĐÁ LINH HỒN] §fChế độ phụ: §e1. 🔥 Soul Harvest (Gặt Hái Linh Hồn)";
-                        case 1 -> "§6[ĐÁ LINH HỒN] §fChế độ phụ: §b2. 👻 Soul Puppet (Chiêu Hồn Phụ Tá)";
-                        case 2 -> "§6[ĐÁ LINH HỒN] §fChế độ phụ: §c3. 💥 Soul Extraction (Tách & Thiêu Rụi Linh Hồn)";
-                        case 3 -> "§6[ĐÁ LINH HỒN] §fChế độ phụ: §a4. 🧟 Kỹ Năng: Tử Linh Phục Sinh";
+                        case 0 -> "§6[ĐÁ LINH HỒN] §fBáo cáo. Chế độ phụ: §e1. 🔥 Soul Harvest (Gặt Hái Linh Hồn)";
+                        case 1 -> "§6[ĐÁ LINH HỒN] §fBáo cáo. Chế độ phụ: §b2. 👻 Soul Puppet (Chiêu Hồn Phụ Tá)";
+                        case 2 -> "§6[ĐÁ LINH HỒN] §fBáo cáo. Chế độ phụ: §c3. 💥 Soul Extraction (Tách & Thiêu Rụi Linh Hồn)";
+                        case 3 -> "§6[ĐÁ LINH HỒN] §fBáo cáo. Chế độ phụ: §a4. 🧟 Kỹ Năng: Tử Linh Phục Sinh";
                         default -> "";
                     };
 
@@ -86,9 +86,9 @@ public class ServerboundCycleRealitySubModePacket {
                     ItemStackDataHelper.putInt(heldStack, "TimeSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
-                        case 0 -> "§a[ĐÁ THỜI GIAN] §fChế độ phụ: §e1. ⌛ Time Rewind (Tua Ngược Thời Gian)";
-                        case 1 -> "§a[ĐÁ THỜI GIAN] §fChế độ phụ: §b2. 🌿 Age Decay & Growth (Lão Hóa & Sinh Trưởng)";
-                        case 2 -> "§a[ĐÁ THỜI GIAN] §fChế độ phụ: §c3. 🛑 Time Freeze Domain (Đóng Băng Thời Gian)";
+                        case 0 -> "§a[ĐÁ THỜI GIAN] §fBáo cáo. Chế độ phụ: §e1. ⌛ Time Rewind (Tua Ngược Thời Gian)";
+                        case 1 -> "§a[ĐÁ THỜI GIAN] §fBáo cáo. Chế độ phụ: §b2. 🌿 Age Decay & Growth (Lão Hóa & Sinh Trưởng)";
+                        case 2 -> "§a[ĐÁ THỜI GIAN] §fBáo cáo. Chế độ phụ: §c3. 🛑 Time Freeze Domain (Đóng Băng Thời Gian)";
                         default -> "";
                     };
 
@@ -108,9 +108,9 @@ public class ServerboundCycleRealitySubModePacket {
                     ItemStackDataHelper.putInt(heldStack, "MindSubMode", nextSubMode);
 
                     String subModeMessage = switch (nextSubMode) {
-                        case 0 -> "§e[ĐÁ TÂM TRÍ] §fChế độ phụ: §61. 👑 Vương Quyền Chi Phối (Hypnosis)";
-                        case 1 -> "§e[ĐÁ TÂM TRÍ] §fChế độ phụ: §b2. 🌀 Telekinesis (Thao Túng Vật Lý)";
-                        case 2 -> "§e[ĐÁ TÂM TRÍ] §fChế độ phụ: §c3. ⚡ Mind Beam Laser (Vision)";
+                        case 0 -> "§e[ĐÁ TÂM TRÍ] §fBáo cáo. Chế độ phụ: §61. 👑 Vương Quyền Chi Phối (Hypnosis)";
+                        case 1 -> "§e[ĐÁ TÂM TRÍ] §fBáo cáo. Chế độ phụ: §b2. 🌀 Telekinesis (Thao Túng Vật Lý)";
+                        case 2 -> "§e[ĐÁ TÂM TRÍ] §fBáo cáo. Chế độ phụ: §c3. ⚡ Mind Beam Laser (Vision)";
                         default -> "";
                     };
 

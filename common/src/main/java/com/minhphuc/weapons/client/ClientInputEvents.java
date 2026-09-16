@@ -5,6 +5,7 @@ import com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneSelectScreen;
 import com.minhphuc.weapons.content.infinitygauntlet.ServerboundCycleRealitySubModePacket;
 import com.minhphuc.weapons.init.ModKeyBindings;
 import com.minhphuc.weapons.network.ModMessages;
+import com.minhphuc.weapons.network.ServerboundCastBeelzebuthPacket;
 import com.minhphuc.weapons.data.ItemStackDataHelper;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.InteractionEvent;
@@ -22,6 +23,21 @@ public class ClientInputEvents {
                 if (mc.screen == null) {
                     mc.setScreen(new InfinityStoneSelectScreen());
                 }
+            }
+
+            if (ModKeyBindings.BEELZEBUTH_KEY.consumeClick()) {
+                // Nhấn phím Z: Chuyển đổi skill cho cả Nguyệt Quang Thần Tế Kiếm và Chân Ma Vương
+                ModMessages.sendToServer(new com.minhphuc.weapons.network.ServerboundCycleSkillPacket());
+            }
+        });
+
+        // Chuột phải vào không khí khi tay không: Thi triển Kỹ Năng Tối Thượng của Chân Ma Vương (chỉ gửi từ tay chính)
+        InteractionEvent.CLIENT_RIGHT_CLICK_AIR.register((player, hand) -> {
+            if (player == null || hand != net.minecraft.world.InteractionHand.MAIN_HAND) return;
+
+            ItemStack heldStack = player.getItemInHand(hand);
+            if (heldStack.isEmpty()) {
+                ModMessages.sendToServer(new ServerboundCastBeelzebuthPacket());
             }
         });
 

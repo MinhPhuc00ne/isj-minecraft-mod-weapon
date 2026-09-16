@@ -52,37 +52,43 @@ public class InfinityGauntletItem extends Item {
             boolean isHolding = player.getMainHandItem() == stack || player.getOffhandItem() == stack;
 
             if (isHolding) {
-                // 1. Instant Health Recovery when health is missing
+                // 1. Khôi phục sinh lực tức thì khi bị mất máu
                 if (player.getHealth() < player.getMaxHealth()) {
                     player.setHealth(player.getMaxHealth());
                 }
 
-                // Extinguish fire and refill air supply underwater
-                player.clearFire();
-                player.setAirSupply(player.getMaxAirSupply());
+                // Dập lửa và làm đầy thanh dưỡng khí khi cần
+                if (player.isOnFire()) {
+                    player.clearFire();
+                }
+                if (player.getAirSupply() < player.getMaxAirSupply()) {
+                    player.setAirSupply(player.getMaxAirSupply());
+                }
 
-                // 2. Grant optimal beneficial potion effects seamlessly
-                int duration = 240; // 12 seconds buffer
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, 4, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.REGENERATION, duration, 4, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.FIRE_RESISTANCE, duration, 0, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.WATER_BREATHING, duration, 0, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, duration, 0, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration, 9, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.DIG_SPEED, duration, 4, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, 1, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.SATURATION, duration, 4, false, false, true));
-                player.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, duration, 4, false, false, true));
+                // 2. Chỉ cấp/làm mới hiệu ứng mỗi giây (20 ticks), tránh spam 200 packets/s
+                if (player.tickCount % 20 == 0) {
+                    int duration = 240; // 12 giây bộ đệm
+                    applyOrRefreshEffect(player, MobEffects.DAMAGE_RESISTANCE, duration, 4);
+                    applyOrRefreshEffect(player, MobEffects.REGENERATION, duration, 4);
+                    applyOrRefreshEffect(player, MobEffects.FIRE_RESISTANCE, duration, 0);
+                    applyOrRefreshEffect(player, MobEffects.WATER_BREATHING, duration, 0);
+                    applyOrRefreshNightVision(player); // Vĩnh cửu 999999 ticks, không bao giờ nhấp nháy màn hình
+                    applyOrRefreshEffect(player, MobEffects.DAMAGE_BOOST, duration, 9);
+                    applyOrRefreshEffect(player, MobEffects.DIG_SPEED, duration, 4);
+                    applyOrRefreshEffect(player, MobEffects.MOVEMENT_SPEED, duration, 1);
+                    applyOrRefreshEffect(player, MobEffects.SATURATION, duration, 4);
+                    applyOrRefreshEffect(player, MobEffects.ABSORPTION, duration, 4);
+                }
 
                 // Tick hiệu ứng Kết Giới Vương Cung Thành Trì của Đá Không Gian
                 if (level instanceof ServerLevel serverLevel) {
-                    SpaceStoneAbility.tickCitadelBarrier(serverLevel, player, stack);
+                    SpaceStoneAbility.tickCitadelBarrier(serverLevel, player);
                 }
 
-                // Frost Walker: Tự động đóng băng nước dưới chân khi ở Chế độ Frozen của Đá Thực Tại
+                // Frost Walker: Tự động đóng băng nước dưới chân khi ở Chế độ Frozen của Đá Thực Tại (kiểm tra mỗi 4 ticks, dùng flag 2)
                 int mode = ItemStackDataHelper.getInt(stack, NBT_MODE);
                 int subMode = ItemStackDataHelper.getInt(stack, "RealitySubMode");
-                if (mode == 3 && subMode == 1 && player.onGround()) {
+                if (mode == 3 && subMode == 1 && player.onGround() && player.tickCount % 4 == 0) {
                     net.minecraft.core.BlockPos feet = player.blockPosition();
                     net.minecraft.core.BlockPos below = feet.below();
                     for (int x = -2; x <= 2; x++) {
@@ -90,7 +96,7 @@ public class InfinityGauntletItem extends Item {
                             net.minecraft.core.BlockPos checkPos = below.offset(x, 0, z);
                             net.minecraft.world.level.block.state.BlockState state = level.getBlockState(checkPos);
                             if (state.is(net.minecraft.world.level.block.Blocks.WATER)) {
-                                level.setBlock(checkPos, net.minecraft.world.level.block.Blocks.FROSTED_ICE.defaultBlockState(), 3);
+                                level.setBlock(checkPos, net.minecraft.world.level.block.Blocks.FROSTED_ICE.defaultBlockState(), 2);
                             }
                         }
                     }
@@ -98,6 +104,20 @@ public class InfinityGauntletItem extends Item {
             }
         }
         super.inventoryTick(stack, level, entity, slotId, isSelected);
+    }
+
+    private void applyOrRefreshNightVision(Player player) {
+        MobEffectInstance current = player.getEffect(MobEffects.NIGHT_VISION);
+        if (current == null || !current.isInfiniteDuration()) {
+            player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, MobEffectInstance.INFINITE_DURATION, 0, false, false, false));
+        }
+    }
+
+    private void applyOrRefreshEffect(Player player, net.minecraft.core.Holder<net.minecraft.world.effect.MobEffect> effect, int duration, int amplifier) {
+        MobEffectInstance current = player.getEffect(effect);
+        if (current == null || current.getDuration() <= 60) {
+            player.addEffect(new MobEffectInstance(effect, duration, amplifier, false, false, true));
+        }
     }
 
     @Override
@@ -108,7 +128,7 @@ public class InfinityGauntletItem extends Item {
         if (mode == 0) {
             if (!level.isClientSide()) {
                 player.displayClientMessage(
-                    Component.literal("§c[Găng Tay Vô Cực] Vui lòng nhấn nút PgUp để chọn viên đá hoặc chế độ 6 viên trước!"),
+                    Component.literal("§c[Găng Tay Vô Cực] §fBáo cáo. Vui lòng nhấn nút PgUp để chọn viên đá hoặc chế độ 6 viên trước!"),
                     true
                 );
                 level.playSound(
@@ -198,7 +218,7 @@ public class InfinityGauntletItem extends Item {
                 );
 
                 serverPlayer.displayClientMessage(
-                    Component.literal("§d§l[SNAP] BẠN ĐÃ BÚNG TAY THỰC HIỆN SỨC MẠNH VÔ CỰC!"),
+                    Component.literal("§d§l[BÁO CÁO] §fBáo cáo! kích hoạt sức mạnh vô cực! đã thành công"),
                     true
                 );
 
@@ -220,7 +240,9 @@ public class InfinityGauntletItem extends Item {
                             if (!entity.isAlive() && !(entity instanceof ItemEntity)) continue;
 
                             if (entity instanceof LivingEntity living && entity != player) {
-                                living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                                // Xử lý rơi Linh Hồn Ma Vương cho cú búng tay SNAP
+                                com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(serverPlayer, living);
+                                living.hurt(serverLevel.damageSources().playerAttack(serverPlayer), 100000.0F);
                                 if (living.isAlive()) {
                                     living.discard();
                                 }
@@ -325,14 +347,18 @@ public class InfinityGauntletItem extends Item {
 
             for (LivingEntity entity : hitEntities) {
                 if (!killed.contains(entity)) {
-                    entity.hurt(level.damageSources().genericKill(), 100000.0F);
+                    com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, entity);
+                    entity.hurt(level.damageSources().playerAttack(player), 100000.0F);
+                    if (entity.isAlive()) {
+                        entity.discard();
+                    }
                     killed.add(entity);
                 }
             }
         }
 
         player.displayClientMessage(
-            Component.literal("§6§l[INFINITY LAZER] §fBắn chùm laze vũ trụ 6 sắc màu! (Xóa sổ " + killed.size() + " sinh vật) ✦"),
+            Component.literal("§6§l[INFINITY LAZER] §fBáo cáo. Đã bắn chùm laze vũ trụ 6 sắc màu! (Xóa sổ " + killed.size() + " cá thể) ✦"),
             true
         );
 

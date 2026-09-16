@@ -9,6 +9,7 @@ import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.ChatEvent;
 import dev.architectury.event.events.common.EntityEvent;
 import dev.architectury.event.events.common.InteractionEvent;
+import dev.architectury.event.events.common.TickEvent;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
@@ -17,6 +18,8 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -27,6 +30,7 @@ public class InfinityGauntletEvents {
         EntityEvent.LIVING_HURT.register(InfinityGauntletEvents::onLivingHurt);
         InteractionEvent.LEFT_CLICK_BLOCK.register(InfinityGauntletEvents::onLeftClickBlock);
         ChatEvent.RECEIVED.register(InfinityGauntletEvents::onServerChat);
+        TickEvent.PLAYER_POST.register(InfinityGauntletEvents::onPlayerTick);
     }
 
     public static EventResult onLivingHurt(LivingEntity living, DamageSource damageSource, float amount) {
@@ -51,7 +55,13 @@ public class InfinityGauntletEvents {
                     );
                     serverLevel.sendParticles(ParticleTypes.SNOWFLAKE, living.getX(), living.getY() + 1.0D, living.getZ(), 20, 0.3D, 0.5D, 0.3D, 0.05D);
 
-                    living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                    ServerPlayer attackerPlayer = damageSource.getEntity() instanceof ServerPlayer sp ? sp : null;
+                    if (attackerPlayer != null) {
+                        com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(attackerPlayer, living);
+                        living.hurt(serverLevel.damageSources().playerAttack(attackerPlayer), 100000.0F);
+                    } else {
+                        living.hurt(serverLevel.damageSources().genericKill(), 100000.0F);
+                    }
                     if (living.isAlive()) {
                         living.discard();
                     }
@@ -68,7 +78,7 @@ public class InfinityGauntletEvents {
         ItemStack heldStack = player.getItemInHand(hand);
         if (heldStack.getItem() instanceof InfinityGauntletItem) {
             player.displayClientMessage(
-                Component.literal("§7[Găng Tay Vô Cực] Nhấn §e[PgUp] §7để chọn viên đá. Chuột Phải để dùng Chiêu Chính, Shift+Chuột Phải để dùng Chiêu Phụ!"),
+                Component.literal("§7[Găng Tay Vô Cực] §fBáo cáo. Nhấn §e[PgUp] §7để chọn viên đá. Chuột Phải để dùng Chiêu Chính, Shift+Chuột Phải để dùng Chiêu Phụ!"),
                 true
             );
             return EventResult.interruptFalse();
@@ -94,17 +104,17 @@ public class InfinityGauntletEvents {
 
         String prompt = rawText;
         if (prompt.isEmpty()) {
-            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] Vui lòng nhập mệnh lệnh cho Gemini AI!"));
+            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fBáo cáo. Vui lòng nhập mệnh lệnh cho Gemini AI!"));
             return EventResult.interruptFalse();
         }
 
         if (!AIGeminiConfig.isApiKeyValid()) {
-            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fChưa có API Key! Hãy dán API Key vào file:\n§e" + AIGeminiConfig.getConfigAbsolutePath()));
+            player.sendSystemMessage(Component.literal("§c[Găng Tay Vô Cực - AI] §fBáo cáo. Chưa có API Key! Hãy dán API Key vào file:\n§e" + AIGeminiConfig.getConfigAbsolutePath()));
             return EventResult.interruptFalse();
         }
 
         // Thông báo cho người chơi AI đang xử lý
-        player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §fĐang lắng nghe và biến mệnh lệnh §e\"" + prompt + "\" §fthành thực tại..."));
+        player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §fBáo cáo. Đang lắng nghe và biến mệnh lệnh của cá thể §e\"" + prompt + "\" §fthành thực tại..."));
 
         ServerLevel level = (ServerLevel) player.level();
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -147,15 +157,38 @@ public class InfinityGauntletEvents {
                 }
 
                 // Hiển thị lời đáp của Gemini AI
-                player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §a" + response.getReply() + " §7(Đã thực thi " + executedCount + " lệnh)"));
+                player.sendSystemMessage(Component.literal("§d§l[GEMINI AI] §aBáo cáo. " + response.getReply() + " §7(Đã thực thi " + executedCount + " lệnh)"));
             });
         });
 
         return EventResult.interruptFalse();
     }
 
-    private static boolean isHoldingGauntlet(Player player) {
+    public static boolean isHoldingGauntlet(Player player) {
         return player.getMainHandItem().getItem() instanceof InfinityGauntletItem
                 || player.getOffhandItem().getItem() instanceof InfinityGauntletItem;
+    }
+
+    public static void onPlayerTick(Player player) {
+        if (player == null || player.level().isClientSide()) return;
+
+        boolean isHolding = isHoldingGauntlet(player);
+        boolean hadGauntletNV = EntityDataHelper.getCustomData(player).getBoolean("GauntletNightVision");
+
+        if (isHolding) {
+            MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
+            if (nv == null || !nv.isInfiniteDuration()) {
+                player.addEffect(new MobEffectInstance(MobEffects.NIGHT_VISION, MobEffectInstance.INFINITE_DURATION, 0, false, false, false));
+                EntityDataHelper.getCustomData(player).putBoolean("GauntletNightVision", true);
+            }
+        } else {
+            MobEffectInstance nv = player.getEffect(MobEffects.NIGHT_VISION);
+            if (hadGauntletNV || (nv != null && nv.isInfiniteDuration())) {
+                if (nv != null) {
+                    player.removeEffect(MobEffects.NIGHT_VISION);
+                }
+                EntityDataHelper.getCustomData(player).remove("GauntletNightVision");
+            }
+        }
     }
 }

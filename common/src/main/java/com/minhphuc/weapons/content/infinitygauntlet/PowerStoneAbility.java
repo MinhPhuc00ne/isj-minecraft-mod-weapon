@@ -99,7 +99,11 @@ public class PowerStoneAbility {
         AABB blastArea = player.getBoundingBox().inflate(6.0D);
         List<LivingEntity> nearbyEntities = level.getEntitiesOfClass(LivingEntity.class, blastArea, e -> e != player && e.isAlive());
         for (LivingEntity entity : nearbyEntities) {
-            entity.hurt(level.damageSources().genericKill(), 100000.0F);
+            com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, entity);
+            entity.hurt(level.damageSources().playerAttack(player), 100000.0F);
+            if (entity.isAlive()) {
+                entity.discard();
+            }
         }
 
         // Hiệu ứng hạt xung nổ tím rực rỡ
@@ -113,7 +117,7 @@ public class PowerStoneAbility {
         level.sendParticles(ParticleTypes.SONIC_BOOM, player.getX(), player.getY() + 1.0D, player.getZ(), 1, 0, 0, 0, 0);
 
         player.displayClientMessage(
-            Component.literal("§d§l[POWER STONE] PHÁT XUNG NĂNG LƯỢNG PHÁ HỦY KHÔNG GIAN KÍN GIÚP BẠN THOÁT RA!"),
+            Component.literal("§d§l[POWER STONE] §fBáo cáo. Đã phát xung năng lượng phá hủy không gian kín giúp cá thể thoát ra!"),
             true
         );
 
@@ -138,14 +142,38 @@ public class PowerStoneAbility {
         Set<BlockPos> brokenBlocks = new HashSet<>();
         Set<LivingEntity> killedEntities = new HashSet<>();
 
-        for (double d = 0; d <= maxDistance; d += step) {
+        Vec3 endVec = startVec.add(lookVec.scale(maxDistance));
+        AABB beamBox = new AABB(startVec, endVec).inflate(2.0D);
+        List<LivingEntity> potentialTargets = level.getEntitiesOfClass(LivingEntity.class, beamBox, e -> e != player && e.isAlive());
+
+        // 1. Quét tiêu diệt các sinh vật nằm dọc chùm tia (1 query duy nhất thay vì 160 queries)
+        for (LivingEntity target : potentialTargets) {
+            Vec3 targetVec = target.position().add(0, target.getBbHeight() * 0.5D, 0).subtract(startVec);
+            double proj = targetVec.dot(lookVec);
+            if (proj >= 0 && proj <= maxDistance) {
+                double distSq = targetVec.lengthSqr() - (proj * proj);
+                if (distSq <= 2.25D) { // Bán kính 1.5 blocks
+                    com.minhphuc.weapons.content.tensura.TensuraEvents.handleMobDeathDrop(player, target);
+                    target.hurt(level.damageSources().playerAttack(player), 100000.0F);
+                    if (target.isAlive()) {
+                        target.discard();
+                    }
+                    killedEntities.add(target);
+                }
+            }
+        }
+
+        // 2. Phá khối và hiển thị hiệu ứng hạt dọc chùm tia (step = 1.0m)
+        for (double d = 0; d <= maxDistance; d += 1.0D) {
             Vec3 currentVec = startVec.add(lookVec.scale(d));
 
-            // Spawn chùm hạt laze tím rực rỡ
-            level.sendParticles(ParticleTypes.DRAGON_BREATH, currentVec.x, currentVec.y, currentVec.z, 2, 0.08D, 0.08D, 0.08D, 0.01D);
-            level.sendParticles(ParticleTypes.PORTAL, currentVec.x, currentVec.y, currentVec.z, 1, 0.04D, 0.04D, 0.04D, 0.02D);
+            // Spawn chùm hạt laze tím mượt mà
+            level.sendParticles(ParticleTypes.DRAGON_BREATH, currentVec.x, currentVec.y, currentVec.z, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+            if ((int) d % 2 == 0) {
+                level.sendParticles(ParticleTypes.PORTAL, currentVec.x, currentVec.y, currentVec.z, 1, 0.02D, 0.02D, 0.02D, 0.02D);
+            }
 
-            if ((int) (d * 2) % 10 == 0) {
+            if ((int) d % 10 == 0) {
                 level.sendParticles(ParticleTypes.FLASH, currentVec.x, currentVec.y, currentVec.z, 1, 0, 0, 0, 0);
             }
 
@@ -158,24 +186,10 @@ public class PowerStoneAbility {
                     brokenBlocks.add(blockPos);
                 }
             }
-
-            // Gây sát thương vô hạn cho sinh vật trúng laze
-            AABB hitBox = new AABB(
-                currentVec.x - 1.2D, currentVec.y - 1.2D, currentVec.z - 1.2D,
-                currentVec.x + 1.2D, currentVec.y + 1.2D, currentVec.z + 1.2D
-            );
-            List<LivingEntity> hitEntities = level.getEntitiesOfClass(LivingEntity.class, hitBox, e -> e != player && e.isAlive());
-
-            for (LivingEntity entity : hitEntities) {
-                if (!killedEntities.contains(entity)) {
-                    entity.hurt(level.damageSources().genericKill(), 100000.0F);
-                    killedEntities.add(entity);
-                }
-            }
         }
 
         player.displayClientMessage(
-            Component.literal("§d[POWER STONE] Bắn chùm laze hủy diệt! (Đã phá " + brokenBlocks.size() + " khối & tiêu diệt " + killedEntities.size() + " sinh vật)"),
+            Component.literal("§d[POWER STONE] §fBáo cáo. Đã bắn chùm laze hủy diệt! (Đã phá " + brokenBlocks.size() + " khối & tiêu diệt " + killedEntities.size() + " cá thể)"),
             true
         );
 

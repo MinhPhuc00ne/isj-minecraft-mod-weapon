@@ -60,7 +60,7 @@ public class TimeStoneAbility {
                 SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.5F, 1.4F);
 
         player.displayClientMessage(
-            Component.literal("§a§l[ĐÁ THỜI GIAN - TIME REWIND] §fĐã tua ngược thời gian, khôi phục 100% sinh lực & trạng thái tối thượng! ⌛"),
+            Component.literal("§a§l[ĐÁ THỜI GIAN - TIME REWIND] §fBáo cáo. Đã tua ngược thời gian, khôi phục 100% sinh lực & trạng thái tối thượng cho cá thể! ⌛"),
             true
         );
 
@@ -72,7 +72,7 @@ public class TimeStoneAbility {
      */
     private static void executeAgeDecay(ServerLevel level, ServerPlayer player, ItemStack gauntlet) {
         BlockPos center = player.blockPosition();
-        int radius = 20;
+        int radius = 10;
 
         // Lão hóa quái vật
         AABB area = new AABB(center).inflate(radius);
@@ -82,10 +82,10 @@ public class TimeStoneAbility {
             mob.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, 400, -255, false, false, true));
             mob.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 400, 255, false, false, true));
             mob.addEffect(new MobEffectInstance(MobEffects.WITHER, 400, 4, false, false, true));
-            level.sendParticles(ParticleTypes.SMOKE, mob.getX(), mob.getY() + 1.0D, mob.getZ(), 10, 0.3D, 0.5D, 0.3D, 0.05D);
+            level.sendParticles(ParticleTypes.SMOKE, mob.getX(), mob.getY() + 1.0D, mob.getZ(), 6, 0.3D, 0.5D, 0.3D, 0.05D);
         }
 
-        // Thúc đẩy cây trồng & cây cối sinh trưởng 100%
+        // Thúc đẩy cây trồng & cây cối sinh trưởng 100% (bán kính 10 blocks)
         int grownCrops = 0;
         for (int x = -radius; x <= radius; x++) {
             for (int y = -radius; y <= radius; y++) {
@@ -94,7 +94,7 @@ public class TimeStoneAbility {
                     if (center.distSqr(targetPos) <= radius * radius) {
                         BlockState state = level.getBlockState(targetPos);
                         if (state.getBlock() instanceof CropBlock crop) {
-                            level.setBlock(targetPos, crop.getStateForAge(crop.getMaxAge()), 3);
+                            level.setBlock(targetPos, crop.getStateForAge(crop.getMaxAge()), 2);
                             grownCrops++;
                         } else if (state.getBlock() instanceof SaplingBlock sapling) {
                             sapling.advanceTree(level, targetPos, state, level.random);
@@ -108,10 +108,10 @@ public class TimeStoneAbility {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.COMPOSTER_READY, SoundSource.PLAYERS, 1.5F, 1.0F);
 
-        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1.0D, player.getZ(), 40, 2.0D, 1.0D, 2.0D, 0.05D);
+        level.sendParticles(ParticleTypes.HAPPY_VILLAGER, player.getX(), player.getY() + 1.0D, player.getZ(), 20, 1.5D, 1.0D, 1.5D, 0.05D);
 
         player.displayClientMessage(
-            Component.literal("§a§l[ĐÁ THỜI GIAN - AGE DECAY] §fĐã tua thời gian: lão hóa " + mobs.size() + " quái vật & thúc đẩy " + grownCrops + " cây trồng sinh trưởng! 🌿"),
+            Component.literal("§a§l[ĐÁ THỜI GIAN - AGE DECAY] §fBáo cáo. Đã tua thời gian: Lão hóa " + mobs.size() + " cá thể quái vật & thúc đẩy " + grownCrops + " cây trồng sinh trưởng! 🌿"),
             true
         );
 
@@ -154,7 +154,7 @@ public class TimeStoneAbility {
                 SoundEvents.BEACON_POWER_SELECT, SoundSource.PLAYERS, 1.5F, 0.5F);
 
         player.displayClientMessage(
-            Component.literal("§a§l[ĐÁ THỜI GIAN - TIME FREEZE DOMAIN] §fĐã dừng hoàn toàn chuyển động của " + mobs.size() + " sinh vật trong 20 blocks! 🛑"),
+            Component.literal("§a§l[ĐÁ THỜI GIAN - TIME FREEZE DOMAIN] §fBáo cáo. Đã dừng hoàn toàn chuyển động của " + mobs.size() + " cá thể trong 20 blocks! 🛑"),
             true
         );
 

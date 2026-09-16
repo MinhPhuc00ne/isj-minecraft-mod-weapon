@@ -8,9 +8,18 @@
   "item.weapons.mind_stone": "Đá Tâm Trí (Mind Stone)",
   "item.weapons.demon_lord_seed": "Hạt Giống Ma Vương (Demon Lord Seed)",
   "item.weapons.demon_lord_soul": "Linh Hồn Ma Vương (Demon Lord Soul)",
+  "item.weapons.divine_helmet": "Mũ Thần Linh Vũ Trang (Divine Helmet)",
+  "item.weapons.divine_chestplate": "Giáp Thân Thần Linh Vũ Trang (Divine Chestplate)",
+  "item.weapons.divine_leggings": "Quần Thần Linh Vũ Trang (Divine Leggings)",
+  "item.weapons.divine_boots": "Giày Thần Linh Vũ Trang (Divine Boots)",
+  "item.weapons.moonlight_sword": "Nguyệt Quang Thần Tế Kiếm (Moonlight Ritual Sword)",
+  "item.weapons.disintegration_magic_circle": "Linh Tử Ma Pháp Trận (Spiritron Magic Circle)",
+  "item.weapons.beelzebuth_magic_circle": "Hắc Ám Thôn Phệ Ma Trận Beelzebuth",
+  "item.weapons.beelzebuth_dragon_maw": "Đầu Rồng Hư Không Bạo Thực Vương Beelzebuth",
+  "item.weapons.jacob_light_pillar": "Cột Sáng Jacob (Jacob Light Pillar)",
   "itemGroup.weapons.weapons_tab": "Vũ Khí & Găng Tay Vô Cực",
   "key.category.weapons": "Mod Vũ Khí (Weapons Mod)",
   "key.weapons.select_stone": "Mở Bảng Chọn Đá Vô Cực (PgUp)",
-  "key.weapons.cast_beelzebuth": "Thi Triển Bạo Thực Vương Beelzebuth (Z)"
+  "key.weapons.cast_beelzebuth": "Chuyển Đổi Kỹ Năng / Tuyệt Chiêu (Z)"
 }
 

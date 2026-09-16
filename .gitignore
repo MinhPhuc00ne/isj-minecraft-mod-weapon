@@ -23,3 +23,8 @@ run
 
 # Files from Forge MDK
 forge*changelog.txt
+
+# Scratch & temporary workspace files
+scratch/
+common/src/pictureee/
+picture/

@@ -1,0 +1,213 @@
+package com.minhphuc.weapons.content.tensura;
+
+import com.minhphuc.weapons.data.EntityDataHelper;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
+import net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+public class HarvestFestival {
+
+    public static class ActiveRitual {
+        public final ServerPlayer player;
+        public final ServerLevel level;
+        public int ticksRemaining;
+        public final int totalTicks;
+
+        public ActiveRitual(ServerPlayer player, ServerLevel level, int totalTicks) {
+            this.player = player;
+            this.level = level;
+            this.ticksRemaining = totalTicks;
+            this.totalTicks = totalTicks;
+        }
+    }
+
+    private static final List<ActiveRitual> ACTIVE_RITUALS = new ArrayList<>();
+
+    public static boolean isPlayerInRitual(ServerPlayer player) {
+        for (ActiveRitual r : ACTIVE_RITUALS) {
+            if (r.player == player) return true;
+        }
+        return false;
+    }
+
+    /**
+     * Bắt đầu đại lễ hội thu hoạch thức tỉnh Chân Ma Vương (Harvest Festival)
+     */
+    public static void start(ServerPlayer player) {
+        if (isPlayerInRitual(player)) return;
+
+        ServerLevel level = (ServerLevel) player.level();
+        // Tiêu hao hạt giống & linh hồn
+        TensuraEvents.consumeSeedItemIfPresent(player);
+        EntityDataHelper.getCustomData(player).putBoolean("TensuraHasSeed", true);
+        TensuraEvents.consumeAllSouls(player);
+
+        // Đăng ký ritual kéo dài 160 ticks (8 giây)
+        ACTIVE_RITUALS.add(new ActiveRitual(player, level, 160));
+
+        // Khởi đầu nghi thức: Trạng thái Sleep Mode (buồn ngủ không cưỡng lại được chuẩn Tensura)
+        sendTitle(player, "§d§l[LỄ HỘI THU HOẠCH]", "§7Báo cáo. Cá thể tiến vào trạng thái Ngủ Say (Sleep Mode)...");
+        VoiceOfTheWorld.announce(player, "Báo cáo. Điều kiện thức tỉnh đã thỏa mãn. Bắt đầu Lễ Hội Thu Hoạch (Harvest Festival)!");
+        VoiceOfTheWorld.announce(player, "Báo cáo. Toàn bộ chức năng sinh học của cá thể chuyển sang chế độ Tĩnh Lặng... Đang bảo lưu ý thức...");
+
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.0F, 0.8F);
+        level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 2.0F, 0.7F);
+    }
+
+    /**
+     * Cập nhật từng giai đoạn của Lễ Hội Thu Hoạch mỗi tick
+     */
+    public static void tickRituals(ServerLevel serverLevel) {
+        if (ACTIVE_RITUALS.isEmpty()) return;
+
+        Iterator<ActiveRitual> it = ACTIVE_RITUALS.iterator();
+        while (it.hasNext()) {
+            ActiveRitual r = it.next();
+            if (r.level != serverLevel) continue;
+            if (r.player == null || !r.player.isAlive()) {
+                it.remove();
+                continue;
+            }
+
+            r.ticksRemaining--;
+            int elapsed = r.totalTicks - r.ticksRemaining;
+
+            // Khóa di chuyển & ban bất tử trong suốt 8 giây nghi thức
+            r.player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 255, false, false, false));
+            r.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 255, false, false, false));
+            r.player.setDeltaMovement(0, 0, 0);
+
+            // ============================================================
+            // GIAI ĐOẠN 1 (0 -> 50 ticks, 0 -> 2.5s): Buồn ngủ, tối sầm, tim đập
+            // ============================================================
+            if (elapsed <= 50) {
+                r.player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 30, 0, false, false, false));
+                r.player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 30, 0, false, false, false));
+
+                r.player.displayClientMessage(
+                    Component.literal("§d§l[LỄ HỘI THU HOẠCH] §7Báo cáo. Cá thể đang ngủ sâu... Ý thức đang chìm vào hư vô..."),
+                    true
+                );
+
+                if (elapsed % 15 == 0) {
+                    r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                            SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 2.0F, 0.8F);
+                }
+
+                // Hạt sương mù kén ma thuật tím bao bọc
+                r.level.sendParticles(ParticleTypes.PORTAL, r.player.getX(), r.player.getY() + 1.0D, r.player.getZ(), 4, 0.4D, 0.4D, 0.4D, 0.05D);
+                r.level.sendParticles(ParticleTypes.DRAGON_BREATH, r.player.getX(), r.player.getY() + 1.0D, r.player.getZ(), 2, 0.3D, 0.3D, 0.3D, 0.02D);
+            }
+
+            // ============================================================
+            // GIAI ĐOẠN 2 (50 -> 110 ticks, 2.5s -> 5.5s): Hiến tế linh hồn & Tái cấu trúc cơ thể
+            // ============================================================
+            if (elapsed == 51) {
+                sendTitle(r.player, "§6§l[HIẾN TẾ 64 LINH HỒN]", "§fHạt Giống nảy mầm... Magicule tăng vọt!");
+                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Đã hiến tế thành công 64 Linh Hồn! Năng lượng Magicule của cá thể vượt ngưỡng x10 lần!");
+                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Bắt đầu tái cấu trúc vật chất cơ thể cá thể: Chuyển đổi thành thể Tinh Linh Quỷ Tộc (Demonic Spiritual Body)!");
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.0F, 1.2F);
+            }
+
+            if (elapsed > 50 && elapsed <= 110) {
+                // Xoáy tia sáng linh hồn màu xanh và cam hội tụ vào tim người chơi
+                int percent = ((elapsed - 50) * 100 / 60);
+                r.player.displayClientMessage(
+                    Component.literal("§5§l[TÁI CẤU TRÚC LINH HỒN] §fBáo cáo. Tế bào ma thuật của cá thể đang dung hợp... §6" + percent + "% 🧬"),
+                    true
+                );
+
+                if (elapsed % 10 == 0) {
+                    float pitch = 0.8F + ((elapsed - 50) / 60.0F) * 0.8F;
+                    r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.5F, pitch);
+                }
+
+                // Vòng xoáy linh hồn bay vào ngực
+                double angle = Math.toRadians((elapsed * 24) % 360);
+                double radius = 1.8D;
+                double px = r.player.getX() + Math.cos(angle) * radius;
+                double pz = r.player.getZ() + Math.sin(angle) * radius;
+                r.level.sendParticles(ParticleTypes.SOUL, px, r.player.getY() + 1.1D, pz, 1, 0, 0, 0, 0);
+                r.level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, px, r.player.getY() + 0.8D, pz, 1, 0, 0, 0, 0);
+                r.level.sendParticles(ParticleTypes.DRAGON_BREATH, r.player.getX(), r.player.getY() + 1.0D, r.player.getZ(), 2, 0.2D, 0.3D, 0.2D, 0.02D);
+            }
+
+            // ============================================================
+            // GIAI ĐOẠN 3 (110 -> 150 ticks, 5.5s -> 7.5s): Tiến hóa Kỹ Năng Bạo Thực Vương
+            // ============================================================
+            if (elapsed == 111) {
+                sendTitle(r.player, "§c§l[TIẾN HÓA KỸ NĂNG]", "§dĐại Bộc Thực Giả §f-> §6Bạo Thực Vương Beelzebuth");
+                VoiceOfTheWorld.announce(r.player, "§aBáo cáo. Tiến trình tái cấu trúc cơ thể cá thể hoàn tất!");
+                VoiceOfTheWorld.announce(r.player, "§eBáo cáo. Bắt đầu phân tích và hợp nhất kỹ năng cá thể: [Kẻ Săn Mồi] + [Kẻ Hủ Hóa]...");
+                VoiceOfTheWorld.announce(r.player, "§a§lBáo cáo. Thành công! Cá thể đã mở khóa Kỹ Năng Tối Thượng: §6§l[BẠO THỰC VƯƠNG BEELZEBUTH]§a!");
+
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 2.0F, 0.9F);
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 2.0F, 1.0F);
+            }
+
+            if (elapsed > 110 && elapsed < 150) {
+                r.player.displayClientMessage(
+                    Component.literal("§6§l[TIẾN HÓA KỸ NĂNG] §fBáo cáo. §d§lBẠO THỰC VƯƠNG BEELZEBUTH §fcủa cá thể đang hình thành... 🌀"),
+                    true
+                );
+
+                r.level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, r.player.getX(), r.player.getY() + 1.2D, r.player.getZ(), 2, 0.3D, 0.4D, 0.3D, 0.05D);
+                r.level.sendParticles(ParticleTypes.DRAGON_BREATH, r.player.getX(), r.player.getY() + 1.0D, r.player.getZ(), 2, 0.3D, 0.3D, 0.3D, 0.02D);
+            }
+
+            // ============================================================
+            // GIAI ĐOẠN 4 (150 -> 160 ticks, 7.5s -> 8s): Thức tỉnh hoàn tất, Bùng nổ Chân Ma Vương
+            // ============================================================
+            if (elapsed >= 155) {
+                // Xóa hiệu ứng xấu
+                r.player.removeEffect(MobEffects.DARKNESS);
+                r.player.removeEffect(MobEffects.BLINDNESS);
+                r.player.removeEffect(MobEffects.MOVEMENT_SLOWDOWN);
+
+                // Thức tỉnh thành Chân Ma Vương
+                EntityDataHelper.getCustomData(r.player).putBoolean("TensuraTrueDemonLord", true);
+
+                // Phát âm thanh và hiệu ứng bùng nổ cuối cùng
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 2.0F, 1.0F);
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.WITHER_SPAWN, SoundSource.PLAYERS, 2.0F, 0.8F);
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 2.0F, 1.2F);
+
+                r.level.sendParticles(ParticleTypes.FLASH, r.player.getX(), r.player.getY() + 1.5D, r.player.getZ(), 2, 0, 0, 0, 0);
+                r.level.sendParticles(ParticleTypes.DRAGON_BREATH, r.player.getX(), r.player.getY() + 1.0D, r.player.getZ(), 20, 0.6D, 0.6D, 0.6D, 0.08D);
+                r.level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, r.player.getX(), r.player.getY() + 1.2D, r.player.getZ(), 25, 0.6D, 0.8D, 0.6D, 0.1D);
+
+                sendTitle(r.player, "§d§l★ CHÂN MA VƯƠNG ★", "§aBáo cáo. Cá thể đã thức tỉnh thành Chân Ma Vương!");
+                VoiceOfTheWorld.announceEvolutionSuccess(r.player);
+
+                it.remove();
+            }
+        }
+    }
+
+    private static void sendTitle(ServerPlayer player, String title, String subtitle) {
+        if (player.connection != null) {
+            player.connection.send(new ClientboundSetTitleTextPacket(Component.literal(title)));
+            player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal(subtitle)));
+        }
+    }
+}
