@@ -100,6 +100,9 @@ public class ModItems {
     public static final RegistrySupplier<Item> BEELZEBUTH_DRAGON_MAW = ITEMS.register("beelzebuth_dragon_maw",
             () -> new Item(new Item.Properties()));
 
+    public static final RegistrySupplier<Item> JACOB_LIGHT_PILLAR = ITEMS.register("jacob_light_pillar",
+            () -> new Item(new Item.Properties()));
+
     // ==========================================
     // CREATIVE TAB
     // ==========================================

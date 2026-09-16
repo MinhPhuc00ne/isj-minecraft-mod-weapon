@@ -29,6 +29,9 @@ public class DivineWeaponEvents {
         // Tick cập nhật các Thánh Giới Linh Tử Băng Hoại đang kích hoạt
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(SanctuaryDisintegrationAbility::tickSanctuaries);
 
+        // Tick cập nhật Tà Khứ Vũ Thê Tử (Jacob's Ladder)
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(JacobsLadderAbility::tickLadders);
+
         // Tick cập nhật Đầu Rồng Hư Không Bạo Thực Vương Beelzebuth
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(BeelzebuthAbility::tickDragons);
 

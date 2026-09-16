@@ -15,10 +15,10 @@
   "item.weapons.moonlight_sword": "Moonlight Ritual Sword",
   "item.weapons.disintegration_magic_circle": "Spiritron Magic Circle",
   "item.weapons.beelzebuth_magic_circle": "Beelzebuth Magic Circle",
-  "item.weapons.beelzebuth_dragon_maw": "Beelzebuth Abyssal Dragon",
-  "itemGroup.weapons.weapons_tab": "Weapons Mod",
+  "item.weapons.beelzebuth_dragon_maw": "Void Dragon Maw of Beelzebuth",
+  "item.weapons.jacob_light_pillar": "Jacob Light Pillar",
+  "itemGroup.weapons.weapons_tab": "Weapons & Infinity Gauntlet",
   "key.category.weapons": "Weapons Mod",
   "key.weapons.select_stone": "Open Stone Selection Menu (PgUp)",
   "key.weapons.cast_beelzebuth": "Cycle Active Skill (Z)"
 }
-

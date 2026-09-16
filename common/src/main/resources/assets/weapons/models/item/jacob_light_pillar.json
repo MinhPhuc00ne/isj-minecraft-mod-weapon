@@ -1,0 +1,40 @@
+{
+  "render_type": "minecraft:translucent",
+  "textures": {
+    "particle": "weapons:item/jacob_light_pillar",
+    "beam": "weapons:item/jacob_light_pillar"
+  },
+  "elements": [
+    {
+      "name": "outer_box",
+      "from": [ 0, 0, 0 ],
+      "to": [ 16, 16, 16 ],
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "up":    { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "down":  { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" }
+      }
+    },
+    {
+      "name": "inner_cross1",
+      "from": [ 0, 0, 8 ],
+      "to": [ 16, 16, 8 ],
+      "faces": {
+        "north": { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "south": { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" }
+      }
+    },
+    {
+      "name": "inner_cross2",
+      "from": [ 8, 0, 0 ],
+      "to": [ 8, 16, 16 ],
+      "faces": {
+        "west":  { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" },
+        "east":  { "uv": [ 0, 0, 16, 16 ], "texture": "#beam" }
+      }
+    }
+  ]
+}
