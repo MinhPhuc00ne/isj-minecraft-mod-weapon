@@ -53,13 +53,12 @@ public class HarvestFestival {
         EntityDataHelper.getCustomData(player).putBoolean("TensuraHasSeed", true);
         TensuraEvents.consumeAllSouls(player);
 
-        // Đăng ký ritual kéo dài 160 ticks (8 giây)
-        ACTIVE_RITUALS.add(new ActiveRitual(player, level, 160));
+        // Đăng ký ritual kéo dài 400 ticks (20 giây)
+        ACTIVE_RITUALS.add(new ActiveRitual(player, level, 400));
 
         // Khởi đầu nghi thức: Trạng thái Sleep Mode (buồn ngủ không cưỡng lại được chuẩn Tensura)
         sendTitle(player, "§d§l[LỄ HỘI THU HOẠCH]", "§7Báo cáo. Cá thể tiến vào trạng thái Ngủ Say (Sleep Mode)...");
         VoiceOfTheWorld.announce(player, "Báo cáo. Điều kiện thức tỉnh đã thỏa mãn. Bắt đầu Lễ Hội Thu Hoạch (Harvest Festival)!");
-        VoiceOfTheWorld.announce(player, "Báo cáo. Toàn bộ chức năng sinh học của cá thể chuyển sang chế độ Tĩnh Lặng... Đang bảo lưu ý thức...");
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.0F, 0.8F);
@@ -68,7 +67,7 @@ public class HarvestFestival {
     }
 
     /**
-     * Cập nhật từng giai đoạn của Lễ Hội Thu Hoạch mỗi tick
+     * Cập nhật từng giai đoạn của Lễ Hội Thu Hoạch mỗi tick (Tổng 20 giây = 400 ticks)
      */
     public static void tickRituals(ServerLevel serverLevel) {
         if (ACTIVE_RITUALS.isEmpty()) return;
@@ -85,15 +84,15 @@ public class HarvestFestival {
             r.ticksRemaining--;
             int elapsed = r.totalTicks - r.ticksRemaining;
 
-            // Khóa di chuyển & ban bất tử trong suốt 8 giây nghi thức
+            // Khóa di chuyển & ban bất tử trong suốt 20 giây nghi thức
             r.player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 40, 255, false, false, false));
             r.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 255, false, false, false));
             r.player.setDeltaMovement(0, 0, 0);
 
             // ============================================================
-            // GIAI ĐOẠN 1 (0 -> 50 ticks, 0 -> 2.5s): Buồn ngủ, tối sầm, tim đập
+            // GIAI ĐOẠN 1 (0 -> 80 ticks, 0s -> 4s): Buồn ngủ, tối sầm, tim đập
             // ============================================================
-            if (elapsed <= 50) {
+            if (elapsed <= 80) {
                 r.player.addEffect(new MobEffectInstance(MobEffects.DARKNESS, 30, 0, false, false, false));
                 r.player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 30, 0, false, false, false));
 
@@ -102,7 +101,11 @@ public class HarvestFestival {
                     true
                 );
 
-                if (elapsed % 15 == 0) {
+                if (elapsed == 40) {
+                    VoiceOfTheWorld.announce(r.player, "Báo cáo. Toàn bộ chức năng sinh học của cá thể chuyển sang chế độ Tĩnh Lặng... Đang bảo lưu ý thức...");
+                }
+
+                if (elapsed % 20 == 0) {
                     r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
                             SoundEvents.WARDEN_HEARTBEAT, SoundSource.PLAYERS, 2.0F, 0.8F);
                 }
@@ -113,32 +116,35 @@ public class HarvestFestival {
             }
 
             // ============================================================
-            // GIAI ĐOẠN 2 (50 -> 110 ticks, 2.5s -> 5.5s): Hiến tế linh hồn & Tái cấu trúc cơ thể
+            // GIAI ĐOẠN 2 (80 -> 230 ticks, 4s -> 11.5s): Hiến tế linh hồn & Tái cấu trúc cơ thể
             // ============================================================
-            if (elapsed == 51) {
+            if (elapsed == 80) {
                 sendTitle(r.player, "§6§l[HIẾN TẾ 64 LINH HỒN]", "§fHạt Giống nảy mầm... Magicule tăng vọt!");
                 VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Đã hiến tế thành công 64 Linh Hồn! Năng lượng Magicule của cá thể vượt ngưỡng x10 lần!");
-                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Bắt đầu tái cấu trúc vật chất cơ thể cá thể: Chuyển đổi thành thể Tinh Linh Quỷ Tộc (Demonic Spiritual Body)!");
                 r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
                         SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.0F, 1.2F);
             }
 
-            if (elapsed > 50 && elapsed <= 110) {
+            if (elapsed == 150) {
+                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Bắt đầu tái cấu trúc vật chất cơ thể cá thể: Chuyển đổi thành thể Tinh Linh Quỷ Tộc (Demonic Spiritual Body)!");
+            }
+
+            if (elapsed > 80 && elapsed <= 230) {
                 // Xoáy tia sáng linh hồn màu xanh và cam hội tụ vào tim người chơi
-                int percent = ((elapsed - 50) * 100 / 60);
+                int percent = Math.min(100, ((elapsed - 80) * 100 / 140));
                 r.player.displayClientMessage(
                     Component.literal("§5§l[TÁI CẤU TRÚC LINH HỒN] §fBáo cáo. Tế bào ma thuật của cá thể đang dung hợp... §6" + percent + "% 🧬"),
                     true
                 );
 
-                if (elapsed % 10 == 0) {
-                    float pitch = 0.8F + ((elapsed - 50) / 60.0F) * 0.8F;
+                if (elapsed % 15 == 0) {
+                    float pitch = 0.8F + ((elapsed - 80) / 150.0F) * 0.8F;
                     r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
                             SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.5F, pitch);
                 }
 
                 // Vòng xoáy linh hồn bay vào ngực
-                double angle = Math.toRadians((elapsed * 24) % 360);
+                double angle = Math.toRadians((elapsed * 18) % 360);
                 double radius = 1.8D;
                 double px = r.player.getX() + Math.cos(angle) * radius;
                 double pz = r.player.getZ() + Math.sin(angle) * radius;
@@ -148,21 +154,26 @@ public class HarvestFestival {
             }
 
             // ============================================================
-            // GIAI ĐOẠN 3 (110 -> 150 ticks, 5.5s -> 7.5s): Tiến hóa Kỹ Năng Bạo Thực Vương
+            // GIAI ĐOẠN 3 (230 -> 340 ticks, 11.5s -> 17s): Tiến hóa Kỹ Năng Bạo Thực Vương
             // ============================================================
-            if (elapsed == 111) {
-                sendTitle(r.player, "§c§l[TIẾN HÓA KỸ NĂNG]", "§dĐại Bộc Thực Giả §f-> §6Bạo Thực Vương Beelzebuth");
+            if (elapsed == 230) {
                 VoiceOfTheWorld.announce(r.player, "§aBáo cáo. Tiến trình tái cấu trúc cơ thể cá thể hoàn tất!");
-                VoiceOfTheWorld.announce(r.player, "§eBáo cáo. Bắt đầu phân tích và hợp nhất kỹ năng cá thể: [Kẻ Săn Mồi] + [Kẻ Hủ Hóa]...");
-                VoiceOfTheWorld.announce(r.player, "§a§lBáo cáo. Thành công! Cá thể đã mở khóa Kỹ Năng Tối Thượng: §6§l[BẠO THỰC VƯƠNG BEELZEBUTH]§a!");
+            }
 
-                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
-                        SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 2.0F, 0.9F);
+            if (elapsed == 270) {
+                sendTitle(r.player, "§c§l[TIẾN HÓA KỸ NĂNG]", "§dĐại Bộc Thực Giả §f-> §6Bạo Thực Vương Beelzebuth");
+                VoiceOfTheWorld.announce(r.player, "§eBáo cáo. Bắt đầu phân tích và hợp nhất kỹ năng cá thể: [Kẻ Săn Mồi] + [Kẻ Hủ Hóa]...");
                 r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
                         SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 2.0F, 1.0F);
             }
 
-            if (elapsed > 110 && elapsed < 150) {
+            if (elapsed == 330) {
+                VoiceOfTheWorld.announce(r.player, "§a§lBáo cáo. Thành công! Cá thể đã mở khóa Kỹ Năng Tối Thượng: §6§l[BẠO THỰC VƯƠNG BEELZEBUTH]§a!");
+                r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),
+                        SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 2.0F, 0.9F);
+            }
+
+            if (elapsed > 270 && elapsed < 390) {
                 r.player.displayClientMessage(
                     Component.literal("§6§l[TIẾN HÓA KỸ NĂNG] §fBáo cáo. §d§lBẠO THỰC VƯƠNG BEELZEBUTH §fcủa cá thể đang hình thành... 🌀"),
                     true
@@ -173,9 +184,9 @@ public class HarvestFestival {
             }
 
             // ============================================================
-            // GIAI ĐOẠN 4 (150 -> 160 ticks, 7.5s -> 8s): Thức tỉnh hoàn tất, Bùng nổ Chân Ma Vương
+            // GIAI ĐOẠN 4 (390 -> 400 ticks, 19.5s -> 20s): Thức tỉnh hoàn tất, Bùng nổ Chân Ma Vương
             // ============================================================
-            if (elapsed >= 155) {
+            if (elapsed >= 395) {
                 // Xóa hiệu ứng xấu
                 r.player.removeEffect(MobEffects.DARKNESS);
                 r.player.removeEffect(MobEffects.BLINDNESS);

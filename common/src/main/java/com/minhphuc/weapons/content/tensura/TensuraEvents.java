@@ -17,6 +17,22 @@ public class TensuraEvents {
 
     public static void register() {
         EntityEvent.LIVING_DEATH.register(TensuraEvents::onLivingDeath);
+        dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(TensuraEvents::onPlayerJoin);
+    }
+
+    public static void onPlayerJoin(ServerPlayer player) {
+        CompoundTag playerData = EntityDataHelper.getCustomData(player);
+        if (!playerData.getBoolean("ReceivedCelestialTome")) {
+            playerData.putBoolean("ReceivedCelestialTome", true);
+            ItemStack tome = new ItemStack(ModItems.GUIDE_BOOK.get());
+            if (!player.getInventory().add(tome)) {
+                player.drop(tome, false);
+            }
+            player.displayClientMessage(
+                net.minecraft.network.chat.Component.literal("§6§l[WEAPONS MOD] §eChào mừng bạn! Đã nhận §b§lThánh Thư Thần Khí§e. Hãy cầm sách nhấn §a[Chuột Phải] §eđể xem toàn bộ công thức và chiêu thức! 📜✨"),
+                false
+            );
+        }
     }
 
     public static boolean hasSeedItemInInventory(ServerPlayer player) {
@@ -77,15 +93,20 @@ public class TensuraEvents {
         boolean hasSeed = playerData.getBoolean("TensuraHasSeed") || hasSeedItemInInventory(player);
         boolean isTrueDemonLord = playerData.getBoolean("TensuraTrueDemonLord");
 
-        // 1. Tỷ lệ 5% rớt Hạt Giống Ma Vương khi diệt sinh vật nếu người chơi chưa sở hữu
-        if (!hasSeed && !isTrueDemonLord && level.random.nextFloat() <= 0.05F) {
+        // 1. Tỷ lệ 25% rớt Hạt Giống Ma Vương khi người chơi đạt cấp độ 10 trở lên và tiêu diệt quái vật thường
+        boolean isMonster = victim instanceof net.minecraft.world.entity.monster.Monster;
+        if (!hasSeed && !isTrueDemonLord && isMonster && player.experienceLevel >= 10 && level.random.nextFloat() <= 0.25F) {
             ItemEntity seedDrop = new ItemEntity(
                 level, victim.getX(), victim.getY() + 0.5D, victim.getZ(),
                 new ItemStack(ModItems.DEMON_LORD_SEED.get())
             );
             level.addFreshEntity(seedDrop);
 
-            VoiceOfTheWorld.announce(player, "Báo cáo. Cá thể vừa thu nhận được hạt giống ma vương");
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 1.2F);
+            level.sendParticles(net.minecraft.core.particles.ParticleTypes.PORTAL, victim.getX(), victim.getY() + 0.5D, victim.getZ(), 20, 0.4D, 0.5D, 0.4D, 0.1D);
+
+            VoiceOfTheWorld.announce(player, "Báo cáo. Cá thể vừa thu nhận được Hạt Giống Ma Vương! Hãy nuốt nó để bắt đầu con đường thức tỉnh.");
             return;
         }
 
@@ -108,6 +129,39 @@ public class TensuraEvents {
                 if (totalAfter % 10 == 0) {
                     VoiceOfTheWorld.announce(player, "Báo cáo. Tiến độ thu thập Linh Hồn Ma Vương: " + totalAfter + "/64.");
                 }
+            }
+        }
+
+        // 3. Rơi Đá Vô Cực khi tiêu diệt Đại Boss / Quái Vật Cổ Đại (Survival)
+        if (victim instanceof net.minecraft.world.entity.boss.wither.WitherBoss) {
+            dropStone(level, victim, ModItems.POWER_STONE.get(), "§d[Đá Sức Mạnh] vừa rơi ra từ tàn tích của Wither!");
+        } else if (victim instanceof net.minecraft.world.entity.monster.warden.Warden) {
+            dropStone(level, victim, ModItems.SOUL_STONE.get(), "§6[Đá Linh Hồn] vừa được giải phóng từ lồng ngực Warden!");
+        } else if (victim instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon) {
+            dropStone(level, victim, ModItems.SPACE_STONE.get(), "§9[Đá Không Gian] vừa kết tinh từ hư không The End!");
+        } else if (victim instanceof net.minecraft.world.entity.monster.ElderGuardian) {
+            dropStone(level, victim, ModItems.TIME_STONE.get(), "§a[Đá Thời Gian] vừa xuất hiện từ mắt cổ thần Elder Guardian!");
+        } else if (victim instanceof net.minecraft.world.entity.monster.Evoker && level.random.nextFloat() <= 0.35F) {
+            dropStone(level, victim, ModItems.MIND_STONE.get(), "§e[Đá Tâm Trí] vừa rơi ra từ pháp sư Evoker!");
+        } else if (victim instanceof net.minecraft.world.entity.monster.piglin.PiglinBrute && level.random.nextFloat() <= 0.25F) {
+            dropStone(level, victim, ModItems.REALITY_STONE.get(), "§c[Đá Thực Tại] vừa rơi ra từ chiến binh Piglin Brute!");
+        }
+    }
+
+    private static void dropStone(ServerLevel level, LivingEntity victim, net.minecraft.world.item.Item stoneItem, String announcement) {
+        ItemEntity stoneDrop = new ItemEntity(
+                level, victim.getX(), victim.getY() + 0.5D, victim.getZ(),
+                new ItemStack(stoneItem)
+        );
+        stoneDrop.setGlowingTag(true);
+        level.addFreshEntity(stoneDrop);
+
+        level.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
+                net.minecraft.sounds.SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, net.minecraft.sounds.SoundSource.PLAYERS, 1.5F, 1.0F);
+
+        for (ServerPlayer p : level.players()) {
+            if (p.distanceToSqr(victim) <= 64.0 * 64.0) {
+                p.displayClientMessage(net.minecraft.network.chat.Component.literal("§6§l✦ BẢO VẬT VŨ TRỤ ✦ " + announcement), false);
             }
         }
     }

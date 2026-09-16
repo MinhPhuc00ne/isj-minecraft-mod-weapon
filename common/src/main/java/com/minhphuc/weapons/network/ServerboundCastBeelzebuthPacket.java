@@ -30,15 +30,34 @@ public class ServerboundCastBeelzebuthPacket {
             boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
 
             if (isTrueDemonLord) {
+                int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
+
+                // Nếu đang kích hoạt Tuyệt Diệt Tinh Tú, khóa các kỹ năng khác
+                if (selectedSkill != 3 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(player)) {
+                    player.displayClientMessage(
+                        Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Không thể thi triển kỹ năng khác!"),
+                        true
+                    );
+                    return;
+                }
+
                 // Kiểm tra hồi chiêu kỹ năng (1.5 giây)
                 if (player.getCooldowns().isOnCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get())) {
                     return;
                 }
                 
-                int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
                 ServerLevel serverLevel = (ServerLevel) player.level();
                 
-                if (selectedSkill == 1) {
+                if (selectedSkill == 4) {
+                    // Chiêu 5: Lục Nhậm Thần Khóa - Trận Đồ Cưỡng Chế Tai Ương (Bật / Tắt chủ động)
+                    com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility.toggleBarrier(serverLevel, player);
+                } else if (selectedSkill == 3) {
+                    // Chiêu 4: Phẫn Nộ Vương - Tuyệt Diệt Tinh Tú (Thái Tuế Tinh Quân)
+                    com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.cast(serverLevel, player);
+                } else if (selectedSkill == 2) {
+                    // Chiêu 3: Long Tinh Bộc Viêm Bá: Dragon Nova (Yêu cầu Giáp Thần Linh)
+                    com.minhphuc.weapons.content.tensura.DragonNovaAbility.cast(serverLevel, player);
+                } else if (selectedSkill == 1) {
                     // Chiêu 2: Bạo Thực Vương - Hủ Hóa & Bạo Liệt
                     BeelzebuthAbility.executeCorrosion(serverLevel, player);
                 } else {

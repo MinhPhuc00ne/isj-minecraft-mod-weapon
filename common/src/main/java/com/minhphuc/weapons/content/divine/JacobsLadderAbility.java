@@ -55,13 +55,16 @@ public class JacobsLadderAbility {
         public float circleAngleDegrees;
         public boolean beamSpawned = false;
 
-        public ActiveLadder(ServerLevel level, ServerPlayer caster, Vec3 center, int durationTicks) {
+        public final SkillPowerRoll powerRoll;
+
+        public ActiveLadder(ServerLevel level, ServerPlayer caster, Vec3 center, int durationTicks, SkillPowerRoll powerRoll) {
             this.level = level;
             this.caster = caster;
             this.center = center;
             this.ticksRemaining = durationTicks;
             this.totalTicks = durationTicks;
             this.circleAngleDegrees = 0.0F;
+            this.powerRoll = powerRoll;
         }
 
         public void cleanupDisplays() {
@@ -111,8 +114,12 @@ public class JacobsLadderAbility {
             targetCenter = new Vec3(groundPos.getX() + 0.5D, groundPos.getY(), groundPos.getZ() + 0.5D);
         }
 
+        // Gieo xúc xắc xuất lực ngẫu nhiên
+        SkillPowerRoll roll = SkillPowerRoll.roll();
+        roll.announceAndPlayEffects(player, "Tà Khứ Vũ Thê Tử (Jacob's Ladder)");
+
         // Tổng thời lượng 135 ticks (~6.75 giây)
-        ActiveLadder ladder = new ActiveLadder(level, player, targetCenter, 135);
+        ActiveLadder ladder = new ActiveLadder(level, player, targetCenter, 135, roll);
 
         // 2. TẠO 1 MA PHÁP TRẬN DUY NHẤT DƯỚI MẶT ĐẤT (Y + 0.03m để không z-fight với đất)
         ladder.groundCircleDisplay = createFlatMagicCircle(level, targetCenter, 0.1F, 0xFFEE55);
@@ -124,11 +131,6 @@ public class JacobsLadderAbility {
                 SoundEvents.EVOKER_PREPARE_SUMMON, SoundSource.PLAYERS, 3.0F, 1.4F);
         level.playSound(null, targetCenter.x, targetCenter.y, targetCenter.z,
                 SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 3.0F, 1.1F);
-
-        player.displayClientMessage(
-                Component.literal("§e§l[TÀ KHỨ VŨ THÊ TỬ] §f\"Mọi điều xấu xa, tội lỗi và sự khốn khổ... Hãy dẫn chúng về với ánh sáng!\" 🪽✨"),
-                true
-        );
 
         player.getCooldowns().addCooldown(sword.getItem(), 180); // 9 giây hồi chiêu
     }
@@ -337,7 +339,8 @@ public class JacobsLadderAbility {
                                 || victim instanceof net.minecraft.world.entity.monster.Phantom
                                 || victim.getMaxHealth() >= 100.0F;
 
-                        float damage = isUndeadOrCursed ? 150.0F : 50.0F;
+                        float baseDamage = isUndeadOrCursed ? 80.0F : 30.0F;
+                        float damage = baseDamage * (l.powerRoll != null ? l.powerRoll.multiplier : 1.0F);
                         victim.hurt(dmgSource, damage);
 
                         l.level.sendParticles(ParticleTypes.SOUL, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 3, 0.1D, 0.2D, 0.1D, 0.02D);
@@ -358,10 +361,22 @@ public class JacobsLadderAbility {
             // =========================================================================
             if (elapsed == 105) {
                 if (l.caster != null) {
-                    l.caster.displayClientMessage(
-                            Component.literal("§6§l[TÀ KHỨ VŨ THÊ TỬ] §c§lXUẤT LỰC TỐI ĐA (MAXIMUM OUTPUT)!! ⚡💥"),
-                            true
-                    );
+                    if (l.powerRoll != null && l.powerRoll.isOverdrive()) {
+                        l.caster.displayClientMessage(
+                                Component.literal("§6§l[TÀ KHỨ VŨ THÊ TỬ] §4§l⚡ XUẤT LỰC TỐI ĐA 200% (MAXIMUM OUTPUT)!! ⚡💥"),
+                                true
+                        );
+                    } else if (l.powerRoll != null && l.powerRoll.isNormal()) {
+                        l.caster.displayClientMessage(
+                                Component.literal("§6§l[TÀ KHỨ VŨ THÊ TỬ] §b§lCột Sáng Bộc Phát Uy Lực Đỉnh Điểm! ✨"),
+                                true
+                        );
+                    } else {
+                        l.caster.displayClientMessage(
+                                Component.literal("§6§l[TÀ KHỨ VŨ THÊ TỬ] §7Ma lực suy yếu dần trước khi tiêu biến..."),
+                                true
+                        );
+                    }
                 }
                 l.level.playSound(null, l.center.x, groundY + 2.0D, l.center.z,
                         SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 3.5F, 1.2F);
@@ -384,9 +399,20 @@ public class JacobsLadderAbility {
                 DamageSource finalDmgSource = (l.caster != null) ? l.level.damageSources().playerAttack(l.caster) : l.level.damageSources().genericKill();
 
                 for (LivingEntity target : finalTargets) {
-                    target.hurt(finalDmgSource, 2000.0F);
-                    if (target.isAlive() && target.getMaxHealth() >= 100.0F) {
-                        target.discard();
+                    if (l.powerRoll != null && l.powerRoll.isOverdrive()) {
+                        // BẠO KÍCH: 5000 sát thương + xóa sổ thực thể lớn
+                        target.hurt(finalDmgSource, 5000.0F);
+                        if (target.isAlive() && target.getMaxHealth() >= 100.0F) {
+                            target.discard();
+                        }
+                    } else if (l.powerRoll != null && l.powerRoll.isNormal()) {
+                        // XUẤT LỰC CHUẨN: 800 sát thương * multiplier
+                        float shockDamage = 800.0F * l.powerRoll.multiplier;
+                        target.hurt(finalDmgSource, shockDamage);
+                    } else {
+                        // ĐẦU RA THẤP: 150 sát thương * multiplier
+                        float shockDamage = 150.0F * (l.powerRoll != null ? l.powerRoll.multiplier : 0.35F);
+                        target.hurt(finalDmgSource, shockDamage);
                     }
                 }
 

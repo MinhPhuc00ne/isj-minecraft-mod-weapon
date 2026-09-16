@@ -14,10 +14,20 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
 public class ClientInputEvents {
+    private static long lastJumpPressTime = 0;
 
     public static void register() {
         ClientTickEvent.CLIENT_POST.register(mc -> {
             if (mc.player == null) return;
+
+            // Nhấn Phím Cách 2 lần (Double-Tap Space): Bay lên và thoát khỏi kết giới Lục Nhậm Thần Khóa
+            if (mc.options.keyJump.consumeClick()) {
+                long now = System.currentTimeMillis();
+                if (now - lastJumpPressTime <= 380) {
+                    ModMessages.sendToServer(new com.minhphuc.weapons.network.ServerboundExitLiuRenBarrierPacket());
+                }
+                lastJumpPressTime = now;
+            }
 
             if (ModKeyBindings.SELECT_STONE_KEY.consumeClick()) {
                 if (mc.screen == null) {
@@ -43,6 +53,9 @@ public class ClientInputEvents {
 
         InteractionEvent.CLIENT_LEFT_CLICK_AIR.register((player, hand) -> {
             if (player == null) return;
+
+            // Bắn Tinh Tú Tuyệt Diệt khi nhấn Chuột Trái
+            ModMessages.sendToServer(new com.minhphuc.weapons.network.ServerboundFireTaisuiStarPacket());
 
             ItemStack heldStack = player.getItemInHand(hand);
             if (heldStack.getItem() instanceof InfinityGauntletItem) {

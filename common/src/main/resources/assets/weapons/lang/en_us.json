@@ -1,4 +1,5 @@
 {
+  "item.weapons.empty_infinity_gauntlet": "Empty Infinity Gauntlet",
   "item.weapons.infinity_gauntlet": "Infinity Gauntlet",
   "item.weapons.power_stone": "Power Stone",
   "item.weapons.space_stone": "Space Stone",
@@ -20,5 +21,6 @@
   "itemGroup.weapons.weapons_tab": "Weapons & Infinity Gauntlet",
   "key.category.weapons": "Weapons Mod",
   "key.weapons.select_stone": "Open Stone Selection Menu (PgUp)",
-  "key.weapons.cast_beelzebuth": "Cycle Active Skill (Z)"
+  "key.weapons.cast_beelzebuth": "Cycle Active Skill (Z)",
+  "item.weapons.celestial_tome": "Celestial Tome (Guide Book)"
 }

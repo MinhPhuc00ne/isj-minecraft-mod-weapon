@@ -1,4 +1,5 @@
 {
+  "item.weapons.empty_infinity_gauntlet": "Găng Tay Vô Cực (Chưa Gắn Đá)",
   "item.weapons.infinity_gauntlet": "Găng Tay Vô Cực (Infinity Gauntlet)",
   "item.weapons.power_stone": "Đá Sức Mạnh (Power Stone)",
   "item.weapons.space_stone": "Đá Không Gian (Space Stone)",
@@ -20,6 +21,7 @@
   "itemGroup.weapons.weapons_tab": "Vũ Khí & Găng Tay Vô Cực",
   "key.category.weapons": "Mod Vũ Khí (Weapons Mod)",
   "key.weapons.select_stone": "Mở Bảng Chọn Đá Vô Cực (PgUp)",
-  "key.weapons.cast_beelzebuth": "Chuyển Đổi Kỹ Năng / Tuyệt Chiêu (Z)"
+  "key.weapons.cast_beelzebuth": "Chuyển Đổi Kỹ Năng / Tuyệt Chiêu (Z)",
+  "item.weapons.celestial_tome": "Thánh Thư Thần Khí & Ma Vương"
 }
 

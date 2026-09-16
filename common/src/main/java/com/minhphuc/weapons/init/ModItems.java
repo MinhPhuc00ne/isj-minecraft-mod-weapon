@@ -20,28 +20,37 @@ public class ModItems {
             DeferredRegister.create(WeaponsMod.MOD_ID, Registries.CREATIVE_MODE_TAB);
 
     // ==========================================
+    // MODULE: GUIDE BOOK (THÁNH THƯ THẦN KHÍ)
+    // ==========================================
+    public static final RegistrySupplier<Item> GUIDE_BOOK = ITEMS.register("celestial_tome",
+            () -> new com.minhphuc.weapons.content.guide.GuideBookItem(new Item.Properties().stacksTo(1).rarity(Rarity.RARE)));
+
+    // ==========================================
     // MODULE: INFINITY GAUNTLET & STONES
     // ==========================================
+    public static final RegistrySupplier<Item> EMPTY_INFINITY_GAUNTLET = ITEMS.register("empty_infinity_gauntlet",
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.EmptyInfinityGauntletItem(new Item.Properties()));
+
     public static final RegistrySupplier<Item> INFINITY_GAUNTLET = ITEMS.register("infinity_gauntlet",
             () -> new InfinityGauntletItem(new Item.Properties()));
 
     public static final RegistrySupplier<Item> POWER_STONE = ITEMS.register("power_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.POWER));
 
     public static final RegistrySupplier<Item> SPACE_STONE = ITEMS.register("space_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.SPACE));
 
     public static final RegistrySupplier<Item> REALITY_STONE = ITEMS.register("reality_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.REALITY));
 
     public static final RegistrySupplier<Item> SOUL_STONE = ITEMS.register("soul_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.SOUL));
 
     public static final RegistrySupplier<Item> TIME_STONE = ITEMS.register("time_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.TIME));
 
     public static final RegistrySupplier<Item> MIND_STONE = ITEMS.register("mind_stone",
-            () -> new Item(new Item.Properties().rarity(Rarity.EPIC)));
+            () -> new com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem(com.minhphuc.weapons.content.infinitygauntlet.InfinityStoneItem.StoneType.MIND));
 
     // ==========================================
     // MODULE: TENSURA DEMON LORD EVOLUTION
@@ -103,6 +112,23 @@ public class ModItems {
     public static final RegistrySupplier<Item> JACOB_LIGHT_PILLAR = ITEMS.register("jacob_light_pillar",
             () -> new Item(new Item.Properties()));
 
+    public static final RegistrySupplier<Item> TAISUI_EYE_PLANET = ITEMS.register("taisui_eye_planet",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> LIUREN_MAGIC_ARRAY = ITEMS.register("liuren_magic_array",
+            () -> new Item(new Item.Properties()));
+
+    @SuppressWarnings("unchecked")
+    public static final RegistrySupplier<Item>[] SHIKIGAMI_GUARDIANS = new RegistrySupplier[12];
+    static {
+        for (int i = 0; i < 12; i++) {
+            final int idx = i;
+            SHIKIGAMI_GUARDIANS[idx] = ITEMS.register("shikigami_guardian_" + idx, () -> new Item(new Item.Properties()));
+        }
+    }
+
+    public static final RegistrySupplier<Item> SHIKIGAMI_GUARDIAN = SHIKIGAMI_GUARDIANS[0];
+
     // ==========================================
     // CREATIVE TAB
     // ==========================================
@@ -111,6 +137,7 @@ public class ModItems {
                     .title(Component.literal("§6§lVũ Khí & Găng Tay Vô Cực"))
                     .icon(() -> new ItemStack(INFINITY_GAUNTLET.get()))
                     .displayItems((parameters, output) -> {
+                        output.accept(EMPTY_INFINITY_GAUNTLET.get());
                         output.accept(INFINITY_GAUNTLET.get());
                         output.accept(POWER_STONE.get());
                         output.accept(SPACE_STONE.get());
@@ -124,6 +151,7 @@ public class ModItems {
                         output.accept(DIVINE_CHESTPLATE.get());
                         output.accept(DIVINE_LEGGINGS.get());
                         output.accept(DIVINE_BOOTS.get());
+                        output.accept(GUIDE_BOOK.get());
                         output.accept(MOONLIGHT_SWORD.get());
                     })
             ));

@@ -1,5 +1,6 @@
 package com.minhphuc.weapons.content.tensura;
 
+import com.minhphuc.weapons.content.divine.SkillPowerRoll;
 import com.minhphuc.weapons.init.ModItems;
 import com.minhphuc.weapons.mixin.DisplayAccessor;
 import com.minhphuc.weapons.mixin.ItemDisplayAccessor;
@@ -56,8 +57,11 @@ public class BeelzebuthAbility {
         public int ticksRemaining;
         public final int totalTicks;
 
+        public final SkillPowerRoll powerRoll;
+
         public ActiveBeelzebuthDragon(ServerLevel level, ServerPlayer caster, Vec3 startPos, Vec3 lookVec,
-                                      float yaw, float pitch, Display.ItemDisplay displayEntity, int durationTicks) {
+                                      float yaw, float pitch, Display.ItemDisplay displayEntity, int durationTicks,
+                                      SkillPowerRoll powerRoll) {
             this.level = level;
             this.caster = caster;
             this.startPos = startPos;
@@ -67,6 +71,7 @@ public class BeelzebuthAbility {
             this.displayEntity = displayEntity;
             this.ticksRemaining = durationTicks;
             this.totalTicks = durationTicks;
+            this.powerRoll = powerRoll;
         }
     }
 
@@ -83,6 +88,10 @@ public class BeelzebuthAbility {
                 SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.5F, 0.7F);
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.WARDEN_SONIC_BOOM, SoundSource.PLAYERS, 2.2F, 0.5F);
+
+        // Gieo xúc xắc xuất lực ngẫu nhiên
+        SkillPowerRoll roll = SkillPowerRoll.roll();
+        roll.announceAndPlayEffects(player, "Bạo Thực Vương: Thôn Phệ (Predator)");
 
         Vec3 start = player.getEyePosition(1.0F);
         Vec3 look = player.getLookAngle();
@@ -117,7 +126,7 @@ public class BeelzebuthAbility {
             ));
 
             level.addFreshEntity(display);
-            ACTIVE_DRAGONS.add(new ActiveBeelzebuthDragon(level, player, start, look, yaw, pitch, display, 24)); // 1.2 giây
+            ACTIVE_DRAGONS.add(new ActiveBeelzebuthDragon(level, player, start, look, yaw, pitch, display, 24, roll)); // 1.2 giây
         }
 
         int devouredEntities = 0;
@@ -170,18 +179,35 @@ public class BeelzebuthAbility {
                     entity.hasImpulse = true;
 
                     if (entity instanceof LivingEntity living) {
-                        // Sinh vật dưới 50% máu -> Bị Beelzebuth nuốt chửng mất tích hoàn toàn!
-                        if (living.getHealth() <= living.getMaxHealth() * 0.5F || !(living.getMaxHealth() >= 100.0F)) {
+                        if (roll.isOverdrive()) {
+                            // BẠO KÍCH: Nuốt chửng 100% mọi thực thể
                             level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
                             level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
-
                             TensuraEvents.handleMobDeathDrop(player, living);
-                            living.discard(); // Nuốt chửng
+                            living.discard();
                             devouredEntities++;
+                        } else if (roll.isNormal()) {
+                            // XUẤT LỰC CHUẨN: Nuốt chửng <= 60 HP hoặc máu < 50%; Boss cắn rách 250F * multiplier
+                            if (living.getHealth() <= 60.0F || living.getHealth() <= living.getMaxHealth() * 0.5F) {
+                                level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
+                                level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
+                                TensuraEvents.handleMobDeathDrop(player, living);
+                                living.discard();
+                                devouredEntities++;
+                            } else {
+                                living.hurt(level.damageSources().playerAttack(player), 250.0F * roll.multiplier);
+                                living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
+                            }
                         } else {
-                            // Boss hoặc quái lớn: Cắn rách 200 sát thương và Wither
-                            living.hurt(level.damageSources().playerAttack(player), 200.0F);
-                            living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
+                            // ĐẦU RA THẤP: Nuốt <= 20 HP, quái to/Boss chỉ bị cắn 60F
+                            if (living.getHealth() <= 20.0F) {
+                                TensuraEvents.handleMobDeathDrop(player, living);
+                                living.discard();
+                                devouredEntities++;
+                            } else {
+                                living.hurt(level.damageSources().playerAttack(player), 60.0F * roll.multiplier);
+                                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 40, 2));
+                            }
                         }
                     } else if (entity instanceof ItemEntity itemEntity) {
                         itemEntity.discard();
@@ -277,18 +303,38 @@ public class BeelzebuthAbility {
                 // Nuốt chửng khi chạm vào khoang miệng rồng (bán kính 3m)
                 if (e.position().distanceToSqr(currentPos) <= 9.0D) {
                     if (e instanceof LivingEntity living) {
-                        if (living.getHealth() <= living.getMaxHealth() * 0.5F || !(living.getMaxHealth() >= 100.0F)) {
+                        SkillPowerRoll roll = d.powerRoll;
+                        if (roll != null && roll.isOverdrive()) {
                             d.level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
                             d.level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
                             if (d.caster != null) {
                                 TensuraEvents.handleMobDeathDrop(d.caster, living);
                             }
                             living.discard();
+                        } else if (roll != null && roll.isNormal()) {
+                            if (living.getHealth() <= 60.0F || living.getHealth() <= living.getMaxHealth() * 0.5F) {
+                                d.level.sendParticles(ParticleTypes.FLASH, living.getX(), living.getY() + 1.0D, living.getZ(), 1, 0, 0, 0, 0);
+                                d.level.sendParticles(ParticleTypes.DRAGON_BREATH, living.getX(), living.getY() + 1.0D, living.getZ(), 8, 0.2D, 0.3D, 0.2D, 0.03D);
+                                if (d.caster != null) {
+                                    TensuraEvents.handleMobDeathDrop(d.caster, living);
+                                }
+                                living.discard();
+                            } else {
+                                DamageSource dmgSource = (d.caster != null) ? d.level.damageSources().playerAttack(d.caster) : d.level.damageSources().magic();
+                                living.hurt(dmgSource, 200.0F * roll.multiplier);
+                                living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
+                                living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 4));
+                            }
                         } else {
-                            DamageSource dmgSource = (d.caster != null) ? d.level.damageSources().playerAttack(d.caster) : d.level.damageSources().magic();
-                            living.hurt(dmgSource, 150.0F);
-                            living.addEffect(new MobEffectInstance(MobEffects.WITHER, 100, 3));
-                            living.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 4));
+                            if (living.getHealth() <= 20.0F) {
+                                if (d.caster != null) {
+                                    TensuraEvents.handleMobDeathDrop(d.caster, living);
+                                }
+                                living.discard();
+                            } else {
+                                DamageSource dmgSource = (d.caster != null) ? d.level.damageSources().playerAttack(d.caster) : d.level.damageSources().magic();
+                                living.hurt(dmgSource, 50.0F * (roll != null ? roll.multiplier : 0.35F));
+                            }
                         }
                     } else if (e instanceof ItemEntity || e instanceof PrimedTnt || e instanceof Creeper) {
                         e.discard();
@@ -327,6 +373,10 @@ public class BeelzebuthAbility {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.DRAGON_FIREBALL_EXPLODE, SoundSource.PLAYERS, 1.8F, 0.6F);
 
+        // Gieo xúc xắc xuất lực ngẫu nhiên
+        SkillPowerRoll roll = SkillPowerRoll.roll();
+        roll.announceAndPlayEffects(player, "Bạo Thực Vương: Hủ Hóa & Bạo Liệt");
+
         Vec3 eyePos = player.getEyePosition(1.0F);
         Vec3 look = player.getLookAngle();
         double maxDist = 14.0D;
@@ -348,12 +398,20 @@ public class BeelzebuthAbility {
 
                 if (perpDistSq <= spreadAtDist * spreadAtDist) {
                     hitEntities.add(victim);
-                    victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 200, 4));
-                    victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 200, 3));
-                    victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WEAKNESS, 200, 3));
 
-                    // Sát thương ăn mòn cực đại
-                    victim.hurt(level.damageSources().magic(), 120.0F);
+                    if (roll.isOverdrive()) {
+                        victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 300, 5));
+                        victim.hurt(level.damageSources().magic(), 1000.0F);
+                    } else if (roll.isNormal()) {
+                        victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 200, 3));
+                        victim.hurt(level.damageSources().magic(), 200.0F * roll.multiplier);
+                    } else {
+                        victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WITHER, 100, 1));
+                        victim.hurt(level.damageSources().magic(), 50.0F * roll.multiplier);
+                    }
+
+                    victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 100, 2));
+                    victim.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.WEAKNESS, 100, 2));
 
                     level.sendParticles(ParticleTypes.SOUL, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 3, 0.2D, 0.4D, 0.2D, 0.05D);
                     level.sendParticles(ParticleTypes.DRAGON_BREATH, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 4, 0.3D, 0.3D, 0.3D, 0.05D);
