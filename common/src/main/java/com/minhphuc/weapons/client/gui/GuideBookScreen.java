@@ -56,7 +56,7 @@ public class GuideBookScreen extends Screen {
     private final ItemStack[][][] divineArmorRecipes = new ItemStack[4][3][3];
 
     public GuideBookScreen() {
-        super(Component.literal("Ma Đạo Thư"));
+        super(Component.translatable("gui.weapons.guide.screen_title"));
         initRecipes();
     }
 
@@ -144,19 +144,19 @@ public class GuideBookScreen extends Screen {
         int top = (this.height - BOOK_HEIGHT) / 2;
 
         // Nút trang trước
-        prevButton = Button.builder(Component.literal("◀ Trang Trước"), b -> {
+        prevButton = Button.builder(Component.translatable("gui.weapons.guide.btn.prev"), b -> {
             if (currentPage > 0) currentPage--;
             updateButtonState();
         }).bounds(left + 16, top + BOOK_HEIGHT - 26, 95, 20).build();
 
         // Nút trang sau
-        nextButton = Button.builder(Component.literal("Trang Sau ▶"), b -> {
+        nextButton = Button.builder(Component.translatable("gui.weapons.guide.btn.next"), b -> {
             if (currentPage < TOTAL_PAGES - 1) currentPage++;
             updateButtonState();
         }).bounds(left + BOOK_WIDTH - 111, top + BOOK_HEIGHT - 26, 95, 20).build();
 
         // Nút Đóng
-        closeButton = Button.builder(Component.literal("§c✕ Đóng"), b -> {
+        closeButton = Button.builder(Component.translatable("gui.weapons.guide.btn.close"), b -> {
             this.onClose();
         }).bounds(left + BOOK_WIDTH / 2 - 30, top + BOOK_HEIGHT - 26, 60, 20).build();
 
@@ -166,9 +166,9 @@ public class GuideBookScreen extends Screen {
 
         // --- Nút trang 4 (Găng Tay) ---
         int gauntletBtnY = top + 80;
-        gauntletEmptyBtn = Button.builder(Component.literal("1. Găng Trống"), b -> selectedGauntletTab = 0)
+        gauntletEmptyBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.empty_gauntlet"), b -> selectedGauntletTab = 0)
                 .bounds(left + 130, gauntletBtnY, 100, 18).build();
-        gauntletLoadedBtn = Button.builder(Component.literal("2. Khảm 6 Đá"), b -> selectedGauntletTab = 1)
+        gauntletLoadedBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.loaded_gauntlet"), b -> selectedGauntletTab = 1)
                 .bounds(left + 238, gauntletBtnY, 100, 18).build();
 
         this.addRenderableWidget(gauntletEmptyBtn);
@@ -176,13 +176,13 @@ public class GuideBookScreen extends Screen {
 
         // --- Nút trang 5 (4 Món Giáp) ---
         int armorBtnY = top + 80;
-        armorHelmBtn = Button.builder(Component.literal("Mũ"), b -> selectedArmorPiece = 0)
+        armorHelmBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.armor_helm"), b -> selectedArmorPiece = 0)
                 .bounds(left + 130, armorBtnY, 46, 18).build();
-        armorChestBtn = Button.builder(Component.literal("Áo"), b -> selectedArmorPiece = 1)
+        armorChestBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.armor_chest"), b -> selectedArmorPiece = 1)
                 .bounds(left + 182, armorBtnY, 46, 18).build();
-        armorLegsBtn = Button.builder(Component.literal("Quần"), b -> selectedArmorPiece = 2)
+        armorLegsBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.armor_legs"), b -> selectedArmorPiece = 2)
                 .bounds(left + 234, armorBtnY, 46, 18).build();
-        armorBootsBtn = Button.builder(Component.literal("Giày"), b -> selectedArmorPiece = 3)
+        armorBootsBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.armor_boots"), b -> selectedArmorPiece = 3)
                 .bounds(left + 286, armorBtnY, 46, 18).build();
 
         this.addRenderableWidget(armorHelmBtn);
@@ -192,18 +192,18 @@ public class GuideBookScreen extends Screen {
 
         // --- Nút trang 6 (Tác Giả & GitHub) ---
         int authorBtnY = top + BOOK_HEIGHT - 54;
-        openGithubBtn = Button.builder(Component.literal("§6🔗 Mở Link GitHub"), b -> {
+        openGithubBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.open_github"), b -> {
             try {
                 Util.getPlatform().openUri(URI.create(GITHUB_URL));
             } catch (Exception ignored) {}
         }).bounds(left + 50, authorBtnY, 130, 20).build();
 
-        copyGithubBtn = Button.builder(Component.literal("§a📋 Sao Chép Link"), b -> {
+        copyGithubBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.copy_github"), b -> {
             if (this.minecraft != null) {
                 this.minecraft.keyboardHandler.setClipboard(GITHUB_URL);
                 if (this.minecraft.player != null) {
                     this.minecraft.player.displayClientMessage(
-                            Component.literal("§a✔ Đã sao chép link GitHub của MinhPhuc00ne / Jos vào Clipboard!"),
+                            Component.translatable("gui.weapons.guide.copy_success"),
                             true
                     );
                 }
@@ -254,7 +254,7 @@ public class GuideBookScreen extends Screen {
         guiGraphics.fill(left + 8, top + 25, left + BOOK_WIDTH - 8, top + 26, 0xFFD4AF37);
 
         // Số trang góc phải
-        String pageStr = "Trang " + (currentPage + 1) + " / " + TOTAL_PAGES;
+        String pageStr = Component.translatable("gui.weapons.guide.page_indicator", currentPage + 1, TOTAL_PAGES).getString();
         guiGraphics.drawString(font, "§7" + pageStr, left + BOOK_WIDTH - font.width(pageStr) - 14, top + 11, 0xFFFFFFFF, false);
 
         // 2. Nội dung từng trang
@@ -279,37 +279,37 @@ public class GuideBookScreen extends Screen {
      * TRANG 1: MA ĐẠO THƯ
      */
     private void renderPageOverview(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§6§l📜 MA ĐẠO THƯ", left + 14, top + 11, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
         int textY = top + 36;
-        guiGraphics.drawString(font, "§eHI!", left + 14, textY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.greeting").getString(), left + 14, textY, 0xFFFFFFFF, false);
 
         textY += 16;
-        guiGraphics.drawString(font, "§fMa Đạo thư này lưu truyền tri thức cổ xưa về cách chế tác,", left + 14, textY, 0xFFDDDDDD, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.intro1").getString(), left + 14, textY, 0xFFDDDDDD, false);
         textY += 12;
-        guiGraphics.drawString(font, "§fthức tỉnh và làm chủ những bảo vật tối thượng.", left + 14, textY, 0xFFDDDDDD, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.intro2").getString(), left + 14, textY, 0xFFDDDDDD, false);
 
         textY += 18;
-        guiGraphics.drawString(font, "§b⚡ Thao Tác Kích Hoạt Kỹ Năng:", left + 14, textY, 0xFF55FFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.controls_title").getString(), left + 14, textY, 0xFF55FFFF, false);
 
         textY += 14;
-        guiGraphics.drawString(font, " • §ePhím [Z]: §fChuyển đổi qua lại thứ tự các chiêu thức", left + 18, textY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.control1").getString(), left + 18, textY, 0xFFFFFFFF, false);
         textY += 13;
-        guiGraphics.drawString(font, " • §a[Chuột Phải]: §fKích hoạt thi triển kỹ năng đã chọn", left + 18, textY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.control2").getString(), left + 18, textY, 0xFFFFFFFF, false);
         textY += 13;
-        guiGraphics.drawString(font, " • §bPhím [Page Up]: §fChọn Đá Vô Cực", left + 18, textY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.control3a").getString(), left + 18, textY, 0xFFFFFFFF, false);
         textY += 11;
-        guiGraphics.drawString(font, "   §fđể gắn hoặc chọn sức mạnh Đá Vô Cực.", left + 18, textY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.control3b").getString(), left + 18, textY, 0xFFFFFFFF, false);
 
         textY += 20;
-        guiGraphics.drawString(font, "§8👉 Bấm [Trang Sau ▶] để xem chi tiết công thức từng trang bị.", left + 14, textY, 0xFF888888, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p0.footer").getString(), left + 14, textY, 0xFF888888, false);
     }
 
     /**
      * TRANG 2: NGUYỆT QUANG THẦN TẾ KIẾM
      */
     private void renderPageMoonlightSword(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§6§l⚔️ NGUYỆT QUANG THẦN TẾ KIẾM", left + 14, top + 11, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
         int gridX = left + 16;
         int gridY = top + 34;
@@ -318,32 +318,32 @@ public class GuideBookScreen extends Screen {
 
         int descX = left + 134;
         int descY = top + 34;
-        guiGraphics.drawString(font, "§6§lNguyệt Quang Thần Tế Kiếm", descX, descY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.name").getString(), descX, descY, 0xFFFFAA00, false);
         descY += 14;
-        guiGraphics.drawString(font, "§7Bảo kiếm hộ vệ thánh điện.", descX, descY, 0xFFDDDDDD, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.desc").getString(), descX, descY, 0xFFDDDDDD, false);
         descY += 12;
-        guiGraphics.drawString(font, "§aĐộ bền vĩnh cửu.", descX, descY, 0xFF55FF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.durability").getString(), descX, descY, 0xFF55FF55, false);
 
         int skillY = top + 104;
-        guiGraphics.drawString(font, "§e⚡ Kỹ Năng Tối Thượng (Phím [Z]):", left + 14, skillY, 0xFFFFDD00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skills_title").getString(), left + 14, skillY, 0xFFFFDD00, false);
 
         skillY += 13;
-        guiGraphics.drawString(font, " 1. §4Trảm Kích Hắc Thiểm Bá Vương", left + 18, skillY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill1").getString(), left + 18, skillY, 0xFFFFFFFF, false);
         skillY += 11;
-        guiGraphics.drawString(font, " 2. §eTam Trọng Thánh Giới (Linh Tử Băng Hoại)", left + 18, skillY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill2").getString(), left + 18, skillY, 0xFFFFFFFF, false);
         skillY += 11;
-        guiGraphics.drawString(font, " 3. §bNấc Thang Jacob (Tà Khứ Vũ Thê Tử)", left + 18, skillY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill3").getString(), left + 18, skillY, 0xFFFFFFFF, false);
         skillY += 11;
-        guiGraphics.drawString(font, " 4. §dBạo Thực Vương Beelzebuth §7(Chân Ma Vương)", left + 18, skillY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill4").getString(), left + 18, skillY, 0xFFFFFFFF, false);
         skillY += 11;
-        guiGraphics.drawString(font, " 5. §5Long Tinh Bộc Viêm Bá: §d[Mặc Đủ Giáp + Ma Vương]", left + 18, skillY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill5").getString(), left + 18, skillY, 0xFFFFAA00, false);
     }
 
     /**
      * TRANG 3: CON ĐƯỜNG THỨC TỈNH CHÂN MA VƯƠNG
      */
     private void renderPageDemonLord(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§d§l👑 THỨC TỈNH CHÂN MA VƯƠNG", left + 14, top + 11, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.title").getString(), left + 14, top + 11, 0xFFFF55FF, false);
 
         int gridX = left + 16;
         int gridY = top + 34;
@@ -352,36 +352,36 @@ public class GuideBookScreen extends Screen {
 
         int descX = left + 134;
         int descY = top + 34;
-        guiGraphics.drawString(font, "§d§lHạt Giống Ma Vương", descX, descY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.seed_name").getString(), descX, descY, 0xFFFF55FF, false);
         descY += 13;
-        guiGraphics.drawString(font, "§a⭐ Cách kiếm trong Survival:", descX, descY, 0xFF55FF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.how_to_get").getString(), descX, descY, 0xFF55FF55, false);
         descY += 11;
-        guiGraphics.drawString(font, "§fCấp §e10+ EXP§f, đánh quái thường", descX, descY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.exp_note").getString(), descX, descY, 0xFFFFFFFF, false);
         descY += 10;
-        guiGraphics.drawString(font, "§fđể gom góp §d10.000 Linh Hồn§f.", descX, descY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.soul_note").getString(), descX, descY, 0xFFFFFFFF, false);
         descY += 12;
-        guiGraphics.drawString(font, "§c[Chuột Phải] §fđể bắt đầu", descX, descY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.right_click").getString(), descX, descY, 0xFFFFAA00, false);
         descY += 10;
-        guiGraphics.drawString(font, "§cLễ Hội Thu Hoạch (Harvest Festival).", descX, descY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.harvest").getString(), descX, descY, 0xFFFFAA00, false);
 
         int awakenY = top + 104;
-        guiGraphics.drawString(font, "§d⚡ Đặc Quyền Chân Ma Vương:", left + 14, awakenY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.perks_title").getString(), left + 14, awakenY, 0xFFFF55FF, false);
 
         awakenY += 13;
-        guiGraphics.drawString(font, " • §eMáu Tối Đa: §aTăng vọt lên 40 Tim (80 HP)", left + 18, awakenY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.perk1").getString(), left + 18, awakenY, 0xFFFFFFFF, false);
         awakenY += 11;
-        guiGraphics.drawString(font, " • §bTốc Độ & Kháng Cự: §fSpeed I, Resistance I vĩnh cửu", left + 18, awakenY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.perk2").getString(), left + 18, awakenY, 0xFFFFFFFF, false);
         awakenY += 11;
-        guiGraphics.drawString(font, " • §5Bí Kíp Tay Không (Phím [Z]): §fThôn Phệ & Hủ Hóa", left + 18, awakenY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.perk3").getString(), left + 18, awakenY, 0xFFFFFFFF, false);
         awakenY += 11;
-        guiGraphics.drawString(font, " • §cKhi Mặc Đủ Giáp Thần Linh: §dKhai mở Dragon Nova!", left + 18, awakenY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p2.perk4").getString(), left + 18, awakenY, 0xFFFF55FF, false);
     }
 
     /**
      * TRANG 4: GĂNG TAY VÔ CỰC & 6 VIÊN ĐÁ
      */
     private void renderPageInfinityGauntlet(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§e§l💎 GĂNG TAY VÔ CỰC & 6 ĐÁ", left + 14, top + 11, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.title").getString(), left + 14, top + 11, 0xFFFFFF55, false);
 
         int gridX = left + 16;
         int gridY = top + 34;
@@ -395,41 +395,41 @@ public class GuideBookScreen extends Screen {
         int descX = left + 134;
         int descY = top + 34;
         if (selectedGauntletTab == 0) {
-            guiGraphics.drawString(font, "§e§lGăng Tay Vô Cực Trống", descX, descY, 0xFFFFFF55, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.empty_name").getString(), descX, descY, 0xFFFFFF55, false);
             descY += 12;
-            guiGraphics.drawString(font, "§7Găng tay vàng rèn từ Netherite.", descX, descY, 0xFFDDDDDD, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.empty_desc1").getString(), descX, descY, 0xFFDDDDDD, false);
             descY += 11;
-            guiGraphics.drawString(font, "§aCầm tay phụ để chống phản phệ.", descX, descY, 0xFF55FF55, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.empty_desc2").getString(), descX, descY, 0xFF55FF55, false);
             descY += 11;
-            guiGraphics.drawString(font, "§7Bấm nút bên dưới để đổi xem:", descX, descY, 0xFF888888, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.empty_desc3").getString(), descX, descY, 0xFF888888, false);
         } else {
-            guiGraphics.drawString(font, "§6§lGăng Tay Đầy Đủ 6 Đá", descX, descY, 0xFFFFAA00, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.loaded_name").getString(), descX, descY, 0xFFFFAA00, false);
             descY += 12;
-            guiGraphics.drawString(font, "§aHợp nhất 6 Viên Đá Vô Cực.", descX, descY, 0xFF55FF55, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.loaded_desc1").getString(), descX, descY, 0xFF55FF55, false);
             descY += 11;
-            guiGraphics.drawString(font, "§bPhím [Page Up] chọn chiêu thức.", descX, descY, 0xFF55FFFF, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.loaded_desc2").getString(), descX, descY, 0xFF55FFFF, false);
             descY += 11;
-            guiGraphics.drawString(font, "§eCú Búng Tay (Snap) xóa sổ quái!", descX, descY, 0xFFFFFF55, false);
+            guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.loaded_desc3").getString(), descX, descY, 0xFFFFFF55, false);
         }
 
         int bossY = top + 104;
-        guiGraphics.drawString(font, "§6⚡ Săn 6 Đá Vanilla & Cầm Riêng Lẻ 20% Lực (Không Lag):", left + 14, bossY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.boss_title").getString(), left + 14, bossY, 0xFFFFAA00, false);
 
         bossY += 13;
-        guiGraphics.drawString(font, " 🔮 §dPower: §fHạ Wither | §cReality: §fHạ Piglin Brute", left + 18, bossY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.boss1").getString(), left + 18, bossY, 0xFFFFFFFF, false);
         bossY += 11;
-        guiGraphics.drawString(font, " 🌌 §9Space: §fHạ Rồng Ender | ⌛ §aTime: §fHạ Elder Guardian", left + 18, bossY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.boss2").getString(), left + 18, bossY, 0xFFFFFFFF, false);
         bossY += 11;
-        guiGraphics.drawString(font, " 🔥 §6Soul: §fHạ Warden | 🧠 §eMind: §fHạ Evoker Mansion", left + 18, bossY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.boss3").getString(), left + 18, bossY, 0xFFFFFFFF, false);
         bossY += 11;
-        guiGraphics.drawString(font, " §c⚠️ Cảnh Báo: §fCầm đá tay không bị phản phệ (cần Găng Trống / Giáp)!", left + 18, bossY, 0xFFFF5555, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p3.backlash_warning").getString(), left + 18, bossY, 0xFFFF5555, false);
     }
 
     /**
      * TRANG 5: THẦN LINH VŨ TRANG (DIVINE ARMOR)
      */
     private void renderPageDivineArmor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§6§l🛡️ THẦN LINH VŨ TRANG (DIVINE)", left + 14, top + 11, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
         int gridX = left + 16;
         int gridY = top + 34;
@@ -442,10 +442,10 @@ public class GuideBookScreen extends Screen {
         };
 
         String armorPieceName = switch (selectedArmorPiece) {
-            case 0 -> "Mũ Thần Linh Vũ Trang";
-            case 1 -> "Áo Giáp Thần Linh Vũ Trang";
-            case 2 -> "Quần Thần Linh Vũ Trang";
-            default -> "Giày Thần Linh Vũ Trang";
+            case 0 -> Component.translatable("gui.weapons.guide.p4.piece_helm").getString();
+            case 1 -> Component.translatable("gui.weapons.guide.p4.piece_chest").getString();
+            case 2 -> Component.translatable("gui.weapons.guide.p4.piece_legs").getString();
+            default -> Component.translatable("gui.weapons.guide.p4.piece_boots").getString();
         };
 
         drawCraftingGrid(guiGraphics, gridX, gridY, divineArmorRecipes[selectedArmorPiece], outputArmor, mouseX, mouseY);
@@ -454,30 +454,30 @@ public class GuideBookScreen extends Screen {
         int descY = top + 34;
         guiGraphics.drawString(font, "§e§l" + armorPieceName, descX, descY, 0xFFFFFF55, false);
         descY += 12;
-        guiGraphics.drawString(font, "§7Nâng cấp từ Giáp Netherite tương ứng.", descX, descY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.desc1").getString(), descX, descY, 0xFFFFFFFF, false);
         descY += 11;
-        guiGraphics.drawString(font, "§aĐộ bền bất tử, không thể bị vỡ.", descX, descY, 0xFF55FF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.desc2").getString(), descX, descY, 0xFF55FF55, false);
         descY += 11;
-        guiGraphics.drawString(font, "§7Bấm nút bên dưới để xem từng món:", descX, descY, 0xFF888888, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.desc3").getString(), descX, descY, 0xFF888888, false);
 
         int effY = top + 104;
-        guiGraphics.drawString(font, "§6⚡ Đặc Tính Kháng Thần Thánh (Khi Mặc Đủ Cả 4 Món):", left + 14, effY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.imm_title").getString(), left + 14, effY, 0xFFFFAA00, false);
 
         effY += 13;
-        guiGraphics.drawString(font, " §a✔ Miễn nhiễm 100% mọi sát thương: §fCận chiến, tên, lửa, nổ...", left + 18, effY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.imm1").getString(), left + 18, effY, 0xFFFFFFFF, false);
         effY += 12;
-        guiGraphics.drawString(font, " §a✔ Miễn nhiễm đòn đánh Boss: §fSonic Boom, Wither Skull...", left + 18, effY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.imm2").getString(), left + 18, effY, 0xFFFFFFFF, false);
         effY += 12;
-        guiGraphics.drawString(font, " §d★ Hợp Nhất Chân Ma Vương: §fKhai mở §5§lDragon Nova §f(Phím [Z])", left + 18, effY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.imm3").getString(), left + 18, effY, 0xFFFF55FF, false);
         effY += 12;
-        guiGraphics.drawString(font, " §c✘ 3 Điểm yếu: §fSát thương Độc (Poison), Đuối Nước và Rơi Hư Vô.", left + 18, effY, 0xFFFFFFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p4.weakness").getString(), left + 18, effY, 0xFFFFFFFF, false);
     }
 
     /**
      * TRANG 6: CẤM THUẬT DIỆT RỒNG - LONG TINH BỘC VIÊM BÁ (DRAGON NOVA)
      */
     private void renderPageDragonNova(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§5§l🐲 CẤM THUẬT DIỆT RỒNG: DRAGO-NOVA", left + 14, top + 11, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.title").getString(), left + 14, top + 11, 0xFFFF55FF, false);
 
         int imgX = left + 14;
         int imgY = top + 34;
@@ -492,36 +492,36 @@ public class GuideBookScreen extends Screen {
         // Văn phong thần thoại mô tả trận trảm sát Tinh Long
         int descX = left + 144;
         int descY = top + 34;
-        guiGraphics.drawString(font, "§5§lCấm Thuật Diệt Rồng Cổ Đại", descX, descY, 0xFFFF55FF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.name1").getString(), descX, descY, 0xFFFF55FF, true);
         descY += 12;
-        guiGraphics.drawString(font, "§dLong Tinh Bộc Viêm Bá §e(Drago-Nova)", descX, descY, 0xFFFF88FF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.name2").getString(), descX, descY, 0xFFFF88FF, true);
         descY += 12;
-        guiGraphics.drawString(font, "§7Tuyệt kỹ diệt thế.", descX, descY, 0xFFDDDDDD, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.desc1").getString(), descX, descY, 0xFFDDDDDD, true);
         descY += 11;
-        guiGraphics.drawString(font, "§7Từng dùng để §cthảm sát và thanh tẩy", descX, descY, 0xFFDDDDDD, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.desc2").getString(), descX, descY, 0xFFDDDDDD, true);
         descY += 11;
-        guiGraphics.drawString(font, "§cTinh Linh Long§7 hóa điên.", descX, descY, 0xFFFF6666, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.desc3").getString(), descX, descY, 0xFFFF6666, true);
         descY += 11;
-        guiGraphics.drawString(font, "§aBốc hơi vạn vật thành bình địa tro bụi.", descX, descY, 0xFF55FF55, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.desc4").getString(), descX, descY, 0xFF55FF55, true);
 
         int effY = top + 128;
-        guiGraphics.drawString(font, "§6⚡ Uy Lực Hủy Diệt & Phá Vỡ Địa Hình:", left + 14, effY, 0xFFFFAA00, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.power_title").getString(), left + 14, effY, 0xFFFFAA00, true);
 
         effY += 12;
-        guiGraphics.drawString(font, " • §bLinh Tử Hội Tụ: §fHút sạch linh tử tinh khiết trong không gian.", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.power1").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §cPhá Hủy Block: §fChùm tia xuyên thấu, san phẳng địa hình.", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.power2").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §dSiêu Tân Tinh: §fTạo hố bom, rút §c88% Máu Đại Boss§f!", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.power3").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §eĐiều Kiện: §fThức Tỉnh Chân Ma Vương + Mặc đủ 4 Món Giáp Thần Linh.", left + 18, effY, 0xFFFFFF55, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p5.power4").getString(), left + 18, effY, 0xFFFFFF55, true);
     }
 
     /**
      * TRANG 7: THÁI TUẾ TINH QUÂN - DARK GATHERING
      */
     private void renderPageTaisui(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§e§l👁️ Taisai Seikun", left + 14, top + 11, 0xFFFFCC00, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.title").getString(), left + 14, top + 11, 0xFFFFCC00, true);
 
         int imgX = left + 14;
         int imgY = top + 34;
@@ -536,51 +536,51 @@ public class GuideBookScreen extends Screen {
         // Mô tả Thái Tuế Tinh Quân
         int descX = left + 144;
         int descY = top + 34;
-        guiGraphics.drawString(font, "§e§lThái Tuế Tinh Quân §6(泰歳星君)", descX, descY, 0xFFFFD700, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.name").getString(), descX, descY, 0xFFFFD700, true);
         descY += 12;
-        guiGraphics.drawString(font, "§7Vị Thần Thống Trị Các Vì Tinh Tú §bDark Gathering§7.", descX, descY, 0xFFDDDDDD, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.desc").getString(), descX, descY, 0xFFDDDDDD, true);
         descY += 11;
-        guiGraphics.drawString(font, "§d• Tuyệt Diệt Tinh Tú (Extinction Stars):", descX, descY, 0xFFFF88FF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.star_name").getString(), descX, descY, 0xFFFF88FF, true);
         descY += 10;
-        guiGraphics.drawString(font, " §f[Chuột Trái]: Bắn 1-Hit Kill & phá block!", descX, descY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.star_click").getString(), descX, descY, 0xFFFFFFFF, true);
         descY += 11;
-        guiGraphics.drawString(font, "§b• Trận Đồ Cưỡng Chế Tai Ương:", descX, descY, 0xFF55FFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.array_name").getString(), descX, descY, 0xFF55FFFF, true);
         descY += 10;
-        guiGraphics.drawString(font, " §f12 Thập Nhị Thần Tướng", descX, descY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.array_sub").getString(), descX, descY, 0xFFFFFFFF, true);
 
         int effY = top + 128;
-        guiGraphics.drawString(font, "§6⚡ Quy Tắc Vận Hành & Khắc Chế:", left + 14, effY, 0xFFFFAA00, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.rules_title").getString(), left + 14, effY, 0xFFFFAA00, true);
 
         effY += 12;
-        guiGraphics.drawString(font, " • §eTuyệt Diệt Tinh Tú: §fBắn hết 5 sao sẽ tự động kết thúc chiêu.", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.rule1").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §aLớp Phòng Ngự: §fKháng 100% sát thương.", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.rule2").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §bThoát Kết Giới: §fNhấn Cách 2 lần để bay lên hoặc nhấp Chuột Phải.", left + 18, effY, 0xFFFFFFFF, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.rule3").getString(), left + 18, effY, 0xFFFFFFFF, true);
         effY += 11;
-        guiGraphics.drawString(font, " • §cĐiều Kiện: §fThức Tỉnh Chân Ma Vương (chuyển đổi qua phím [Z]).", left + 18, effY, 0xFFFFFF55, true);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p6.rule4").getString(), left + 18, effY, 0xFFFFFF55, true);
     }
 
     /**
      * TRANG 8: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
      */
     private void renderPageAuthor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, "§6§l👑 TÁC GIẢ & THÔNG TIN DỰ ÁN", left + 14, top + 11, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
         int textY = top + 34;
-        guiGraphics.drawString(font, "§e⚡ Tác Giả Sáng Lập: §f§lMinhPhuc00ne / Jos", left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.author").getString(), left + 18, textY, 0xFFFFAA00, false);
 
         textY += 13;
-        guiGraphics.drawString(font, "§b🏢 Đơn Vị Phát Triển: §f§lIcey Studio", left + 18, textY, 0xFF55FFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.studio").getString(), left + 18, textY, 0xFF55FFFF, false);
 
         textY += 13;
-        guiGraphics.drawString(font, "§6🎓 Học Viện / Trường: §f§lFPT University", left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.university").getString(), left + 18, textY, 0xFFFFAA00, false);
 
         textY += 13;
-        guiGraphics.drawString(font, "§a🌟 Tên Bản Mod: §fWeapons Mod - Divine Armament & Infinity", left + 18, textY, 0xFF55FF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.mod_name").getString(), left + 18, textY, 0xFF55FF55, false);
 
         textY += 13;
-        guiGraphics.drawString(font, "§d📜 Bản Quyền: §fMIT License (Open Source)", left + 18, textY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.license").getString(), left + 18, textY, 0xFFFF55FF, false);
 
         textY += 15;
         // Khung trích dẫn hoành tráng
@@ -588,12 +588,12 @@ public class GuideBookScreen extends Screen {
         guiGraphics.fill(left + 18, textY - 2, left + 18 + quoteBoxW, textY + 38, 0xFF231B30);
         drawBorder(guiGraphics, left + 18, textY - 2, quoteBoxW, 40, 0xFFD4AF37);
 
-        guiGraphics.drawString(font, "§e\"Được kiến tạo từ niềm đam mê và sở thích của tác giả.", left + 24, textY + 3, 0xFFFFFF55, false);
-        guiGraphics.drawString(font, "§eHy vọng bạn sẽ tìm thấy niềm vui trong từng trận chiến.", left + 24, textY + 14, 0xFFFFFF55, false);
-        guiGraphics.drawString(font, "§eChúc bạn có một trải nghiệm thật bùng nổ và tuyệt vời!\"", left + 24, textY + 25, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote1").getString(), left + 24, textY + 3, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote2").getString(), left + 24, textY + 14, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote3").getString(), left + 24, textY + 25, 0xFFFFFF55, false);
 
         textY += 44;
-        guiGraphics.drawString(font, "§6🔗 Mã Nguồn Dự Án (GitHub):", left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.github").getString(), left + 18, textY, 0xFFFFAA00, false);
         textY += 11;
         guiGraphics.drawString(font, "§9§n" + GITHUB_URL, left + 18, textY, 0xFF55FFFF, false);
     }
