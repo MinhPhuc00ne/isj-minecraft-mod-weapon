@@ -42,20 +42,26 @@ public class ServerboundCycleSkillPacket {
                 // 2. Chuyển đổi skill cho Chân Ma Vương (khi không cầm kiếm)
                 boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
                 if (isTrueDemonLord) {
+                    int maxSkills = 5; // 0: Thôn Phệ, 1: Hủ Hóa, 2: Dragon Nova, 3: Tuyệt Diệt Tinh Tú, 4: Lục Nhậm Thần Khóa
                     int current = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
-                    int next = (current + 1) % 2; // 0: Thôn Phệ, 1: Hủ Hóa
+                    int next = (current + 1) % maxSkills;
                     EntityDataHelper.getCustomData(player).putInt("TensuraDemonLordSkill", next);
 
-                    String skillName = next == 0
-                            ? "§d§l1. Bạo Thực Vương: Thôn Phệ (Predator)"
-                            : "§c§l2. Bạo Thực Vương: Hủ Hóa & Bạo Liệt (Corrosion)";
+                    String skillName = switch (next) {
+                        case 0 -> "§d§l1. Bạo Thực Vương: Thôn Phệ (Predator)";
+                        case 1 -> "§c§l2. Bạo Thực Vương: Hủ Hóa & Bạo Liệt (Corrosion)";
+                        case 2 -> "§d§l3. Long Tinh Bộc Viêm Bá: Dragon Nova (竜星爆炎覇)";
+                        case 3 -> "§e§l4. Phẫn Nộ Vương: Tuyệt Diệt Tinh Tú";
+                        case 4 -> "§b§l5. Trận Đồ Cưỡng Chế Tai Ương";
+                        default -> "§7Chưa chọn";
+                    };
 
                     player.displayClientMessage(
                         Component.literal("§d§l[CHÂN MA VƯƠNG] §fBáo cáo. Kỹ năng được chọn: " + skillName + " §7(Chuột Phải để thi triển)"),
                         true
                     );
 
-                    float pitch = 1.0F + (next * 0.4F);
+                    float pitch = 1.0F + (next * 0.25F);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                             SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, pitch);
                 } else {

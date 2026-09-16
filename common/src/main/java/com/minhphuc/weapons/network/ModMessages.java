@@ -41,6 +41,21 @@ public class ModMessages {
                 ServerboundCycleSkillPacket::encode,
                 ServerboundCycleSkillPacket::new,
                 ServerboundCycleSkillPacket::handle);
+
+        CHANNEL.register(ServerboundFireTaisuiStarPacket.class,
+                ServerboundFireTaisuiStarPacket::encode,
+                ServerboundFireTaisuiStarPacket::new,
+                ServerboundFireTaisuiStarPacket::handle);
+
+        CHANNEL.register(ClientboundSyncTaisuiPacket.class,
+                ClientboundSyncTaisuiPacket::encode,
+                ClientboundSyncTaisuiPacket::new,
+                ClientboundSyncTaisuiPacket::handle);
+
+        CHANNEL.register(ServerboundExitLiuRenBarrierPacket.class,
+                ServerboundExitLiuRenBarrierPacket::encode,
+                ServerboundExitLiuRenBarrierPacket::new,
+                ServerboundExitLiuRenBarrierPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {
@@ -49,5 +64,9 @@ public class ModMessages {
 
     public static <MSG> void sendToPlayer(MSG message, ServerPlayer player) {
         CHANNEL.sendToPlayer(player, message);
+    }
+
+    public static <MSG> void sendToPlayers(Iterable<ServerPlayer> players, MSG message) {
+        CHANNEL.sendToPlayers(players, message);
     }
 }

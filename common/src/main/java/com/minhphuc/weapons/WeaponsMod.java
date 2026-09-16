@@ -35,6 +35,7 @@ public class WeaponsMod {
     public static void initClient() {
         ModKeyBindings.register();
         ClientInputEvents.register();
+        com.minhphuc.weapons.client.ClientTaisuiHandler.init();
         LOGGER.info("Weapons Mod Client Setup complete!");
     }
 }

@@ -38,18 +38,53 @@ public class DivineWeaponEvents {
         // Tick cập nhật Lễ Hội Thu Hoạch Thức Tỉnh Chân Ma Vương (Harvest Festival)
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.tensura.HarvestFestival::tickRituals);
 
+        // Tick cập nhật Long Tinh Bộc Viêm Bá: Dragon Nova
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.tensura.DragonNovaAbility::tickDragonNovas);
+
+        // Tick cập nhật Thái Tuế Tinh Quân: Tuyệt Diệt Tinh Tú
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility::tickTaisuiStates);
+
+        // Tick cập nhật Thái Tuế Tinh Quân: Lớp Phòng Ngự Lục Nhậm Thần Khóa
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility::tickBarriers);
+
+        // Đồng bộ trạng thái Tuyệt Diệt Tinh Tú khi người chơi tham gia thế giới
+        dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(serverPlayer -> {
+            com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.ACTIVE_TAISUI.forEach((uuid, state) -> {
+                if (state.isCharged && state.starsRemaining > 0) {
+                    com.minhphuc.weapons.network.ModMessages.sendToPlayer(
+                            new com.minhphuc.weapons.network.ClientboundSyncTaisuiPacket(uuid, true, state.starsRemaining),
+                            serverPlayer
+                    );
+                }
+            });
+        });
+
         // Chuột phải vào sinh vật khi tay không: Thi triển Kỹ Năng Chân Ma Vương
         InteractionEvent.INTERACT_ENTITY.register((player, target, hand) -> {
             if (player.level().isClientSide()) return EventResult.pass();
             if (player.getItemInHand(hand).isEmpty() && player instanceof ServerPlayer serverPlayer) {
                 boolean isTrueDemonLord = EntityDataHelper.getCustomData(serverPlayer).getBoolean("TensuraTrueDemonLord");
                 if (isTrueDemonLord) {
+                    int selectedSkill = EntityDataHelper.getCustomData(serverPlayer).getInt("TensuraDemonLordSkill");
+                    if (selectedSkill != 3 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(serverPlayer)) {
+                        serverPlayer.displayClientMessage(
+                            Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Không thể thi triển kỹ năng khác!"),
+                            true
+                        );
+                        return EventResult.interruptTrue();
+                    }
+
                     if (serverPlayer.getCooldowns().isOnCooldown(ModItems.DEMON_LORD_SEED.get())) {
                         return EventResult.interruptTrue();
                     }
-                    int selectedSkill = EntityDataHelper.getCustomData(serverPlayer).getInt("TensuraDemonLordSkill");
                     ServerLevel sl = (ServerLevel) serverPlayer.level();
-                    if (selectedSkill == 1) {
+                    if (selectedSkill == 4) {
+                        com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility.toggleBarrier(sl, serverPlayer);
+                    } else if (selectedSkill == 3) {
+                        com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.cast(sl, serverPlayer);
+                    } else if (selectedSkill == 2) {
+                        com.minhphuc.weapons.content.tensura.DragonNovaAbility.cast(sl, serverPlayer);
+                    } else if (selectedSkill == 1) {
                         BeelzebuthAbility.executeCorrosion(sl, serverPlayer);
                     } else {
                         BeelzebuthAbility.executeBeelzebuth(sl, serverPlayer);
@@ -62,6 +97,17 @@ public class DivineWeaponEvents {
     }
 
     public static EventResult onLivingHurt(LivingEntity victim, DamageSource source, float amount) {
+        // =========================================================================
+        // 0. LỚP PHÒNG NGỰ LỤC NHẬM THẦN KHÓA: Bất tử tuyệt đối 100% (kể cả Sonic Boom của Warden)!
+        // =========================================================================
+        if (victim instanceof Player player) {
+            if (com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility.isBarrierActive(player)) {
+                player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.0F, 1.6F);
+                return EventResult.interruptFalse();
+            }
+        }
+
         // =========================================================================
         // 1. THẦN LINH VŨ TRANG (DIVINE ARMOR): Kháng gần 100% mọi sát thương trừ Độc & Dưới Nước
         // =========================================================================
