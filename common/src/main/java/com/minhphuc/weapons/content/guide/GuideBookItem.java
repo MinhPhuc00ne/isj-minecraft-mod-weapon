@@ -33,11 +33,11 @@ public class GuideBookItem extends Item {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
-        tooltip.add(Component.literal("§6§l[BÍ TÍCH THẦN THOẠI]"));
-        tooltip.add(Component.literal("§b§lThánh Thư Thần Khí & Ma Vương"));
-        tooltip.add(Component.literal("§7Cuốn sách ghi chép toàn bộ công thức rèn đúc,"));
-        tooltip.add(Component.literal("§7cách thức tỉnh Chân Ma Vương và bí kíp tuyệt kỹ."));
-        tooltip.add(Component.literal(""));
-        tooltip.add(Component.literal("§e👉 Nhấn §a[Chuột Phải] §eđể mở giao diện hướng dẫn trực quan!"));
+        tooltip.add(Component.translatable("tooltip.weapons.celestial_tome.title"));
+        tooltip.add(Component.translatable("tooltip.weapons.celestial_tome.name"));
+        tooltip.add(Component.translatable("tooltip.weapons.celestial_tome.desc1"));
+        tooltip.add(Component.translatable("tooltip.weapons.celestial_tome.desc2"));
+        tooltip.add(Component.empty());
+        tooltip.add(Component.translatable("tooltip.weapons.celestial_tome.usage"));
     }
 }
