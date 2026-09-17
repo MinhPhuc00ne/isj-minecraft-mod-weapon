@@ -1,8 +1,8 @@
 {
   "render_type": "minecraft:translucent",
   "textures": {
-    "particle": "weapons:item/jacob_light_pillar",
-    "beam": "weapons:item/jacob_light_pillar"
+    "particle": "weapons:item/disintegration_light_beam",
+    "beam": "weapons:item/disintegration_light_beam"
   },
   "elements": [
     {
