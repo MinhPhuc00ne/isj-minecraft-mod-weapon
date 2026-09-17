@@ -14,16 +14,20 @@ import java.net.URI;
 public class GuideBookScreen extends Screen {
 
     private int currentPage = 0;
-    private static final int TOTAL_PAGES = 8;
+    private static final int TOTAL_PAGES = 10;
 
     private static final net.minecraft.resources.ResourceLocation DRAGON_NOVA_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/dragon_nova_art.png");
     private static final net.minecraft.resources.ResourceLocation TAISUI_ART_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/taisui_art.png");
+    private static final net.minecraft.resources.ResourceLocation SEER_FLESH_ART_TEXTURE =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/seer_flesh_art.png");
+    private static final net.minecraft.resources.ResourceLocation SEER_ARM_COMBO_ART_TEXTURE =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/seer_arm_combo_art.png");
 
-    // Kích thước khung sách rộng rãi 380px, căn chỉnh chuẩn xác không bao giờ tràn chữ
-    private static final int BOOK_WIDTH = 380;
-    private static final int BOOK_HEIGHT = 228;
+    // Kích thước khung sách rộng rãi 430px x 236px, tuyệt đối không bị tràn chữ ra màn hình
+    private static final int BOOK_WIDTH = 430;
+    private static final int BOOK_HEIGHT = 236;
 
     private Button prevButton;
     private Button nextButton;
@@ -190,13 +194,13 @@ public class GuideBookScreen extends Screen {
         this.addRenderableWidget(armorLegsBtn);
         this.addRenderableWidget(armorBootsBtn);
 
-        // --- Nút trang 6 (Tác Giả & GitHub) ---
+        // --- Nút trang 10 (Tác Giả & GitHub) ---
         int authorBtnY = top + BOOK_HEIGHT - 54;
         openGithubBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.open_github"), b -> {
             try {
                 Util.getPlatform().openUri(URI.create(GITHUB_URL));
             } catch (Exception ignored) {}
-        }).bounds(left + 50, authorBtnY, 130, 20).build();
+        }).bounds(left + BOOK_WIDTH / 2 - 135, authorBtnY, 130, 20).build();
 
         copyGithubBtn = Button.builder(Component.translatable("gui.weapons.guide.btn.copy_github"), b -> {
             if (this.minecraft != null) {
@@ -208,7 +212,7 @@ public class GuideBookScreen extends Screen {
                     );
                 }
             }
-        }).bounds(left + 200, authorBtnY, 130, 20).build();
+        }).bounds(left + BOOK_WIDTH / 2 + 5, authorBtnY, 130, 20).build();
 
         this.addRenderableWidget(openGithubBtn);
         this.addRenderableWidget(copyGithubBtn);
@@ -230,7 +234,7 @@ public class GuideBookScreen extends Screen {
         if (armorLegsBtn != null) armorLegsBtn.visible = isArmorPage;
         if (armorBootsBtn != null) armorBootsBtn.visible = isArmorPage;
 
-        boolean isAuthorPage = (currentPage == 7);
+        boolean isAuthorPage = (currentPage == 9);
         if (openGithubBtn != null) openGithubBtn.visible = isAuthorPage;
         if (copyGithubBtn != null) copyGithubBtn.visible = isAuthorPage;
     }
@@ -266,7 +270,9 @@ public class GuideBookScreen extends Screen {
             case 4 -> renderPageDivineArmor(guiGraphics, left, top, mouseX, mouseY);
             case 5 -> renderPageDragonNova(guiGraphics, left, top, mouseX, mouseY);
             case 6 -> renderPageTaisui(guiGraphics, left, top, mouseX, mouseY);
-            case 7 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
+            case 7 -> renderPageSeerFlesh(guiGraphics, left, top, mouseX, mouseY);
+            case 8 -> renderPageSeerArmCombo(guiGraphics, left, top, mouseX, mouseY);
+            case 9 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
         }
 
         // 3. Render Tooltip nếu đang di chuột qua slot item
@@ -333,10 +339,12 @@ public class GuideBookScreen extends Screen {
         guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill2").getString(), left + 18, skillY, 0xFFFFFFFF, false);
         skillY += 11;
         guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill3").getString(), left + 18, skillY, 0xFFFFFFFF, false);
-        skillY += 11;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill4").getString(), left + 18, skillY, 0xFFFFFFFF, false);
-        skillY += 11;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill5").getString(), left + 18, skillY, 0xFFFFAA00, false);
+        skillY += 10;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill3a").getString(), left + 18, skillY, 0xFFFFFFFF, false);
+        skillY += 10;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill3b").getString(), left + 18, skillY, 0xFFFFFFFF, false);
+        skillY += 10;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p1.skill4").getString(), left + 18, skillY, 0xFFFFAA00, false);
     }
 
     /**
@@ -562,25 +570,128 @@ public class GuideBookScreen extends Screen {
     }
 
     /**
-     * TRANG 8: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
+     * TRANG 8: THÁI TUẾ TINH QUÂN - THỊ NHỤC (SEER FLESH)
+     */
+    private void renderPageSeerFlesh(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.title").getString(), left + 14, top + 11, 0xFFFF4444, true);
+
+        int imgX = left + 14;
+        int imgY = top + 34;
+        int imgW = 120;
+        int imgH = 88;
+
+        // Viền đỏ thẫm huyết tế quanh tranh minh họa
+        guiGraphics.fill(imgX - 2, imgY - 2, imgX + imgW + 2, imgY + imgH + 2, 0xFFCC0022);
+        guiGraphics.fill(imgX - 1, imgY - 1, imgX + imgW + 1, imgY + imgH + 1, 0xFF1B1622);
+        guiGraphics.blit(SEER_FLESH_ART_TEXTURE, imgX, imgY, 0.0F, 0.0F, imgW, imgH, imgW, imgH);
+
+        // Mô tả Thị Nhục
+        int descX = left + 144;
+        int descY = top + 34;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.name").getString(), descX, descY, 0xFFFF5555, true);
+        descY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.desc").getString(), descX, descY, 0xFFDDDDDD, true);
+        descY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.summon").getString(), descX, descY, 0xFFFFAA00, true);
+        descY += 10;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.distance").getString(), descX, descY, 0xFF888888, true);
+        descY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.harvest").getString(), descX, descY, 0xFF55FF55, true);
+        descY += 10;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.attack").getString(), descX, descY, 0xFFFF8888, true);
+
+        int effY = top + 128;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.effects_title").getString(), left + 14, effY, 0xFFFFAA00, true);
+
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.eff1").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.eff2").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.eff3").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.eff4").getString(), left + 18, effY, 0xFFFFFF55, true);
+    }
+
+    /**
+     * TRANG 9: CỘNG HƯỞNG THÁI TUẾ - THỊ NHỤC BỌC TAY & TUYỆT DIỆT TINH TÚ
+     */
+    private void renderPageSeerArmCombo(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
+
+        // Ảnh minh họa chiến đấu Dark Gathering hoành tráng
+        int imgX = left + 16;
+        int imgY = top + 34;
+        int imgW = 126;
+        int imgH = 92;
+
+        // Viền ngọc bích ma quái quanh tranh minh họa
+        guiGraphics.fill(imgX - 2, imgY - 2, imgX + imgW + 2, imgY + imgH + 2, 0xFF2E5A36);
+        guiGraphics.fill(imgX - 1, imgY - 1, imgX + imgW + 1, imgY + imgH + 1, 0xFF1B1622);
+        guiGraphics.blit(SEER_ARM_COMBO_ART_TEXTURE, imgX, imgY, 0.0F, 0.0F, imgW, imgH, imgW, imgH);
+
+        // Mô tả hình thái cộng hưởng bên phải ảnh
+        int descX = left + 150;
+        int descY = top + 34;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.name").getString(), descX, descY, 0xFF55FF55, true);
+        descY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.desc").getString(), descX, descY, 0xFFDDDDDD, true);
+        descY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.combo_trigger").getString(), descX, descY, 0xFFFFAA00, true);
+        descY += 12;
+
+        // Hiển thị 2 vật phẩm preview trực quan có tooltip
+        drawSingleItemSlot(guiGraphics, descX, descY, new ItemStack(ModItems.SEER_FLESH_ARM.get()), mouseX, mouseY);
+        drawSingleItemSlot(guiGraphics, descX + 26, descY, new ItemStack(ModItems.EXTINCTION_STAR.get()), mouseX, mouseY);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.item_note").getString(), descX + 54, descY + 6, 0xFFFFFF55, true);
+
+        // Các quy tắc và uy lực chiến đấu
+        int effY = top + 130;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.effects_title").getString(), left + 14, effY, 0xFFFFAA00, true);
+
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.eff1").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.eff2").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.eff3").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 11;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p8.eff4").getString(), left + 18, effY, 0xFF55FFFF, true);
+    }
+
+    private void drawSingleItemSlot(GuiGraphics guiGraphics, int slotX, int slotY, ItemStack item, int mouseX, int mouseY) {
+        guiGraphics.fill(slotX, slotY, slotX + 20, slotY + 20, 0xFF373737);
+        guiGraphics.fill(slotX + 1, slotY + 1, slotX + 19, slotY + 19, 0xFF8B8B8B);
+        guiGraphics.fill(slotX + 1, slotY + 1, slotX + 18, slotY + 18, 0xFF2A2A2A);
+
+        if (item != null && !item.isEmpty()) {
+            guiGraphics.renderItem(item, slotX + 2, slotY + 2);
+            if (mouseX >= slotX && mouseX <= slotX + 20 && mouseY >= slotY && mouseY <= slotY + 20) {
+                hoveredTooltipStack = item;
+            }
+        }
+    }
+
+    /**
+     * TRANG 10: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
      */
     private void renderPageAuthor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
         int textY = top + 34;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.author").getString(), left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.author").getString(), left + 18, textY, 0xFFFFAA00, false);
 
         textY += 13;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.studio").getString(), left + 18, textY, 0xFF55FFFF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.studio").getString(), left + 18, textY, 0xFF55FFFF, false);
 
         textY += 13;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.university").getString(), left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.university").getString(), left + 18, textY, 0xFFFFAA00, false);
 
         textY += 13;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.mod_name").getString(), left + 18, textY, 0xFF55FF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.mod_name").getString(), left + 18, textY, 0xFF55FF55, false);
 
         textY += 13;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.license").getString(), left + 18, textY, 0xFFFF55FF, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.license").getString(), left + 18, textY, 0xFFFF55FF, false);
 
         textY += 15;
         // Khung trích dẫn hoành tráng
@@ -588,12 +699,12 @@ public class GuideBookScreen extends Screen {
         guiGraphics.fill(left + 18, textY - 2, left + 18 + quoteBoxW, textY + 38, 0xFF231B30);
         drawBorder(guiGraphics, left + 18, textY - 2, quoteBoxW, 40, 0xFFD4AF37);
 
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote1").getString(), left + 24, textY + 3, 0xFFFFFF55, false);
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote2").getString(), left + 24, textY + 14, 0xFFFFFF55, false);
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.quote3").getString(), left + 24, textY + 25, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.quote1").getString(), left + 24, textY + 3, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.quote2").getString(), left + 24, textY + 14, 0xFFFFFF55, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.quote3").getString(), left + 24, textY + 25, 0xFFFFFF55, false);
 
         textY += 44;
-        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p7.github").getString(), left + 18, textY, 0xFFFFAA00, false);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.github").getString(), left + 18, textY, 0xFFFFAA00, false);
         textY += 11;
         guiGraphics.drawString(font, "§9§n" + GITHUB_URL, left + 18, textY, 0xFF55FFFF, false);
     }
