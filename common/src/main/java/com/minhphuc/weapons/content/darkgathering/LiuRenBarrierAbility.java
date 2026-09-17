@@ -153,26 +153,26 @@ public class LiuRenBarrierAbility {
             barrier.groundArray = array;
         }
 
-        // 2. Tạo 12 Thức Thần Thần Tướng 3D (Shikigami) quỳ chầu bao bọc 360 độ, mỗi con 1 màu sắc thần thánh
+        // 2. Tạo 12 Thức Thần Thần Tướng 3D (Shikigami) uy nghiêm bao bọc 360 độ, mỗi vị thần mang sắc màu và ấn ký cổ ngữ riêng biệt
         final int[] SHIKIGAMI_COLORS = {
-            0xE60026, // Chu Tước (Đỏ Rực)
-            0x00F0FF, // Thanh Long (Lam Ngọc)
-            0xFFD700, // Thần Hậu (Hoàng Kim)
-            0x9933FF, // Thái Thường (Tím Huyền Bí)
-            0x00E676, // Lục Hợp (Ngọc Bích)
-            0xFF6D00, // Đằng Xà (Cam Lửa)
-            0xFF4081, // Thái Âm (Hồng Phấn)
-            0x2979FF, // Huyền Vũ (Lam Đại Dương)
-            0xFFFFFF, // Bạch Hổ (Bạch Kim)
-            0xAEEA00, // Câu Trận (Xanh Lục Dạ Quang)
-            0x00BFA5, // Thiên Nhất (Xanh Ngọc Lam)
-            0xD500F9  // Thiên Khôi (Tím Ánh Hồng)
+            0x9D4EDD, // 0: Thiên Không (Tengu) - Tím Huyền Bí
+            0xFF80BF, // 1: Thái Âm (Taiyin) - Hồng Nguyệt
+            0x0099FF, // 2: Huyền Vũ (Xuanwu) - Lam Đại Dương
+            0x00E676, // 3: Thái Thường (Taiyue) - Ngọc Bích
+            0x00F0FF, // 4: Thanh Long (Qinglong) - Lam Ngọc
+            0xFFB300, // 5: Câu Trận (Gouchen) - Hổ Phách
+            0x10B981, // 6: Lục Hợp (Liuren) - Lục Bảo
+            0xFFFFFF, // 7: Bạch Hổ (Baihu) - Bạch Kim
+            0xFF1744, // 8: Chu Tước (Zhuque) - Đỏ Thắm
+            0xFF4081, // 9: Thiên Hậu (Tianhou) - Hồng Cát Tường
+            0xFFD700, // 10: Thiên Nhất (Tianyi) - Hoàng Kim Tối Cao
+            0xFF6D00  // 11: Đằng Xà (Shentu) - Cam Lửa
         };
 
         for (int i = 0; i < 12; i++) {
             double theta = i * (Math.PI * 2.0D / 12.0D);
-            double sx = center.x + Math.cos(theta) * 3.6D;
-            double sz = center.z + Math.sin(theta) * 3.6D;
+            double sx = center.x + Math.cos(theta) * 3.8D;
+            double sz = center.z + Math.sin(theta) * 3.8D;
             // Quay mặt hướng về tâm bảo vệ người chơi
             float yaw = (float) Math.toDegrees(-theta - (Math.PI / 2.0D));
 
@@ -187,12 +187,12 @@ public class LiuRenBarrierAbility {
                 dispAcc.weapons$setBillboardConstraints(Display.BillboardConstraints.FIXED);
                 shikigami.setGlowingTag(true);
                 dispAcc.weapons$setGlowColorOverride(SHIKIGAMI_COLORS[i]);
-                dispAcc.weapons$setViewRange(3.0F);
+                dispAcc.weapons$setViewRange(4.0F);
 
                 dispAcc.weapons$setTransformation(new Transformation(
                         new Vector3f(0.0F, 0.0F, 0.0F),
                         new Quaternionf(),
-                        new Vector3f(2.0F, 2.0F, 2.0F),
+                        new Vector3f(2.6F, 2.6F, 2.6F),
                         null
                 ));
 
@@ -265,7 +265,45 @@ public class LiuRenBarrierAbility {
                 ));
             }
 
-            // 3. Vòm ánh sáng ngọc bích quanh 12 Thức Thần
+            // 3. Hoạt ảnh động lơ lửng, nhịp thở và kết giới liên hoàn của 12 Thần Tướng 3D
+            for (int i = 0; i < barrier.shikigamis.size(); i++) {
+                Display.ItemDisplay s = barrier.shikigamis.get(i);
+                if (s == null || !s.isAlive()) continue;
+
+                // Hoạt ảnh bồng bềnh lơ lửng theo nhịp sin khác nhau cho từng Thần Tướng
+                float hoverY = (float) Math.sin((gameTime * 0.08F) + (i * 0.52F)) * 0.14F;
+                float pulse = 2.6F + (float) Math.sin((gameTime * 0.05F) + i) * 0.05F;
+                float swayYaw = (float) Math.sin((gameTime * 0.04F) + (i * 0.7F)) * 2.5F;
+
+                Quaternionf swayRot = new Quaternionf().rotateY((float) Math.toRadians(swayYaw));
+
+                ((DisplayAccessor) s).weapons$setTransformation(new Transformation(
+                        new Vector3f(0.0F, hoverY, 0.0F),
+                        swayRot,
+                        new Vector3f(pulse, pulse, pulse),
+                        null
+                ));
+
+                // Bụi hạt phát quang linh hồn xung quanh mỗi Thần Tướng
+                if (gameTime % 3 == 0) {
+                    level.sendParticles(ParticleTypes.END_ROD, s.getX(), s.getY() + 1.2D + hoverY, s.getZ(), 1, 0.15D, 0.25D, 0.15D, 0.01D);
+                    level.sendParticles(ELECTRIC_CYAN_DUST, s.getX(), s.getY() + 0.6D + hoverY, s.getZ(), 1, 0.2D, 0.2D, 0.2D, 0);
+                }
+
+                // Xích năng lượng kết giới liên kết 360 độ giữa Thần Tướng i và Thần Tướng kế tiếp (i + 1)
+                if (gameTime % 2 == 0) {
+                    int nextIdx = (i + 1) % barrier.shikigamis.size();
+                    Display.ItemDisplay nextS = barrier.shikigamis.get(nextIdx);
+                    if (nextS != null && nextS.isAlive()) {
+                        double midX = (s.getX() + nextS.getX()) * 0.5D;
+                        double midY = center.y + 1.2D + (hoverY * 0.5D);
+                        double midZ = (s.getZ() + nextS.getZ()) * 0.5D;
+                        level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, midX, midY, midZ, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+                    }
+                }
+            }
+
+            // 4. Vòm ánh sáng ngọc bích quanh 12 Thức Thần
             if (gameTime % 2 == 0) {
                 for (int i = 0; i < 16; i++) {
                     double ang = i * (Math.PI * 2.0D / 16.0D);

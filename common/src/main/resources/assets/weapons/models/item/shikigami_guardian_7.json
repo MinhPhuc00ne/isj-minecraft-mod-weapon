@@ -1,47 +1,98 @@
 {
-  "credit": "3D Shikigami Guardian 7 for MinhPhuc00ne",
+  "credit": "3D Shikigami Guardian 7 - Dark Gathering for MinhPhuc00ne",
   "textures": {
     "particle": "weapons:item/shikigami_guardian_7",
     "texture": "weapons:item/shikigami_guardian_7"
   },
   "elements": [
     {
-      "name": "hood_head",
+      "name": "hood_base",
       "from": [
-        4,
-        13,
-        4
+        4.0,
+        14.0,
+        4.0
       ],
       "to": [
-        12,
-        21,
-        12
+        12.0,
+        22.0,
+        12.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            4,
+            0,
+            8,
+            4
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "spirit_mask",
+      "from": [
+        4.6,
+        14.5,
+        3.2
+      ],
+      "to": [
+        11.4,
+        21.5,
+        4.1
       ],
       "faces": {
         "north": {
           "uv": [
             0,
             0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
+            4,
+            4
           ],
           "texture": "#texture"
         },
@@ -49,8 +100,17 @@
           "uv": [
             0,
             0,
-            8,
-            8
+            1,
+            4
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            3,
+            0,
+            4,
+            4
           ],
           "texture": "#texture"
         },
@@ -58,7 +118,76 @@
           "uv": [
             0,
             0,
-            8,
+            4,
+            1
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            0,
+            3,
+            4,
+            4
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "collar_shroud",
+      "from": [
+        3.5,
+        12.5,
+        3.5
+      ],
+      "to": [
+        12.5,
+        14.2,
+        12.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            0,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -66,32 +195,8 @@
         "down": {
           "uv": [
             0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        }
-      }
-    },
-    {
-      "name": "face_glow",
-      "from": [
-        5,
-        14,
-        3.8
-      ],
-      "to": [
-        11,
-        20,
-        4.2
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            8,
-            0,
-            16,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -102,20 +207,20 @@
       "name": "robe_torso",
       "from": [
         4.5,
-        6,
+        6.0,
         4.5
       ],
       "to": [
         11.5,
-        13,
+        12.5,
         11.5
       ],
       "faces": {
         "north": {
           "uv": [
             0,
-            0,
-            8,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -123,17 +228,8 @@
         "south": {
           "uv": [
             0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            8,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -141,8 +237,17 @@
         "east": {
           "uv": [
             0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
             0,
-            8,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -150,8 +255,17 @@
         "up": {
           "uv": [
             0,
+            4,
+            4,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
             0,
-            8,
+            4,
+            4,
             8
           ],
           "texture": "#texture"
@@ -159,22 +273,22 @@
       }
     },
     {
-      "name": "arm_left",
+      "name": "shoulder_left",
       "from": [
-        2,
-        6,
-        5
+        1.2,
+        9.5,
+        3.5
       ],
       "to": [
         4.5,
-        12,
-        10
+        13.5,
+        12.5
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
             8,
             8
           ],
@@ -182,8 +296,17 @@
         },
         "south": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            4,
+            4,
             8,
             8
           ],
@@ -191,8 +314,8 @@
         },
         "west": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
             8,
             8
           ],
@@ -200,8 +323,8 @@
         },
         "up": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
             8,
             8
           ],
@@ -209,8 +332,8 @@
         },
         "down": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
             8,
             8
           ],
@@ -219,229 +342,31 @@
       }
     },
     {
-      "name": "arm_right",
+      "name": "shoulder_right",
       "from": [
         11.5,
-        6,
-        5
-      ],
-      "to": [
-        14,
-        12,
-        10
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        }
-      }
-    },
-    {
-      "name": "prayer_hands",
-      "from": [
-        6,
-        7,
-        2.5
-      ],
-      "to": [
-        10,
-        10,
-        4.8
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        },
-        "south": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        },
-        "west": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        },
-        "east": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        },
-        "up": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        },
-        "down": {
-          "uv": [
-            8,
-            8,
-            16,
-            16
-          ],
-          "texture": "#texture"
-        }
-      }
-    },
-    {
-      "name": "lower_robes",
-      "from": [
-        2.5,
-        0,
-        3
-      ],
-      "to": [
-        13.5,
-        6,
-        13
-      ],
-      "faces": {
-        "north": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "south": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "west": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "east": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "down": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        },
-        "up": {
-          "uv": [
-            0,
-            0,
-            8,
-            8
-          ],
-          "texture": "#texture"
-        }
-      }
-    },
-    {
-      "name": "kneeling_front",
-      "from": [
-        4,
-        0,
-        0.5
-      ],
-      "to": [
-        12,
-        4,
+        9.5,
         3.5
       ],
+      "to": [
+        14.8,
+        13.5,
+        12.5
+      ],
       "faces": {
         "north": {
           "uv": [
+            4,
+            4,
             8,
-            8,
-            16,
-            16
+            8
           ],
           "texture": "#texture"
         },
-        "west": {
+        "south": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
             8,
             8
           ],
@@ -449,8 +374,17 @@
         },
         "east": {
           "uv": [
-            0,
-            0,
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            4,
+            4,
             8,
             8
           ],
@@ -458,9 +392,462 @@
         },
         "up": {
           "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            4,
+            4,
+            8,
+            8
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "sleeve_left",
+      "from": [
+        1.5,
+        3.5,
+        4.0
+      ],
+      "to": [
+        4.5,
+        10.0,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "sleeve_right",
+      "from": [
+        11.5,
+        3.5,
+        4.0
+      ],
+      "to": [
+        14.5,
+        10.0,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "mudra_hands",
+      "from": [
+        6.0,
+        7.5,
+        1.8
+      ],
+      "to": [
+        10.0,
+        11.0,
+        4.4
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            0,
+            8,
+            4,
+            12
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "lower_robes_upper",
+      "from": [
+        3.0,
+        2.5,
+        3.0
+      ],
+      "to": [
+        13.0,
+        6.2,
+        13.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
             8,
             8,
-            16,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "lower_robes_lower",
+      "from": [
+        2.0,
+        0.0,
+        2.0
+      ],
+      "to": [
+        14.0,
+        2.8,
+        14.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "down": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            4,
+            8,
+            8,
+            12
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "hagoromo_left",
+      "from": [
+        -0.5,
+        5.0,
+        11.5
+      ],
+      "to": [
+        2.0,
+        15.0,
+        12.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "hagoromo_right",
+      "from": [
+        14.0,
+        5.0,
+        11.5
+      ],
+      "to": [
+        16.5,
+        15.0,
+        12.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "east": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "west": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "hagoromo_top",
+      "from": [
+        1.0,
+        15.0,
+        11.5
+      ],
+      "to": [
+        15.0,
+        17.5,
+        12.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            0,
+            12,
+            4,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "up": {
+          "uv": [
+            0,
+            12,
+            4,
             16
           ],
           "texture": "#texture"
@@ -468,9 +855,9 @@
         "down": {
           "uv": [
             0,
-            0,
-            8,
-            8
+            12,
+            4,
+            16
           ],
           "texture": "#texture"
         }
@@ -479,20 +866,53 @@
     {
       "name": "halo_ring",
       "from": [
-        1.5,
-        11,
-        12
+        0.0,
+        11.0,
+        13.2
       ],
       "to": [
-        14.5,
-        23,
-        12.8
+        16.0,
+        25.0,
+        13.8
       ],
       "faces": {
         "north": {
           "uv": [
-            0,
             8,
+            0,
+            16,
+            8
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            8,
+            0,
+            16,
+            8
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "ofuda_left",
+      "from": [
+        -1.2,
+        6.5,
+        1.5
+      ],
+      "to": [
+        1.2,
+        12.5,
+        2.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            12,
             8,
             16
           ],
@@ -500,8 +920,41 @@
         },
         "south": {
           "uv": [
-            0,
+            4,
+            12,
             8,
+            16
+          ],
+          "texture": "#texture"
+        }
+      }
+    },
+    {
+      "name": "ofuda_right",
+      "from": [
+        14.8,
+        6.5,
+        1.5
+      ],
+      "to": [
+        17.2,
+        12.5,
+        2.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            4,
+            12,
+            8,
+            16
+          ],
+          "texture": "#texture"
+        },
+        "south": {
+          "uv": [
+            4,
+            12,
             8,
             16
           ],
