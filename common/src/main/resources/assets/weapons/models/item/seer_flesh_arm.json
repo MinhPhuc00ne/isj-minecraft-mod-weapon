@@ -1,0 +1,9 @@
+{
+  "parent": "weapons:item/seer_flesh_arm_3eyes",
+  "overrides": [
+    { "predicate": { "weapons:eyes": 0.00 }, "model": "weapons:item/seer_flesh_arm_closed" },
+    { "predicate": { "weapons:eyes": 0.25 }, "model": "weapons:item/seer_flesh_arm_1eye" },
+    { "predicate": { "weapons:eyes": 0.55 }, "model": "weapons:item/seer_flesh_arm_2eyes" },
+    { "predicate": { "weapons:eyes": 0.85 }, "model": "weapons:item/seer_flesh_arm_3eyes" }
+  ]
+}

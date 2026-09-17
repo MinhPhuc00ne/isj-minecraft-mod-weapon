@@ -32,6 +32,12 @@ public class DivineWeaponEvents {
         // Tick cập nhật Tà Khứ Vũ Thê Tử (Jacob's Ladder)
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(JacobsLadderAbility::tickLadders);
 
+        // Tick cập nhật Bát Môn Thiên Phạt Trận (Heavenly Judgment Array)
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(HeavenlyJudgmentArrayAbility::tickArrays);
+
+        // Tick cập nhật Đại Thánh Tẩy - Quang Minh Cứu Rỗi (Great Purification)
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(PurificationPillarAbility::tickPillars);
+
         // Tick cập nhật Đầu Rồng Hư Không Bạo Thực Vương Beelzebuth
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(BeelzebuthAbility::tickDragons);
 
@@ -47,6 +53,12 @@ public class DivineWeaponEvents {
         // Tick cập nhật Thái Tuế Tinh Quân: Lớp Phòng Ngự Lục Nhậm Thần Khóa
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility::tickBarriers);
 
+        // Tick cập nhật Thái Tuế Tinh Quân: Thị Nhục (Seer Flesh)
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.SeerFleshAbility::tickFleshes);
+
+        // Đánh vào Thị Nhục bằng chuột trái: Rạch lấy Con Mắt Thị Nhục
+        dev.architectury.event.events.common.PlayerEvent.ATTACK_ENTITY.register(com.minhphuc.weapons.content.darkgathering.SeerFleshAbility::onAttack);
+
         // Đồng bộ trạng thái Tuyệt Diệt Tinh Tú khi người chơi tham gia thế giới
         dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(serverPlayer -> {
             com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.ACTIVE_TAISUI.forEach((uuid, state) -> {
@@ -59,16 +71,56 @@ public class DivineWeaponEvents {
             });
         });
 
-        // Chuột phải vào sinh vật khi tay không: Thi triển Kỹ Năng Chân Ma Vương
+        // Tương tác chuột phải với sinh vật / thực thể
         InteractionEvent.INTERACT_ENTITY.register((player, target, hand) -> {
             if (player.level().isClientSide()) return EventResult.pass();
+
+            // 1. Tương tác chuột phải với khối Thị Nhục (Hồi 100% HP & Giải trừ độc tố)
+            EventResult fleshResult = com.minhphuc.weapons.content.darkgathering.SeerFleshAbility.onInteract(player, target, hand);
+            if (fleshResult.interruptsFurtherEvaluation()) {
+                return fleshResult;
+            }
+
+            // 2. Cầm [Con Mắt Thị Nhục] chuột phải vào sinh vật khác: Chữa lành 100% HP & Xóa mọi hiệu ứng xấu
+            if (target instanceof LivingEntity targetLiving) {
+                ItemStack held = player.getItemInHand(hand);
+                if (held.getItem() instanceof com.minhphuc.weapons.content.darkgathering.SeerFleshEyeItem) {
+                    targetLiving.setHealth(targetLiving.getMaxHealth());
+                    com.minhphuc.weapons.content.darkgathering.SeerFleshEyeItem.cleanseHarmfulEffects(targetLiving);
+                    targetLiving.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.REGENERATION, 200, 2, false, false, true));
+                    targetLiving.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.ABSORPTION, 300, 1, false, false, true));
+
+                    player.level().playSound(null, targetLiving.getX(), targetLiving.getY(), targetLiving.getZ(),
+                            SoundEvents.PLAYER_BURP, SoundSource.PLAYERS, 1.2F, 1.1F);
+                    player.level().playSound(null, targetLiving.getX(), targetLiving.getY(), targetLiving.getZ(),
+                            SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 2.5F, 1.6F);
+
+                    if (player.level() instanceof ServerLevel sl) {
+                        sl.sendParticles(ParticleTypes.HEART, targetLiving.getX(), targetLiving.getY() + 1.0D, targetLiving.getZ(), 10, 0.4D, 0.4D, 0.4D, 0.05D);
+                        sl.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, targetLiving.getX(), targetLiving.getY() + 1.0D, targetLiving.getZ(), 25, 0.3D, 0.5D, 0.3D, 0.15D);
+                    }
+
+                    if (!player.getAbilities().instabuild) {
+                        held.shrink(1);
+                    }
+
+                    player.displayClientMessage(
+                            Component.literal("§c§l[CON MẮT THỊ NHỤC] §aĐã chữa lành toàn diện cho " + targetLiving.getName().getString() + "! Hồi 100% máu & hóa giải mọi nguyền rủa! ✨👁️"),
+                            true
+                    );
+
+                    return EventResult.interruptTrue();
+                }
+            }
+
+            // 3. Chuột phải vào sinh vật khi tay không: Thi triển Kỹ Năng Chân Ma Vương
             if (player.getItemInHand(hand).isEmpty() && player instanceof ServerPlayer serverPlayer) {
                 boolean isTrueDemonLord = EntityDataHelper.getCustomData(serverPlayer).getBoolean("TensuraTrueDemonLord");
                 if (isTrueDemonLord) {
                     int selectedSkill = EntityDataHelper.getCustomData(serverPlayer).getInt("TensuraDemonLordSkill");
-                    if (selectedSkill != 3 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(serverPlayer)) {
+                    if (selectedSkill != 3 && selectedSkill != 5 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(serverPlayer)) {
                         serverPlayer.displayClientMessage(
-                            Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Không thể thi triển kỹ năng khác!"),
+                            Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Chỉ có thể kết hợp kích hoạt Thị Nhục!"),
                             true
                         );
                         return EventResult.interruptTrue();
@@ -78,7 +130,9 @@ public class DivineWeaponEvents {
                         return EventResult.interruptTrue();
                     }
                     ServerLevel sl = (ServerLevel) serverPlayer.level();
-                    if (selectedSkill == 4) {
+                    if (selectedSkill == 5) {
+                        com.minhphuc.weapons.content.darkgathering.SeerFleshAbility.cast(sl, serverPlayer);
+                    } else if (selectedSkill == 4) {
                         com.minhphuc.weapons.content.darkgathering.LiuRenBarrierAbility.toggleBarrier(sl, serverPlayer);
                     } else if (selectedSkill == 3) {
                         com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.cast(sl, serverPlayer);

@@ -7,9 +7,12 @@
     "MixinEntity",
     "MixinPlayer",
     "DisplayAccessor",
-    "ItemDisplayAccessor"
+    "ItemDisplayAccessor",
+    "InteractionAccessor"
   ],
-  "client": [],
+  "client": [
+    "ItemPropertiesAccessor"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

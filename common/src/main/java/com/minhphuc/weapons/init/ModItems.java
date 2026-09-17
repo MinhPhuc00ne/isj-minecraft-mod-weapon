@@ -103,6 +103,24 @@ public class ModItems {
     public static final RegistrySupplier<Item> DISINTEGRATION_MAGIC_CIRCLE = ITEMS.register("disintegration_magic_circle",
             () -> new Item(new Item.Properties()));
 
+    public static final RegistrySupplier<Item> DISINTEGRATION_GROUND_ARRAY = ITEMS.register("disintegration_ground_array",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DISINTEGRATION_RUNE_RING = ITEMS.register("disintegration_rune_ring",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DISINTEGRATION_CROWN_RING = ITEMS.register("disintegration_crown_ring",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DISINTEGRATION_VERTICAL_CREST = ITEMS.register("disintegration_vertical_crest",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DISINTEGRATION_LIGHT_BEAM = ITEMS.register("disintegration_light_beam",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DISINTEGRATION_SHOCKWAVE = ITEMS.register("disintegration_shockwave",
+            () -> new Item(new Item.Properties()));
+
     public static final RegistrySupplier<Item> BEELZEBUTH_MAGIC_CIRCLE = ITEMS.register("beelzebuth_magic_circle",
             () -> new Item(new Item.Properties()));
 
@@ -129,6 +147,18 @@ public class ModItems {
 
     public static final RegistrySupplier<Item> SHIKIGAMI_GUARDIAN = SHIKIGAMI_GUARDIANS[0];
 
+    public static final RegistrySupplier<Item> TAISUI_SEER_FLESH = ITEMS.register("seer_flesh",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> SEER_FLESH_EYE = ITEMS.register("seer_flesh_eye",
+            () -> new com.minhphuc.weapons.content.darkgathering.SeerFleshEyeItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.RARE).stacksTo(16)));
+
+    public static final RegistrySupplier<Item> SEER_FLESH_ARM = ITEMS.register("seer_flesh_arm",
+            () -> new com.minhphuc.weapons.content.darkgathering.SeerFleshArmItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC).stacksTo(1)));
+
+    public static final RegistrySupplier<Item> EXTINCTION_STAR = ITEMS.register("extinction_star",
+            () -> new com.minhphuc.weapons.content.darkgathering.ExtinctionStarItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC).stacksTo(1)));
+
     // ==========================================
     // CREATIVE TAB
     // ==========================================
@@ -153,6 +183,9 @@ public class ModItems {
                         output.accept(DIVINE_BOOTS.get());
                         output.accept(GUIDE_BOOK.get());
                         output.accept(MOONLIGHT_SWORD.get());
+                        output.accept(SEER_FLESH_EYE.get());
+                        output.accept(SEER_FLESH_ARM.get());
+                        output.accept(EXTINCTION_STAR.get());
                     })
             ));
 

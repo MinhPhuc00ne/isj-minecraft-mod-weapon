@@ -1,0 +1,1276 @@
+{
+  "credit": "3D Seer Flesh (Thi Nhuc) of Taisai Seikun for MinhPhuc00ne",
+  "textures": {
+    "particle": "weapons:item/seer_flesh",
+    "flesh": "weapons:item/seer_flesh"
+  },
+  "elements": [
+    {
+      "name": "base_core",
+      "from": [
+        2.0,
+        0.0,
+        2.0
+      ],
+      "to": [
+        14.0,
+        8.0,
+        14.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "base_left_bulge",
+      "from": [
+        0.0,
+        1.0,
+        3.0
+      ],
+      "to": [
+        6.0,
+        8.5,
+        13.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "base_right_bulge",
+      "from": [
+        10.0,
+        1.0,
+        3.0
+      ],
+      "to": [
+        16.0,
+        8.5,
+        13.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "base_front_bulge",
+      "from": [
+        3.0,
+        0.5,
+        0.0
+      ],
+      "to": [
+        13.0,
+        7.5,
+        5.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "base_back_bulge",
+      "from": [
+        3.0,
+        0.5,
+        11.0
+      ],
+      "to": [
+        13.0,
+        8.0,
+        16.0
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "mid_core",
+      "from": [
+        3.0,
+        7.0,
+        3.0
+      ],
+      "to": [
+        13.0,
+        14.5,
+        13.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "mid_front_bulge",
+      "from": [
+        4.0,
+        7.5,
+        1.2
+      ],
+      "to": [
+        12.0,
+        13.5,
+        5.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "mid_left_bulge",
+      "from": [
+        1.2,
+        8.0,
+        4.0
+      ],
+      "to": [
+        5.5,
+        13.5,
+        12.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "mid_right_bulge",
+      "from": [
+        10.5,
+        8.0,
+        4.0
+      ],
+      "to": [
+        14.8,
+        13.5,
+        12.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "upper_core",
+      "from": [
+        4.0,
+        14.0,
+        4.0
+      ],
+      "to": [
+        12.0,
+        19.5,
+        12.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "peak_crown",
+      "from": [
+        5.5,
+        19.0,
+        5.5
+      ],
+      "to": [
+        10.5,
+        22.5,
+        10.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            8,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_front_lower",
+      "from": [
+        6.0,
+        2.5,
+        -1.0
+      ],
+      "to": [
+        10.0,
+        6.5,
+        1.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_front_mid_left",
+      "from": [
+        2.5,
+        8.0,
+        0.0
+      ],
+      "to": [
+        6.2,
+        11.7,
+        2.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_front_mid_right",
+      "from": [
+        9.8,
+        8.5,
+        0.0
+      ],
+      "to": [
+        13.5,
+        12.2,
+        2.2
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_front_upper",
+      "from": [
+        6.0,
+        14.2,
+        2.6
+      ],
+      "to": [
+        10.0,
+        18.2,
+        4.8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_left_lower",
+      "from": [
+        -1.0,
+        3.0,
+        5.0
+      ],
+      "to": [
+        1.2,
+        7.0,
+        9.0
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_left_mid",
+      "from": [
+        0.0,
+        9.0,
+        6.5
+      ],
+      "to": [
+        2.2,
+        12.7,
+        10.2
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_right_lower",
+      "from": [
+        14.8,
+        3.0,
+        5.0
+      ],
+      "to": [
+        17.0,
+        7.0,
+        9.0
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_right_mid",
+      "from": [
+        13.8,
+        9.0,
+        6.5
+      ],
+      "to": [
+        16.0,
+        12.7,
+        10.2
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_back_lower",
+      "from": [
+        6.0,
+        3.0,
+        14.8
+      ],
+      "to": [
+        10.0,
+        7.0,
+        17.0
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_back_mid_left",
+      "from": [
+        2.5,
+        8.5,
+        13.8
+      ],
+      "to": [
+        6.2,
+        12.2,
+        16.0
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_back_mid_right",
+      "from": [
+        9.8,
+        8.5,
+        13.8
+      ],
+      "to": [
+        13.5,
+        12.2,
+        16.0
+      ],
+      "faces": {
+        "south": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "eye_peak_top",
+      "from": [
+        6.5,
+        22.0,
+        6.5
+      ],
+      "to": [
+        9.5,
+        24.8,
+        9.5
+      ],
+      "faces": {
+        "up": {
+          "uv": [
+            8,
+            0,
+            12,
+            4
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            8,
+            4,
+            12,
+            8
+          ],
+          "texture": "#flesh"
+        }
+      }
+    }
+  ],
+  "display": {
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "gui": {
+      "rotation": [
+        15,
+        35,
+        0
+      ],
+      "scale": [
+        0.65,
+        0.65,
+        0.65
+      ]
+    }
+  }
+}

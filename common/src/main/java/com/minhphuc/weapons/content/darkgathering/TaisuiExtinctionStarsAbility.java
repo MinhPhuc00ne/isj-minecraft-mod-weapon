@@ -30,6 +30,8 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.InteractionHand;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
@@ -153,6 +155,9 @@ public class TaisuiExtinctionStarsAbility {
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
                 SoundEvents.RESPAWN_ANCHOR_CHARGE, SoundSource.PLAYERS, 3.0F, 1.2F);
 
+        // Kiểm tra kích hoạt trạng thái Cộng Hưởng Thái Tuế nếu Thị Nhục đang bật
+        checkAndApplySynergy(level, player);
+
         return true;
     }
 
@@ -170,6 +175,7 @@ public class TaisuiExtinctionStarsAbility {
             if (state.level != level) continue;
 
             if (state.caster == null || !state.caster.isAlive() || state.caster.hasDisconnected()) {
+                cleanupSynergy(state.caster);
                 syncTaisuiToAll(level, entry.getKey(), false, 0);
                 state.cleanupDisplay();
                 it.remove();
@@ -239,8 +245,18 @@ public class TaisuiExtinctionStarsAbility {
             else {
                 state.remainingTicks--;
 
+                // Nếu đang trong trạng thái Cộng Hưởng Thái Tuế
+                if (EntityDataHelper.getCustomData(caster).getBoolean("TaisuiSynergyActive")) {
+                    // Nếu tay chính đang trống và tay phụ có Thị Nhục -> tự ngưng tụ Ngôi Sao Tuyệt Diệt trên tay chính
+                    if (caster.getMainHandItem().isEmpty() && caster.getOffhandItem().is(ModItems.SEER_FLESH_ARM.get())) {
+                        caster.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.EXTINCTION_STAR.get()));
+                        EntityDataHelper.getCustomData(caster).putBoolean("TaisuiSynergyGrantedMainhand", true);
+                    }
+                }
+
                 // Kiểm tra nếu đã bắn hết 5 viên tinh tú -> Kết thúc ngay lập tức không cần chờ hết thời gian!
                 if (state.starsRemaining <= 0) {
+                    cleanupSynergy(caster);
                     syncTaisuiToAll(level, caster.getUUID(), false, 0);
                     it.remove();
                     continue;
@@ -269,6 +285,7 @@ public class TaisuiExtinctionStarsAbility {
 
                 // Hết thời gian 3 phút
                 if (state.remainingTicks <= 0) {
+                    cleanupSynergy(caster);
                     syncTaisuiToAll(level, caster.getUUID(), false, 0);
                     caster.displayClientMessage(
                         Component.literal("§7✦ Tuyệt Diệt Tinh Tú đã tiêu tán năng lượng."),
@@ -285,12 +302,45 @@ public class TaisuiExtinctionStarsAbility {
      */
     public static boolean fireStar(ServerLevel level, ServerPlayer player) {
         ActiveTaisuiState state = ACTIVE_TAISUI.get(player.getUUID());
+        boolean hasHeldStar = player.getMainHandItem().is(ModItems.EXTINCTION_STAR.get()) || player.getOffhandItem().is(ModItems.EXTINCTION_STAR.get());
+
         if (state == null || !state.isCharged || state.starsRemaining <= 0) {
+            if (hasHeldStar) {
+                fireStarBeam(level, player);
+                return true;
+            }
             return false;
         }
 
         state.starsRemaining--;
+        fireStarBeam(level, player);
 
+        // 5. Kiểm tra: Nếu bắn hết 5 viên thì kết thúc chiêu ngay lập tức không cần chờ 3 phút!
+        if (state.starsRemaining <= 0) {
+            cleanupSynergy(player);
+            ACTIVE_TAISUI.remove(player.getUUID());
+            syncTaisuiToAll(level, player.getUUID(), false, 0);
+            player.displayClientMessage(
+                Component.literal("§7✦ Đã giải phóng toàn bộ 5 Tinh Tú Tuyệt Diệt. Kỹ năng đã hoàn tất!"),
+                true
+            );
+            level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                    SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 2.0F, 1.5F);
+        } else {
+            syncTaisuiToAll(level, player.getUUID(), true, state.starsRemaining);
+            player.displayClientMessage(
+                Component.literal("§e§l✦ Bắn Tinh Tú Tuyệt Diệt! §f(Còn lại: " + state.starsRemaining + "/5)"),
+                true
+            );
+        }
+
+        return true;
+    }
+
+    /**
+     * Thi triển chùm tia Tinh Tú xuyên thấu địa hình và hủy diệt mục tiêu
+     */
+    public static void fireStarBeam(ServerLevel level, ServerPlayer player) {
         Vec3 eyePos = player.getEyePosition();
         Vec3 look = player.getLookAngle();
         double maxDist = 45.0D;
@@ -338,26 +388,89 @@ public class TaisuiExtinctionStarsAbility {
                 SoundEvents.FIREWORK_ROCKET_BLAST, SoundSource.PLAYERS, 3.5F, 1.8F);
         level.playSound(null, hitPos.x, hitPos.y, hitPos.z,
                 SoundEvents.GENERIC_EXPLODE, SoundSource.PLAYERS, 2.5F, 1.9F);
+    }
 
-        // 5. Kiểm tra: Nếu bắn hết 5 viên thì kết thúc chiêu ngay lập tức không cần chờ 3 phút!
-        if (state.starsRemaining <= 0) {
-            ACTIVE_TAISUI.remove(player.getUUID());
-            syncTaisuiToAll(level, player.getUUID(), false, 0);
-            player.displayClientMessage(
-                Component.literal("§7✦ Đã giải phóng toàn bộ 5 Tinh Tú Tuyệt Diệt. Kỹ năng đã hoàn tất!"),
-                true
-            );
-            level.playSound(null, player.getX(), player.getY(), player.getZ(),
-                    SoundEvents.BEACON_DEACTIVATE, SoundSource.PLAYERS, 2.0F, 1.5F);
-        } else {
-            syncTaisuiToAll(level, player.getUUID(), true, state.starsRemaining);
-            player.displayClientMessage(
-                Component.literal("§e§l✦ Bắn Tinh Tú Tuyệt Diệt! §f(Còn lại: " + state.starsRemaining + "/5)"),
-                true
-            );
+    /**
+     * Kích hoạt hoặc kiểm tra trạng thái Cộng Hưởng: Thị Nhục Bọc Tay + Tuyệt Diệt Tinh Tú
+     */
+    public static void checkAndApplySynergy(ServerLevel level, ServerPlayer player) {
+        if (isTaisuiActive(player) && SeerFleshAbility.isFleshActive(player)) {
+            CompoundTag data = EntityDataHelper.getCustomData(player);
+            if (!data.getBoolean("TaisuiSynergyActive")) {
+                data.putBoolean("TaisuiSynergyActive", true);
+
+                // Trang bị Thị Nhục Bọc Tay cho tay phụ nếu chưa cầm
+                ItemStack offhand = player.getOffhandItem();
+                if (!offhand.is(ModItems.SEER_FLESH_ARM.get())) {
+                    if (!offhand.isEmpty()) {
+                        data.put("TaisuiSavedOffhand", offhand.save(player.level().registryAccess()));
+                    }
+                    ItemStack fleshArm = new ItemStack(ModItems.SEER_FLESH_ARM.get());
+                    SeerFleshArmItem.setEyes(fleshArm, 3);
+                    player.setItemInHand(InteractionHand.OFF_HAND, fleshArm);
+                    data.putBoolean("TaisuiSynergyGrantedOffhand", true);
+                }
+
+                // Trang bị Ngôi Sao Tuyệt Diệt cho tay chính nếu đang để trống
+                if (player.getMainHandItem().isEmpty()) {
+                    player.setItemInHand(InteractionHand.MAIN_HAND, new ItemStack(ModItems.EXTINCTION_STAR.get()));
+                    data.putBoolean("TaisuiSynergyGrantedMainhand", true);
+                }
+
+                // Hiệu ứng bùng nổ cộng hưởng thần tính
+                if (player.connection != null) {
+                    player.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§2§l✦ CỘNG HƯỞNG THÁI TUẾ ✦")));
+                    player.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§aThị Nhục 3 Mắt §f& §eTuyệt Diệt Tinh Tú")));
+                }
+
+                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 4.0F, 1.2F);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.WARDEN_ROAR, SoundSource.PLAYERS, 2.5F, 1.4F);
+                level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                        SoundEvents.AMETHYST_BLOCK_RESONATE, SoundSource.PLAYERS, 3.5F, 0.8F);
+
+                level.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, player.getX(), player.getY() + 1.2D, player.getZ(), 40, 0.5D, 0.8D, 0.5D, 0.2D);
+                level.sendParticles(ParticleTypes.END_ROD, player.getX(), player.getY() + 1.2D, player.getZ(), 30, 0.4D, 0.6D, 0.4D, 0.1D);
+
+                player.displayClientMessage(
+                        Component.literal("§a§l✦ CỘNG HƯỞNG THÁI TUẾ THÀNH CÔNG! §fTay trái bọc §2Thị Nhục 3 Mắt §f(Chuột phải hồi máu), tay phải ngưng tụ §eNgôi Sao Tuyệt Diệt!"),
+                        false
+                );
+            }
         }
+    }
 
-        return true;
+    /**
+     * Dọn dẹp trạng thái cộng hưởng khi kỹ năng Tuyệt Diệt Tinh Tú kết thúc
+     */
+    public static void cleanupSynergy(ServerPlayer player) {
+        if (player == null) return;
+        CompoundTag data = EntityDataHelper.getCustomData(player);
+        if (data.getBoolean("TaisuiSynergyActive")) {
+            data.putBoolean("TaisuiSynergyActive", false);
+
+            if (data.getBoolean("TaisuiSynergyGrantedOffhand")) {
+                if (player.getOffhandItem().is(ModItems.SEER_FLESH_ARM.get())) {
+                    if (data.contains("TaisuiSavedOffhand")) {
+                        CompoundTag saved = data.getCompound("TaisuiSavedOffhand");
+                        ItemStack restored = ItemStack.parseOptional(player.level().registryAccess(), saved);
+                        player.setItemInHand(InteractionHand.OFF_HAND, restored);
+                        data.remove("TaisuiSavedOffhand");
+                    } else {
+                        player.setItemInHand(InteractionHand.OFF_HAND, ItemStack.EMPTY);
+                    }
+                }
+                data.remove("TaisuiSynergyGrantedOffhand");
+            }
+
+            if (data.getBoolean("TaisuiSynergyGrantedMainhand")) {
+                if (player.getMainHandItem().is(ModItems.EXTINCTION_STAR.get())) {
+                    player.setItemInHand(InteractionHand.MAIN_HAND, ItemStack.EMPTY);
+                }
+                data.remove("TaisuiSynergyGrantedMainhand");
+            }
+        }
     }
 
     public static void syncTaisuiToAll(ServerLevel level, UUID playerUuid, boolean active, int starsRemaining) {
