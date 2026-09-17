@@ -1,0 +1,610 @@
+{
+  "credit": "3D Green Seer Flesh Arm for Dark Gathering Mod",
+  "textures": {
+    "particle": "weapons:item/seer_flesh_arm",
+    "flesh": "weapons:item/seer_flesh_arm"
+  },
+  "elements": [
+    {
+      "name": "forearm_mass",
+      "from": [
+        5.0,
+        0.0,
+        5.0
+      ],
+      "to": [
+        11.0,
+        8.0,
+        11.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            4,
+            6
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            8.25,
+            8.25,
+            12.0,
+            12.0
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "hand_cluster",
+      "from": [
+        4.5,
+        7.5,
+        4.5
+      ],
+      "to": [
+        11.5,
+        13.0,
+        11.5
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            5,
+            5
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            8.25,
+            5,
+            12.0
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "knuckle_tendril_1",
+      "from": [
+        5.0,
+        13.0,
+        5.5
+      ],
+      "to": [
+        6.5,
+        15.0,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            8.25,
+            1,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            8.25,
+            1,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            8.25,
+            1,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            8.25,
+            1,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            8.25,
+            1,
+            9
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "knuckle_tendril_2",
+      "from": [
+        7.2,
+        13.0,
+        5.5
+      ],
+      "to": [
+        8.8,
+        15.5,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            8.25,
+            2,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            1,
+            8.25,
+            2,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            1,
+            8.25,
+            2,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            1,
+            8.25,
+            2,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            1,
+            8.25,
+            2,
+            9
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "knuckle_tendril_3",
+      "from": [
+        9.5,
+        13.0,
+        5.5
+      ],
+      "to": [
+        11.0,
+        14.8,
+        7.0
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            2,
+            8.25,
+            3,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            2,
+            8.25,
+            3,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            2,
+            8.25,
+            3,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            2,
+            8.25,
+            3,
+            10
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            2,
+            8.25,
+            3,
+            9
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "center_eye",
+      "from": [
+        6.0,
+        8.5,
+        3.2
+      ],
+      "to": [
+        10.0,
+        12.5,
+        4.7
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            8.25,
+            0.25,
+            12.0,
+            4.0
+          ],
+          "texture": "#flesh"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ],
+          "texture": "#flesh"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            1,
+            3
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            3,
+            1
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            3,
+            1
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "side_eye_left",
+      "from": [
+        3.2,
+        7.0,
+        6.5
+      ],
+      "to": [
+        4.7,
+        10.0,
+        9.5
+      ],
+      "faces": {
+        "west": {
+          "uv": [
+            12.25,
+            0.25,
+            15.75,
+            3.75
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        }
+      }
+    },
+    {
+      "name": "side_eye_right",
+      "from": [
+        11.3,
+        7.0,
+        6.5
+      ],
+      "to": [
+        12.8,
+        10.0,
+        9.5
+      ],
+      "faces": {
+        "east": {
+          "uv": [
+            12.25,
+            4.25,
+            15.75,
+            7.75
+          ],
+          "texture": "#flesh"
+        },
+        "north": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            1,
+            2
+          ],
+          "texture": "#flesh"
+        }
+      }
+    }
+  ],
+  "display": {
+    "thirdperson_righthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1.5,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "thirdperson_lefthand": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        1.5,
+        0
+      ],
+      "scale": [
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        -90,
+        25
+      ],
+      "translation": [
+        1.13,
+        2.5,
+        1.13
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "firstperson_lefthand": {
+      "rotation": [
+        0,
+        90,
+        -25
+      ],
+      "translation": [
+        1.13,
+        2.5,
+        1.13
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.75,
+        0.75,
+        0.75
+      ]
+    },
+    "gui": {
+      "rotation": [
+        30,
+        -135,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.85,
+        0.85,
+        0.85
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.8,
+        0.8,
+        0.8
+      ]
+    }
+  }
+}
