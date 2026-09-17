@@ -1,0 +1,394 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "vortex": "weapons:item/alkaid_vortex",
+    "particle": "weapons:item/alkaid_vortex"
+  },
+  "elements": [
+    {
+      "from": [
+        4.5,
+        4.5,
+        0.0
+      ],
+      "to": [
+        11.5,
+        11.5,
+        0.5
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          0.0
+        ],
+        "axis": "z",
+        "angle": 0.0
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        }
+      }
+    },
+    {
+      "from": [
+        0.0,
+        0.0,
+        3.0
+      ],
+      "to": [
+        16.0,
+        16.0,
+        3.5
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          3.0
+        ],
+        "axis": "z",
+        "angle": 22.5
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        }
+      }
+    },
+    {
+      "from": [
+        0.0,
+        0.0,
+        6.0
+      ],
+      "to": [
+        16.0,
+        16.0,
+        6.5
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          6.0
+        ],
+        "axis": "z",
+        "angle": 0.0
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        }
+      }
+    },
+    {
+      "from": [
+        0.0,
+        0.0,
+        9.0
+      ],
+      "to": [
+        16.0,
+        16.0,
+        9.5
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          9.0
+        ],
+        "axis": "z",
+        "angle": 22.5
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        }
+      }
+    },
+    {
+      "from": [
+        0.0,
+        0.0,
+        12.0
+      ],
+      "to": [
+        16.0,
+        16.0,
+        12.5
+      ],
+      "rotation": {
+        "origin": [
+          8,
+          8,
+          12.0
+        ],
+        "axis": "z",
+        "angle": 0.0
+      },
+      "faces": {
+        "north": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "south": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "east": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "west": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "up": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        },
+        "down": {
+          "uv": [
+            0,
+            0,
+            16,
+            16
+          ],
+          "texture": "#vortex"
+        }
+      }
+    }
+  ]
+}

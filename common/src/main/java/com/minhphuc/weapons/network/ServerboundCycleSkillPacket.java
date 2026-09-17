@@ -42,7 +42,7 @@ public class ServerboundCycleSkillPacket {
                 // 2. Chuyển đổi skill cho Chân Ma Vương (khi không cầm kiếm)
                 boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
                 if (isTrueDemonLord) {
-                    int maxSkills = 6; // 0: Thôn Phệ, 1: Hủ Hóa, 2: Dragon Nova, 3: Tuyệt Diệt Tinh Tú, 4: Lục Nhậm Thần Khóa, 5: Thị Nhục
+                    int maxSkills = 7; // 0: Thôn Phệ, 1: Hủ Hóa, 2: Dragon Nova, 3: Tuyệt Diệt Tinh Tú, 4: Lục Nhậm Thần Khóa, 5: Thị Nhục, 6: Alkaid
                     int current = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
                     int next = (current + 1) % maxSkills;
                     EntityDataHelper.getCustomData(player).putInt("TensuraDemonLordSkill", next);
@@ -54,6 +54,7 @@ public class ServerboundCycleSkillPacket {
                         case 3 -> "§e§l4. Phẫn Nộ Vương: Tuyệt Diệt Tinh Tú";
                         case 4 -> "§b§l5. Trận Đồ Cưỡng Chế Tai Ương";
                         case 5 -> "§c§l6. Thị Nhục - Nhục Thể Bất Tử Thái Tuế (Seer Flesh)";
+                        case 6 -> "§4§l7. Diệt Thế Tà Tinh: Alkaid (ALKAID)";
                         default -> "§7Chưa chọn";
                     };
 
