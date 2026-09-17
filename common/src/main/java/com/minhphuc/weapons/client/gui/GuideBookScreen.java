@@ -14,7 +14,7 @@ import java.net.URI;
 public class GuideBookScreen extends Screen {
 
     private int currentPage = 0;
-    private static final int TOTAL_PAGES = 10;
+    private static final int TOTAL_PAGES = 11;
 
     private static final net.minecraft.resources.ResourceLocation DRAGON_NOVA_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/dragon_nova_art.png");
@@ -234,7 +234,7 @@ public class GuideBookScreen extends Screen {
         if (armorLegsBtn != null) armorLegsBtn.visible = isArmorPage;
         if (armorBootsBtn != null) armorBootsBtn.visible = isArmorPage;
 
-        boolean isAuthorPage = (currentPage == 9);
+        boolean isAuthorPage = (currentPage == 10);
         if (openGithubBtn != null) openGithubBtn.visible = isAuthorPage;
         if (copyGithubBtn != null) copyGithubBtn.visible = isAuthorPage;
     }
@@ -272,7 +272,8 @@ public class GuideBookScreen extends Screen {
             case 6 -> renderPageTaisui(guiGraphics, left, top, mouseX, mouseY);
             case 7 -> renderPageSeerFlesh(guiGraphics, left, top, mouseX, mouseY);
             case 8 -> renderPageSeerArmCombo(guiGraphics, left, top, mouseX, mouseY);
-            case 9 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
+            case 9 -> renderPageAlkaid(guiGraphics, left, top, mouseX, mouseY);
+            case 10 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
         }
 
         // 3. Render Tooltip nếu đang di chuột qua slot item
@@ -673,7 +674,43 @@ public class GuideBookScreen extends Screen {
     }
 
     /**
-     * TRANG 10: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
+     * TRANG 10: THÁI TUẾ TINH QUÂN - DIỆT THẾ TÀ TINH: ALKAID (LOW COMPRESSION DECOMPOSITION)
+     */
+    private void renderPageAlkaid(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.title").getString(), left + 14, top + 11, 0xFFFF2222, true);
+
+        int textX = left + 16;
+        int textY = top + 34;
+
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.name").getString(), textX, textY, 0xFFFF5555, true);
+        textY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.desc").getString(), textX, textY, 0xFFDDDDDD, true);
+        textY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.condition").getString(), textX, textY, 0xFFFFAA00, true);
+        textY += 13;
+
+        // Preview 2 vật phẩm Alkaid: Tà Cầu Phân Rã & Xoáy Khoan Hủy Diệt
+        drawSingleItemSlot(guiGraphics, textX, textY, new ItemStack(ModItems.ALKAID_SPHERE.get()), mouseX, mouseY);
+        drawSingleItemSlot(guiGraphics, textX + 26, textY, new ItemStack(ModItems.ALKAID_VORTEX.get()), mouseX, mouseY);
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.item_note").getString(), textX + 54, textY + 6, 0xFFFFFF55, true);
+
+        int effY = top + 92;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.effects_title").getString(), left + 14, effY, 0xFFFFAA00, true);
+
+        effY += 13;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.eff1").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.eff2").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.eff3").getString(), left + 18, effY, 0xFFFFFFFF, true);
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.eff4").getString(), left + 18, effY, 0xFF55FFFF, true);
+        effY += 12;
+        guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p10.eff5").getString(), left + 18, effY, 0xFFFF5555, true);
+    }
+
+    /**
+     * TRANG 11: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
      */
     private void renderPageAuthor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
         guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);

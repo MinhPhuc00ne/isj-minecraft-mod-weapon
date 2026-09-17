@@ -159,6 +159,12 @@ public class ModItems {
     public static final RegistrySupplier<Item> EXTINCTION_STAR = ITEMS.register("extinction_star",
             () -> new com.minhphuc.weapons.content.darkgathering.ExtinctionStarItem(new Item.Properties().rarity(net.minecraft.world.item.Rarity.EPIC).stacksTo(1)));
 
+    public static final RegistrySupplier<Item> ALKAID_SPHERE = ITEMS.register("alkaid_sphere",
+            () -> new Item(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> ALKAID_VORTEX = ITEMS.register("alkaid_vortex",
+            () -> new Item(new Item.Properties()));
+
     // ==========================================
     // CREATIVE TAB
     // ==========================================

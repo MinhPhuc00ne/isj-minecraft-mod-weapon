@@ -56,6 +56,9 @@ public class DivineWeaponEvents {
         // Tick cập nhật Thái Tuế Tinh Quân: Thị Nhục (Seer Flesh)
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.SeerFleshAbility::tickFleshes);
 
+        // Tick cập nhật Thái Tuế Tinh Quân: Diệt Thế Tà Tinh - Alkaid
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(com.minhphuc.weapons.content.darkgathering.AlkaidAbility::tickAlkaids);
+
         // Đánh vào Thị Nhục bằng chuột trái: Rạch lấy Con Mắt Thị Nhục
         dev.architectury.event.events.common.PlayerEvent.ATTACK_ENTITY.register(com.minhphuc.weapons.content.darkgathering.SeerFleshAbility::onAttack);
 

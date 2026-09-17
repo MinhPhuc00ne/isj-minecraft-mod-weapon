@@ -60,13 +60,14 @@ public class MoonlightSwordItem extends Item {
             case 7 -> "§c§l8. Phẫn Nộ Vương: Tuyệt Diệt Tinh Tú (Extinction Stars)";
             case 8 -> "§b§l9. Trận Đồ Cưỡng Chế Tai Ương";
             case 9 -> "§c§l10. Thị Nhục - Nhục Thể Bất Tử Thái Tuế (Seer Flesh)";
+            case 10 -> "§4§l11. Diệt Thế Tà Tinh: Alkaid (ALKAID)";
             default -> "§7Chưa chọn";
         };
     }
 
     public static void cycleSkill(ServerPlayer player, ItemStack stack) {
         boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
-        int maxSkills = isTrueDemonLord ? 10 : 5;
+        int maxSkills = isTrueDemonLord ? 11 : 5;
 
         int current = ItemStackDataHelper.getInt(stack, NBT_SKILL);
         int next = (current + 1) % maxSkills;
@@ -89,10 +90,10 @@ public class MoonlightSwordItem extends Item {
         if (!level.isClientSide() && level instanceof ServerLevel serverLevel && player instanceof ServerPlayer serverPlayer) {
             int skill = ItemStackDataHelper.getInt(stack, NBT_SKILL);
 
-            // Kiểm tra nếu đang kích hoạt Tuyệt Diệt Tinh Tú thì chỉ cho phép kết hợp kích hoạt Thị Nhục (Chiêu 10 - index 9)
-            if (skill != 7 && skill != 9 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(serverPlayer)) {
+            // Kiểm tra nếu đang kích hoạt Tuyệt Diệt Tinh Tú thì chỉ cho phép kết hợp kích hoạt Thị Nhục (Chiêu 10 - index 9) hoặc Alkaid (Chiêu 11 - index 10)
+            if (skill != 7 && skill != 9 && skill != 10 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(serverPlayer)) {
                 serverPlayer.displayClientMessage(
-                    Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Chỉ có thể kết hợp kích hoạt Thị Nhục!"),
+                    Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Chỉ có thể kết hợp kích hoạt Thị Nhục hoặc Diệt Thế Tà Tinh (Alkaid)!"),
                     true
                 );
                 return InteractionResultHolder.sidedSuccess(stack, level.isClientSide());
@@ -129,6 +130,9 @@ public class MoonlightSwordItem extends Item {
             } else if (skill == 9) {
                 // Chiêu 10: Thị Nhục (Seer Flesh) - Thái Tuế Tinh Quân
                 com.minhphuc.weapons.content.darkgathering.SeerFleshAbility.cast(serverLevel, serverPlayer);
+            } else if (skill == 10) {
+                // Chiêu 11: Diệt Thế Tà Tinh - Alkaid (Yêu cầu đang bật Tuyệt Diệt Tinh Tú)
+                com.minhphuc.weapons.content.darkgathering.AlkaidAbility.cast(serverLevel, serverPlayer);
             }
         }
 
@@ -230,6 +234,7 @@ public class MoonlightSwordItem extends Item {
         tooltip.add(Component.literal("§7   + §a5. Đại Thánh Tẩy: §fThánh trụ cứu rỗi, hồi máu toàn diện, chuyển hóa Zombie/Witch thành Dân Làng"));
         tooltip.add(Component.literal("§7   + §d6..9. Kỹ Năng Tối Thượng Ma Vương: §fBeelzebuth, Dragon Nova, Tinh Tú, Lục Nhậm Thần Khóa"));
         tooltip.add(Component.literal("§7   + §c10. Thị Nhục (Seer Flesh): §fKhối thịt lúc nhúc 12 mắt, hồi 100% HP, xóa độc & rạch mắt trị liệu"));
+        tooltip.add(Component.literal("§7   + §411. Diệt Thế Tà Tinh (Alkaid): §fTất sát tà tinh tụ 8s tạo đại cầu phân rã khoan xuyên lòng đất!"));
         tooltip.add(Component.literal("§7- Nhấn §a[Chuột Phải] §7để thi triển kỹ năng đã chọn"));
         tooltip.add(Component.literal("§5🎲 Cơ Chế Xuất Lực Ngẫu Nhiên:"));
         tooltip.add(Component.literal("§7  • §7Đầu Ra Thấp (30%): §fHụt lực, sát thương nhẹ, đẩy lùi"));

@@ -32,10 +32,10 @@ public class ServerboundCastBeelzebuthPacket {
             if (isTrueDemonLord) {
                 int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
 
-                // Nếu đang kích hoạt Tuyệt Diệt Tinh Tú, chỉ cho phép kích hoạt thêm Thị Nhục (Chiêu 6 - index 5) để tạo Cộng Hưởng Thái Tuế
-                if (selectedSkill != 3 && selectedSkill != 5 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(player)) {
+                // Nếu đang kích hoạt Tuyệt Diệt Tinh Tú, chỉ cho phép kích hoạt thêm Thị Nhục (Chiêu 6 - index 5) hoặc Diệt Thế Tà Tinh (Chiêu 7 - index 6)
+                if (selectedSkill != 3 && selectedSkill != 5 && selectedSkill != 6 && com.minhphuc.weapons.content.darkgathering.TaisuiExtinctionStarsAbility.isTaisuiActive(player)) {
                     player.displayClientMessage(
-                        Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Chỉ có thể kết hợp kích hoạt Thị Nhục!"),
+                        Component.literal("§c⚠️ Đang trong trạng thái Tuyệt Diệt Tinh Tú! Chỉ có thể kết hợp kích hoạt Thị Nhục hoặc Diệt Thế Tà Tinh (Alkaid)!"),
                         true
                     );
                     return;
@@ -48,7 +48,10 @@ public class ServerboundCastBeelzebuthPacket {
                 
                 ServerLevel serverLevel = (ServerLevel) player.level();
                 
-                if (selectedSkill == 5) {
+                if (selectedSkill == 6) {
+                    // Chiêu 7: Diệt Thế Tà Tinh - Alkaid (Yêu cầu đang bật Tuyệt Diệt Tinh Tú)
+                    com.minhphuc.weapons.content.darkgathering.AlkaidAbility.cast(serverLevel, player);
+                } else if (selectedSkill == 5) {
                     // Chiêu 6: Thị Nhục - Nhục Thể Bất Tử Thái Tuế (Seer Flesh)
                     com.minhphuc.weapons.content.darkgathering.SeerFleshAbility.cast(serverLevel, player);
                 } else if (selectedSkill == 4) {
