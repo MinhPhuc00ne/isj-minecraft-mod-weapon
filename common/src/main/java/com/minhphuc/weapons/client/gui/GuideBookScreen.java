@@ -1,5 +1,6 @@
 package com.minhphuc.weapons.client.gui;
 
+import com.minhphuc.weapons.init.ModBlocks;
 import com.minhphuc.weapons.init.ModItems;
 import net.minecraft.Util;
 import net.minecraft.client.gui.GuiGraphics;
@@ -14,7 +15,7 @@ import java.net.URI;
 public class GuideBookScreen extends Screen {
 
     private int currentPage = 0;
-    private static final int TOTAL_PAGES = 11;
+    private static final int TOTAL_PAGES = 15;
 
     private static final net.minecraft.resources.ResourceLocation DRAGON_NOVA_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/dragon_nova_art.png");
@@ -24,6 +25,8 @@ public class GuideBookScreen extends Screen {
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/seer_flesh_art.png");
     private static final net.minecraft.resources.ResourceLocation SEER_ARM_COMBO_ART_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/seer_arm_combo_art.png");
+    private static final net.minecraft.resources.ResourceLocation CARRERA_ART_TEXTURE =
+            net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/carrera_art.png");
 
     // Kích thước khung sách rộng rãi 430px x 236px, tuyệt đối không bị tràn chữ ra màn hình
     private static final int BOOK_WIDTH = 430;
@@ -234,7 +237,7 @@ public class GuideBookScreen extends Screen {
         if (armorLegsBtn != null) armorLegsBtn.visible = isArmorPage;
         if (armorBootsBtn != null) armorBootsBtn.visible = isArmorPage;
 
-        boolean isAuthorPage = (currentPage == 10);
+        boolean isAuthorPage = (currentPage == 14);
         if (openGithubBtn != null) openGithubBtn.visible = isAuthorPage;
         if (copyGithubBtn != null) copyGithubBtn.visible = isAuthorPage;
     }
@@ -273,7 +276,11 @@ public class GuideBookScreen extends Screen {
             case 7 -> renderPageSeerFlesh(guiGraphics, left, top, mouseX, mouseY);
             case 8 -> renderPageSeerArmCombo(guiGraphics, left, top, mouseX, mouseY);
             case 9 -> renderPageAlkaid(guiGraphics, left, top, mouseX, mouseY);
-            case 10 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
+            case 10 -> renderPageGoldenGun(guiGraphics, left, top, mouseX, mouseY);
+            case 11 -> renderPagePrimordialsOverview(guiGraphics, left, top, mouseX, mouseY);
+            case 12 -> renderPagePrimordialsPowerBoss(guiGraphics, left, top, mouseX, mouseY);
+            case 13 -> renderPagePrimordialsDomain(guiGraphics, left, top, mouseX, mouseY);
+            case 14 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
         }
 
         // 3. Render Tooltip nếu đang di chuột qua slot item
@@ -712,6 +719,173 @@ public class GuideBookScreen extends Screen {
     /**
      * TRANG 11: TÁC GIẢ & BẢN QUYỀN DỰ ÁN
      */
+    /**
+     * TRANG 11: SÚNG LỤC HOÀNG KIM & MA ĐẠN (CARRERA - TENSURA LN)
+     */
+    private void renderPageGoldenGun(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§6§lSÚNG LỤC HOÀNG KIM & 4 LOẠI MA ĐẠN", left + 14, top + 11, 0xFFFFAA00, false);
+
+        int artX = left + 14;
+        int artY = top + 34;
+        int artSize = 88;
+        guiGraphics.fill(artX - 1, artY - 1, artX + artSize + 1, artY + artSize + 1, 0xFFD4AF37);
+        guiGraphics.blit(CARRERA_ART_TEXTURE, artX, artY, 0, 0, artSize, artSize, artSize, artSize);
+
+        int iconY = artY + artSize + 6;
+        guiGraphics.renderItem(new ItemStack(ModItems.GOLDEN_GUN.get()), artX + 10, iconY);
+        guiGraphics.drawString(font, "§eCarrera Gun", artX + 32, iconY + 4, 0xFFFFDD00, false);
+
+        int descX = left + 110;
+        int descY = top + 34;
+        guiGraphics.drawString(font, "§e§lHoàng Sắc Thủy Tổ Carrera §7(Tensura)", descX, descY, 0xFFFFAA00, false);
+        descY += 12;
+        guiGraphics.drawString(font, "§7Kế thừa từ Kondou + Tối Thượng Abaddon", descX, descY, 0xFFCCCCCC, false);
+        descY += 14;
+        guiGraphics.drawString(font, "§a👉 Cầm súng ấn [PgUp]: §fMở ổ xoay chọn đạn.", descX, descY, 0xFF55FFFF, false);
+        descY += 10;
+        guiGraphics.drawString(font, "§c(Yêu cầu có ít nhất 1 viên ma đạn trong túi đồ)", descX, descY, 0xFFFF7777, false);
+
+        descY += 14;
+        guiGraphics.drawString(font, "§6⚡ 4 Chủng Loại Ma Đạn Nghệ Thuật:", descX, descY, 0xFFFFDD00, false);
+        descY += 12;
+        guiGraphics.drawString(font, "§e1. Thần Tốc Phán Quyết: §c§lBẮN PHÁT CHẾT LUÔN!", descX + 4, descY, 0xFFFFFFFF, false);
+        descY += 10;
+        guiGraphics.drawString(font, "§7   Phá hủy lõi linh hồn + Giọng Nói Thế Giới thông báo.", descX + 4, descY, 0xFFDDDDDD, false);
+        descY += 11;
+        guiGraphics.drawString(font, "§d2. Hạch Thâm Uyên: §fHố đen trọng lực nuốt & nổ lớn.", descX + 4, descY, 0xFFFFFFFF, false);
+        descY += 11;
+        guiGraphics.drawString(font, "§93. Trọng Lực Sụp Đổ: §fKhóa cứng di chuyển mục tiêu.", descX + 4, descY, 0xFFFFFFFF, false);
+        descY += 11;
+        guiGraphics.drawString(font, "§64. Hoàng Kim Xạ Kích: §fBắn liên thanh xuyên giáp.", descX + 4, descY, 0xFFFFFFFF, false);
+    }
+
+    /**
+     * TRANG 12: THẤT ĐẠI THỦY TỔ ÁC MA (TENSURA PRIMORDIALS)
+     */
+    private void renderPagePrimordialsOverview(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§c§lTHẤT ĐẠI THỦY TỔ ÁC MA • MA GIỚI TENSURA", left + 14, top + 11, 0xFFFFAA00, false);
+
+        int slotY = top + 32;
+        int slotStartX = left + 18;
+        ItemStack[] pacts = {
+                new ItemStack(ModItems.PRIMORDIAL_PACT_NOIR.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_ROUGE.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_BLANC.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_JAUNE.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_VIOLET.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_BLEU.get()),
+                new ItemStack(ModItems.PRIMORDIAL_PACT_VERT.get())
+        };
+
+        for (int i = 0; i < pacts.length; i++) {
+            drawSingleItemSlot(guiGraphics, slotStartX + i * 22, slotY, pacts[i], mouseX, mouseY);
+        }
+        guiGraphics.drawString(font, "§e7 Cuộn Khế Ước Thủy Tổ", slotStartX + pacts.length * 22 + 6, slotY + 6, 0xFFFFDD00, false);
+
+        int textY = top + 58;
+        guiGraphics.drawString(font, "§6⚡ 1. Nguồn Gốc & Triệu Hồi Ban Đầu:", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• 7 Ác Ma Khởi Nguyên giáng thế từ Ma Giới: §cRouge§7, §8Noir§7, §fBlanc§7, §eJaune§7...", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Dùng §cPháp Điển Khế Ước §7để mở nghi thức triệu hồi thử thách sức mạnh.", left + 22, textY, 0xFFDDDDDD, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§6⚔ 2. Đánh Bại, Rơi Khế Ước & Phục Tùng:", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• Khi bị đánh bại, mỗi người §erơi ra đúng cuộn Khế Ước Thủy Tổ §7của họ.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§a• Chuột Phải cuộn khế ước: §fTriệu hồi họ xuất thế (có thông báo & thoại).", left + 22, textY, 0xFF55FF55, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Họ sẽ §bphục tùng và bảo vệ chủ nhân §7trừ khi bị ai đó khác giết chết.", left + 22, textY, 0xFF55FFFF, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§6✦ 3. Thu Hồi Nghỉ Ngơi (Cho Lui Đi):", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§e• Khi ác ma đang có mặt: §fBấm Chuột Phải thêm lần nữa để §6cho họ lui đi§f!", left + 22, textY, 0xFFFFFFFF, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Họ sẽ đọc thoại tạm biệt và thu hồi an toàn vào ấn chú.", left + 22, textY, 0xFFCCCCCC, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§d• Shift + Chuột Phải: §fDịch chuyển đến gần & Đổi lệnh §a(Đi Theo / Đứng Canh)§f.", left + 22, textY, 0xFFFFAAFF, false);
+    }
+
+    /**
+     * TRANG 13: XẾP HẠNG SỨC MẠNH & TỶ LỆ DIỆT BOSS
+     */
+    private void renderPagePrimordialsPowerBoss(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§6§lXẾP HẠNG SỨC MẠNH & TỶ LỆ DIỆT BOSS", left + 14, top + 11, 0xFFFFAA00, false);
+
+        int textY = top + 34;
+        guiGraphics.drawString(font, "§c§l1. Rouge & Noir (Tối Thượng): §e§l90% DIỆT BOSS", left + 18, textY, 0xFFFF5555, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§f   HP: 3600 | DMG: 160 §7(Ngang nhau, mạnh gấp 4 lần ác ma thường, gấp đôi Blanc).", left + 18, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§c   * Lưu ý: Nếu chủ quan / sơ suất vẫn có 10% rủi ro bị Boss hạ gục.", left + 18, textY, 0xFFFF8888, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§f§l2. Blanc - Testarossa (Đại Thủy Tổ): §a§l75% DIỆT BOSS", left + 18, textY, 0xFFFFFFFF, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7   HP: 1800 | DMG: 80 §7(Bạch Viêm Thánh Ma, mạnh gấp đôi các ác ma thường).", left + 18, textY, 0xFFCCCCCC, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§e§l3. Jaune - Carrera (Hủy Diệt Tối Cao): §a§l65% DIỆT BOSS", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7   HP: 1500 | DMG: 70 §7(Đại Ma Pháp Hạt Nhân Đa Vòng & Súng Carrera liên hoàn).", left + 18, textY, 0xFFDDDDDD, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§5§l4. Violet - Ultima: §d§l33% DIỆT BOSS §7(HP: 950 | Tử Độc Khởi Nguyên)", left + 18, textY, 0xFFAAFF, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§a§l5. Vert - Misery: §d§l30% DIỆT BOSS §7(HP: 900 | Bão Tố & Khiên Hồi Phục)", left + 18, textY, 0xFF55FF55, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§9§l6. Bleu - Rain: §b§l20% DIỆT BOSS §7(HP: 800 | Hàn Băng - Yếu nhất trong 7 ác ma)", left + 18, textY, 0xFF55FFFF, false);
+        textY += 13;
+        guiGraphics.drawString(font, "§7(Tuy yếu hơn các ác ma khác nhưng Bleu vẫn mạnh hơn đa số quái thường của các mod).", left + 18, textY, 0xFF888888, false);
+    }
+
+    /**
+     * TRANG 14: BÀNH TRƯỚNG LÃNH ĐỊA & KHỐI KẾT GIỚI
+     */
+    private void renderPagePrimordialsDomain(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§d§lBÀNH TRƯỚNG LÃNH ĐỊA & KHỐI KẾT GIỚI", left + 14, top + 11, 0xFFFFAA00, false);
+
+        int slotY = top + 32;
+        int slotStartX = left + 18;
+        ItemStack[] barrierItems = {
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_NOIR.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_ROUGE.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_BLANC.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_JAUNE.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_VIOLET.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_BLEU.get()),
+                new ItemStack(ModBlocks.DOMAIN_BARRIER_VERT.get())
+        };
+
+        for (int i = 0; i < barrierItems.length; i++) {
+            drawSingleItemSlot(guiGraphics, slotStartX + i * 22, slotY, barrierItems[i], mouseX, mouseY);
+        }
+        guiGraphics.drawString(font, "§b7 Khối Kết Giới", slotStartX + barrierItems.length * 22 + 6, slotY + 6, 0xFF88CCFF, false);
+
+        int textY = top + 58;
+        guiGraphics.drawString(font, "§e⚡ 1. Khối Kết Giới Lãnh Địa Thực Tế:", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• Khi ác ma bộc phát Tuyệt Kỹ 4, kết giới vòm khối 16m được kiến tạo.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Khối kết giới phát quang mang sắc màu và hoa văn động riêng của từng người.", left + 22, textY, 0xFFDDDDDD, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§c⚡ 2. Tăng Cường +50% Sức Mạnh Tuyệt Đối:", left + 18, textY, 0xFFFF5555, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§a• Ác ma bên trong Lãnh Địa được ban tặng thêm +50% Sát Thương (Strength III)!", left + 22, textY, 0xFF55FF55, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Gia tăng tốc độ di chuyển và sức chống chịu bền bỉ trước mọi đòn công kích.", left + 22, textY, 0xFFCCCCCC, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§6⚡ 3. Giam Hãm Kẻ Thù & Tự Động Hoàn Trả:", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• Quái vật bên trong bị giam cầm, giật ngược vào tâm khi chạm biên giới.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§f• Sau 15 giây, toàn bộ khối kết giới §etự tan vỡ hoàn trả địa hình nguyên vẹn§f.", left + 22, textY, 0xFFFFFFFF, false);
+    }
+
     private void renderPageAuthor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
         guiGraphics.drawString(font, Component.translatable("gui.weapons.guide.p9.title").getString(), left + 14, top + 11, 0xFFFFAA00, false);
 
