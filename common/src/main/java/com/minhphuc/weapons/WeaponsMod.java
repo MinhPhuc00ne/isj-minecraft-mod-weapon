@@ -15,8 +15,12 @@ public class WeaponsMod {
     public static final Logger LOGGER = LogUtils.getLogger();
 
     public static void init() {
-        // Đăng ký Items và Creative Tabs
+        // Đăng ký Blocks & Items
+        com.minhphuc.weapons.init.ModBlocks.register();
         ModItems.register();
+
+        // Đăng ký Entities
+        com.minhphuc.weapons.entity.ModEntities.register();
 
         // Đăng ký Network Packets
         ModMessages.register();
@@ -37,6 +41,17 @@ public class WeaponsMod {
         ClientInputEvents.register();
         com.minhphuc.weapons.client.ClientTaisuiHandler.init();
         com.minhphuc.weapons.client.ClientModelProperties.register();
+
+        // Đăng ký Model Layers và Entity Renderers cho Ác Ma Thủy Tổ
+        dev.architectury.registry.client.level.entity.EntityModelLayerRegistry.register(
+                com.minhphuc.weapons.client.model.PrimordialDemonModel.LAYER_LOCATION,
+                com.minhphuc.weapons.client.model.PrimordialDemonModel::createBodyLayer
+        );
+        dev.architectury.registry.client.level.entity.EntityRendererRegistry.register(
+                com.minhphuc.weapons.entity.ModEntities.PRIMORDIAL_DEMON,
+                com.minhphuc.weapons.client.renderer.PrimordialDemonRenderer::new
+        );
+
         LOGGER.info("Weapons Mod Client Setup complete!");
     }
 }

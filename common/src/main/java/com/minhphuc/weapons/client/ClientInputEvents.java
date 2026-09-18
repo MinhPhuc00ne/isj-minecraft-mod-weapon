@@ -10,6 +10,7 @@ import com.minhphuc.weapons.data.ItemStackDataHelper;
 import dev.architectury.event.events.client.ClientTickEvent;
 import dev.architectury.event.events.common.InteractionEvent;
 import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -31,7 +32,24 @@ public class ClientInputEvents {
 
             if (ModKeyBindings.SELECT_STONE_KEY.consumeClick()) {
                 if (mc.screen == null) {
-                    mc.setScreen(new InfinityStoneSelectScreen());
+                    ItemStack mainItem = mc.player.getMainHandItem();
+                    ItemStack offItem = mc.player.getOffhandItem();
+                    boolean holdingGun = (mainItem.getItem() instanceof com.minhphuc.weapons.content.tensura.GoldenGunItem)
+                            || (offItem.getItem() instanceof com.minhphuc.weapons.content.tensura.GoldenGunItem);
+
+                    if (holdingGun) {
+                        if (com.minhphuc.weapons.content.tensura.GoldenGunItem.hasAnyBullet(mc.player)) {
+                            mc.setScreen(new com.minhphuc.weapons.client.gui.GoldenGunBulletSelectScreen());
+                        } else {
+                            mc.player.displayClientMessage(
+                                    Component.literal("§c§l[SÚNG HOÀNG KIM] §eBạn cần có ít nhất 1 viên ma đạn trên tay hoặc trong túi đồ để mở giao diện chọn đạn! ⚠️"),
+                                    true
+                            );
+                            mc.player.playSound(net.minecraft.sounds.SoundEvents.DISPENSER_FAIL, 1.2F, 1.6F);
+                        }
+                    } else {
+                        mc.setScreen(new InfinityStoneSelectScreen());
+                    }
                 }
             }
 
