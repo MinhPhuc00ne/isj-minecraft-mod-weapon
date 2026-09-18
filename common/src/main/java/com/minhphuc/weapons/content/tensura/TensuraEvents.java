@@ -18,6 +18,10 @@ public class TensuraEvents {
     public static void register() {
         EntityEvent.LIVING_DEATH.register(TensuraEvents::onLivingDeath);
         dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(TensuraEvents::onPlayerJoin);
+        dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(level -> {
+            CarreraBulletLogic.tickVortices();
+            PrimordialSummonRitual.tickRituals(level);
+        });
     }
 
     public static void onPlayerJoin(ServerPlayer player) {

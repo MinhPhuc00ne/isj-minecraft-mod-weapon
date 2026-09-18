@@ -29,4 +29,16 @@ public class ItemStackDataHelper {
     public static void putBoolean(ItemStack stack, String key, boolean value) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putBoolean(key, value));
     }
+
+    public static String getString(ItemStack stack, String key) {
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        if (customData != null) {
+            return customData.copyTag().getString(key);
+        }
+        return "";
+    }
+
+    public static void putString(ItemStack stack, String key, String value) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(key, value));
+    }
 }

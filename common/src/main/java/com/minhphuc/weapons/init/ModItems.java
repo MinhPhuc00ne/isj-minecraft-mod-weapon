@@ -166,6 +166,87 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
 
     // ==========================================
+    // MODULE: CARRERA'S GOLDEN GUN & MA ĐẠN (TENSURA LN)
+    // ==========================================
+    public static final RegistrySupplier<Item> GOLDEN_GUN = ITEMS.register("golden_gun",
+            () -> new com.minhphuc.weapons.content.tensura.GoldenGunItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> CARRERA_BULLET_JUDGEMENT = ITEMS.register("carrera_bullet_judgement",
+            () -> new com.minhphuc.weapons.content.tensura.CarreraBulletItem(com.minhphuc.weapons.content.tensura.CarreraBulletItem.BulletType.JUDGEMENT));
+
+    public static final RegistrySupplier<Item> CARRERA_BULLET_ABYSS = ITEMS.register("carrera_bullet_abyss",
+            () -> new com.minhphuc.weapons.content.tensura.CarreraBulletItem(com.minhphuc.weapons.content.tensura.CarreraBulletItem.BulletType.ABYSS_CORE));
+
+    public static final RegistrySupplier<Item> CARRERA_BULLET_GRAVITY = ITEMS.register("carrera_bullet_gravity",
+            () -> new com.minhphuc.weapons.content.tensura.CarreraBulletItem(com.minhphuc.weapons.content.tensura.CarreraBulletItem.BulletType.GRAVITY));
+
+    public static final RegistrySupplier<Item> CARRERA_BULLET_RAPID = ITEMS.register("carrera_bullet_rapid",
+            () -> new com.minhphuc.weapons.content.tensura.CarreraBulletItem(com.minhphuc.weapons.content.tensura.CarreraBulletItem.BulletType.RAPID));
+
+    // ==========================================
+    // MODULE: PRIMORDIAL DEMONS (THẤT ĐẠI ÁC MA THỦY TỔ)
+    // ==========================================
+    public static final RegistrySupplier<Item> PRIMORDIAL_GRIMOIRE = ITEMS.register("primordial_grimoire",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialGrimoireItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> DEMON_SUMMONING_CIRCLE = ITEMS.register("demon_summoning_circle",
+            () -> new Item(new Item.Properties()));
+
+    // 9 VÒNG TRÒN MA THUẬT ĐỘC BẢN CHO TỪNG THỦY TỔ & MA PHÁP HỦY DIỆT CỦA JAUNE
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_NOIR = ITEMS.register("magic_circle_noir",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_ROUGE = ITEMS.register("magic_circle_rouge",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_BLANC = ITEMS.register("magic_circle_blanc",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_JAUNE = ITEMS.register("magic_circle_jaune",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_JAUNE_DESTRUCTION = ITEMS.register("magic_circle_jaune_destruction",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_JAUNE_NUCLEAR = ITEMS.register("magic_circle_jaune_nuclear",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_VIOLET = ITEMS.register("magic_circle_violet",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_BLEU = ITEMS.register("magic_circle_bleu",
+            () -> new Item(new Item.Properties()));
+    public static final RegistrySupplier<Item> MAGIC_CIRCLE_VERT = ITEMS.register("magic_circle_vert",
+            () -> new Item(new Item.Properties()));
+
+    // 7 VẬT PHẨM KHẾ ƯỚC THỦY TỔ RIÊNG BIỆT CHO TỪNG ÁC MA
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT = ITEMS.register("primordial_pact",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_NOIR = ITEMS.register("primordial_pact_noir",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_ROUGE = ITEMS.register("primordial_pact_rouge",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLANC = ITEMS.register("primordial_pact_blanc",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_JAUNE = ITEMS.register("primordial_pact_jaune",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VIOLET = ITEMS.register("primordial_pact_violet",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLEU = ITEMS.register("primordial_pact_bleu",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VERT = ITEMS.register("primordial_pact_vert",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties()));
+
+    // 7 KHỐI KẾT GIỚI LÃNH ĐỊA (DOMAIN BARRIER BLOCKS)
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_NOIR = ITEMS.register("domain_barrier_noir",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_NOIR.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_ROUGE = ITEMS.register("domain_barrier_rouge",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_ROUGE.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_BLANC = ITEMS.register("domain_barrier_blanc",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_BLANC.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_JAUNE = ITEMS.register("domain_barrier_jaune",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_JAUNE.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_VIOLET = ITEMS.register("domain_barrier_violet",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_VIOLET.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_BLEU = ITEMS.register("domain_barrier_bleu",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_BLEU.get(), new Item.Properties()));
+    public static final RegistrySupplier<Item> DOMAIN_BARRIER_VERT = ITEMS.register("domain_barrier_vert",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_VERT.get(), new Item.Properties()));
+
+    // ==========================================
     // CREATIVE TAB
     // ==========================================
     public static final RegistrySupplier<CreativeModeTab> WEAPONS_TAB = CREATIVE_MODE_TABS.register("weapons_tab",
@@ -183,6 +264,26 @@ public class ModItems {
                         output.accept(MIND_STONE.get());
                         output.accept(DEMON_LORD_SEED.get());
                         output.accept(DEMON_LORD_SOUL.get());
+                        output.accept(PRIMORDIAL_GRIMOIRE.get());
+
+                        // Khế Ước Thủy Tổ
+                        output.accept(PRIMORDIAL_PACT_NOIR.get());
+                        output.accept(PRIMORDIAL_PACT_ROUGE.get());
+                        output.accept(PRIMORDIAL_PACT_BLANC.get());
+                        output.accept(PRIMORDIAL_PACT_JAUNE.get());
+                        output.accept(PRIMORDIAL_PACT_VIOLET.get());
+                        output.accept(PRIMORDIAL_PACT_BLEU.get());
+                        output.accept(PRIMORDIAL_PACT_VERT.get());
+
+                        // Khối Kết Giới Lãnh Địa
+                        output.accept(DOMAIN_BARRIER_NOIR.get());
+                        output.accept(DOMAIN_BARRIER_ROUGE.get());
+                        output.accept(DOMAIN_BARRIER_BLANC.get());
+                        output.accept(DOMAIN_BARRIER_JAUNE.get());
+                        output.accept(DOMAIN_BARRIER_VIOLET.get());
+                        output.accept(DOMAIN_BARRIER_BLEU.get());
+                        output.accept(DOMAIN_BARRIER_VERT.get());
+
                         output.accept(DIVINE_HELMET.get());
                         output.accept(DIVINE_CHESTPLATE.get());
                         output.accept(DIVINE_LEGGINGS.get());
@@ -192,6 +293,13 @@ public class ModItems {
                         output.accept(SEER_FLESH_EYE.get());
                         output.accept(SEER_FLESH_ARM.get());
                         output.accept(EXTINCTION_STAR.get());
+
+                        // Súng Lục Hoàng Kim & Ma Đạn Carrera
+                        output.accept(GOLDEN_GUN.get());
+                        output.accept(CARRERA_BULLET_JUDGEMENT.get());
+                        output.accept(CARRERA_BULLET_ABYSS.get());
+                        output.accept(CARRERA_BULLET_GRAVITY.get());
+                        output.accept(CARRERA_BULLET_RAPID.get());
                     })
             ));
 

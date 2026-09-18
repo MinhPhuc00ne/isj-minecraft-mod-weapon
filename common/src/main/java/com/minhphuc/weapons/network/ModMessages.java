@@ -56,6 +56,16 @@ public class ModMessages {
                 ServerboundExitLiuRenBarrierPacket::encode,
                 ServerboundExitLiuRenBarrierPacket::new,
                 ServerboundExitLiuRenBarrierPacket::handle);
+
+        CHANNEL.register(ServerboundSelectBulletPacket.class,
+                ServerboundSelectBulletPacket::encode,
+                ServerboundSelectBulletPacket::new,
+                ServerboundSelectBulletPacket::handle);
+
+        CHANNEL.register(ServerboundSummonDemonPacket.class,
+                ServerboundSummonDemonPacket::encode,
+                ServerboundSummonDemonPacket::new,
+                ServerboundSummonDemonPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {
