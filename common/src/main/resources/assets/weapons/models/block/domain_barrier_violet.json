@@ -1,0 +1,7 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "weapons:block/domain_barrier_violet"
+  },
+  "render_type": "translucent"
+}
