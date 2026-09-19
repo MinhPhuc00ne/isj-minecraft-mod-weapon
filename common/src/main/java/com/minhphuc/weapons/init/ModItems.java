@@ -247,6 +247,75 @@ public class ModItems {
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_VERT.get(), new Item.Properties()));
 
     // ==========================================
+    // MODULE: BỒN CHỨA & KHUNG XƯƠNG THỂ XÁC NHÂN TẠO
+    // ==========================================
+    public static final RegistrySupplier<Item> ARTIFICIAL_SKELETON = ITEMS.register("artificial_skeleton",
+            () -> new Item(new Item.Properties().rarity(Rarity.RARE)));
+
+    public static final RegistrySupplier<Item> INCUBATION_CAPSULE = ITEMS.register("incubation_capsule",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.INCUBATION_CAPSULE.get(), new Item.Properties().rarity(Rarity.EPIC)));
+
+    public static final RegistrySupplier<Item> INCUBATION_CAPSULE_SKELETON = ITEMS.register("incubation_capsule_skeleton",
+            () -> new net.minecraft.world.item.BlockItem(ModBlocks.INCUBATION_CAPSULE.get(), new Item.Properties().rarity(Rarity.EPIC)));
+
+    // 21 VẬT PHẨM KHẾ ƯỚC TIẾN HÓA ĐỘC BẢN CHO 7 ÁC MA THỦY TỔ (7 Ác Ma x 3 Trạng Thái: Body, Named, Awakened)
+    // 1. DẠNG THỂ XÁC (BODY) - 7 ÁC MA
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_NOIR_BODY = ITEMS.register("primordial_pact_noir_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_ROUGE_BODY = ITEMS.register("primordial_pact_rouge_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLANC_BODY = ITEMS.register("primordial_pact_blanc_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_JAUNE_BODY = ITEMS.register("primordial_pact_jaune_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VIOLET_BODY = ITEMS.register("primordial_pact_violet_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLEU_BODY = ITEMS.register("primordial_pact_bleu_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VERT_BODY = ITEMS.register("primordial_pact_vert_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    // 2. DẠNG BAN DANH XƯNG (NAMED) - 7 ÁC MA
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_NOIR_NAMED = ITEMS.register("primordial_pact_noir_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_ROUGE_NAMED = ITEMS.register("primordial_pact_rouge_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLANC_NAMED = ITEMS.register("primordial_pact_blanc_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_JAUNE_NAMED = ITEMS.register("primordial_pact_jaune_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VIOLET_NAMED = ITEMS.register("primordial_pact_violet_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLEU_NAMED = ITEMS.register("primordial_pact_bleu_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VERT_NAMED = ITEMS.register("primordial_pact_vert_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    // 3. DẠNG MA THẦN TỐI THƯỢNG THỨC TỈNH (AWAKENED - THỂ XÁC & TÊN) - 7 ÁC MA
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_NOIR_AWAKENED = ITEMS.register("primordial_pact_noir_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_ROUGE_AWAKENED = ITEMS.register("primordial_pact_rouge_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLANC_AWAKENED = ITEMS.register("primordial_pact_blanc_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_JAUNE_AWAKENED = ITEMS.register("primordial_pact_jaune_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VIOLET_AWAKENED = ITEMS.register("primordial_pact_violet_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BLEU_AWAKENED = ITEMS.register("primordial_pact_bleu_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_VERT_AWAKENED = ITEMS.register("primordial_pact_vert_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    // Fallbacks
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_BODY = ITEMS.register("primordial_pact_body",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_NAMED = ITEMS.register("primordial_pact_named",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+    public static final RegistrySupplier<Item> PRIMORDIAL_PACT_AWAKENED = ITEMS.register("primordial_pact_awakened",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialPactItem(new Item.Properties().rarity(Rarity.EPIC)));
+
+    // ==========================================
     // CREATIVE TAB
     // ==========================================
     public static final RegistrySupplier<CreativeModeTab> WEAPONS_TAB = CREATIVE_MODE_TABS.register("weapons_tab",
@@ -300,6 +369,42 @@ public class ModItems {
                         output.accept(CARRERA_BULLET_ABYSS.get());
                         output.accept(CARRERA_BULLET_GRAVITY.get());
                         output.accept(CARRERA_BULLET_RAPID.get());
+
+                        // Bồn Chứa & Khung Xương Thể Xác Nhân Tạo & 21 Khế Ước Tiến Hóa Độc Bản
+                        output.accept(ARTIFICIAL_SKELETON.get());
+                        output.accept(INCUBATION_CAPSULE.get());
+                        output.accept(INCUBATION_CAPSULE_SKELETON.get());
+
+                        // 7 Khế Ước Thể Xác (Body)
+                        output.accept(PRIMORDIAL_PACT_ROUGE_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_NOIR_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_BLANC_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_JAUNE_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_VIOLET_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_BLEU_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_VERT_BODY.get());
+
+                        // 7 Khế Ước Sắc Phong Danh Xưng (Named)
+                        output.accept(PRIMORDIAL_PACT_ROUGE_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_NOIR_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_BLANC_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_JAUNE_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_VIOLET_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_BLEU_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_VERT_NAMED.get());
+
+                        // 7 Khế Ước Ma Thần Tối Thượng (Awakened)
+                        output.accept(PRIMORDIAL_PACT_ROUGE_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_NOIR_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_BLANC_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_JAUNE_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_VIOLET_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_BLEU_AWAKENED.get());
+                        output.accept(PRIMORDIAL_PACT_VERT_AWAKENED.get());
+
+                        output.accept(PRIMORDIAL_PACT_BODY.get());
+                        output.accept(PRIMORDIAL_PACT_NAMED.get());
+                        output.accept(PRIMORDIAL_PACT_AWAKENED.get());
                     })
             ));
 
