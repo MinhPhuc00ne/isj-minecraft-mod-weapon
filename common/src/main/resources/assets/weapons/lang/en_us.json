@@ -55,13 +55,11 @@
   "key.weapons.select_stone": "Open Stone Selection Menu (PgUp)",
   "key.weapons.cast_beelzebuth": "Cycle Active Skill (Z)",
   "item.weapons.celestial_tome": "Celestial Tome (Guide Book)",
-
   "tooltip.weapons.celestial_tome.title": "§6§l[MYTHIC SCRIPTURE]",
   "tooltip.weapons.celestial_tome.name": "§b§lCelestial Tome of Armaments & Demon Lord",
   "tooltip.weapons.celestial_tome.desc1": "§7A sacred tome documenting all forging recipes,",
   "tooltip.weapons.celestial_tome.desc2": "§7True Demon Lord awakening and supreme secrets.",
   "tooltip.weapons.celestial_tome.usage": "§e👉 Press §a[Right-Click] §eto open visual guide!",
-
   "gui.weapons.guide.screen_title": "Celestial Tome",
   "gui.weapons.guide.page_indicator": "Page %s / %s",
   "gui.weapons.guide.btn.prev": "◀ Prev Page",
@@ -76,7 +74,6 @@
   "gui.weapons.guide.btn.open_github": "§6🔗 Open GitHub",
   "gui.weapons.guide.btn.copy_github": "§a📋 Copy Link",
   "gui.weapons.guide.copy_success": "§a✔ Copied MinhPhuc00ne / Jos GitHub link to clipboard!",
-
   "gui.weapons.guide.p0.title": "§6§l📜 CELESTIAL TOME",
   "gui.weapons.guide.p0.greeting": "§eGREETINGS!",
   "gui.weapons.guide.p0.intro1": "§fThis sacred tome records ancient knowledge of crafting,",
@@ -87,7 +84,6 @@
   "gui.weapons.guide.p0.control3a": " • §bKey [Page Up]: §fOpen Infinity Stone selection menu",
   "gui.weapons.guide.p0.control3b": "   §fto socket or select Infinity Stone powers.",
   "gui.weapons.guide.p0.footer": "§8👉 Click [Next Page ▶] to view crafting recipes & details.",
-
   "gui.weapons.guide.p1.title": "§6§l⚔️ MOONLIGHT RITUAL SWORD",
   "gui.weapons.guide.p1.name": "§6§lMoonlight Ritual Sword",
   "gui.weapons.guide.p1.desc": "§7Sacred blade protecting the holy sanctuary.",
@@ -99,7 +95,6 @@
   "gui.weapons.guide.p1.skill3a": " 4. §6Heavenly Judgment Array (7 Pillars)",
   "gui.weapons.guide.p1.skill3b": " 5. §aGreat Purification (Holy Salvation)",
   "gui.weapons.guide.p1.skill4": " 6..10. §dDemon Lord & Taisai §7(Predator, Stars, Seer Flesh)",
-
   "gui.weapons.guide.p2.title": "§d§l👑 TRUE DEMON LORD AWAKENING",
   "gui.weapons.guide.p2.seed_name": "§d§lDemon Lord Seed",
   "gui.weapons.guide.p2.how_to_get": "§a⭐ How to obtain in Survival:",
@@ -112,7 +107,6 @@
   "gui.weapons.guide.p2.perk2": " • §bSpeed & Resistance: §fPermanent Speed I & Resistance I",
   "gui.weapons.guide.p2.perk3": " • §5Unarmed Arts (Key [Z]): §f6 Supreme Skills (Predator, Stars, Seer Flesh...)",
   "gui.weapons.guide.p2.perk4": " • §cWith Full Divine Armor: §dUnlocks Drago-Nova!",
-
   "gui.weapons.guide.p3.title": "§e§l💎 INFINITY GAUNTLET & 6 STONES",
   "gui.weapons.guide.p3.empty_name": "§e§lEmpty Infinity Gauntlet",
   "gui.weapons.guide.p3.empty_desc1": "§7Golden gauntlet forged with Netherite.",
@@ -127,7 +121,6 @@
   "gui.weapons.guide.p3.boss2": " 🌌 §9Space: §fSlay Ender Dragon | ⌛ §aTime: §fSlay Elder Guardian",
   "gui.weapons.guide.p3.boss3": " 🔥 §6Soul: §fSlay Warden | 🧠 §eMind: §fSlay Evoker Mansion",
   "gui.weapons.guide.p3.backlash_warning": " §c⚠️ Warning: §fRaw stones inflict backlash (requires Gauntlet/Armor)!",
-
   "gui.weapons.guide.p4.title": "§6§l🛡️ DIVINE ARMAMENT (DIVINE)",
   "gui.weapons.guide.p4.piece_helm": "Divine Armament Helmet",
   "gui.weapons.guide.p4.piece_chest": "Divine Armament Chestplate",
@@ -141,7 +134,6 @@
   "gui.weapons.guide.p4.imm2": " §a✔ Boss Attack Immunity: §fSonic Boom, Wither Skulls...",
   "gui.weapons.guide.p4.imm3": " §d★ Demon Lord Synergy: §fUnlocks §5§lDrago-Nova §f(Key [Z])",
   "gui.weapons.guide.p4.weakness": " §c✘ 3 Weaknesses: §fPoison damage, Drowning, and The Void.",
-
   "gui.weapons.guide.p5.title": "§5§l🐲 DRAGON SLAYING TABOO: DRAGO-NOVA",
   "gui.weapons.guide.p5.name1": "§5§lAncient Dragon Slaying Taboo",
   "gui.weapons.guide.p5.name2": "§dDrago-Nova §e(Stardust Explosion)",
@@ -154,7 +146,6 @@
   "gui.weapons.guide.p5.power2": " • §cBlock Obliteration: §fPiercing ray disintegrates terrain.",
   "gui.weapons.guide.p5.power3": " • §dSupernova: §fCraters the impact, shaves §c88% Boss HP§f!",
   "gui.weapons.guide.p5.power4": " • §eRequirements: §fTrue Demon Lord + Full Divine Armor Set.",
-
   "gui.weapons.guide.p6.title": "§e§l👁️ Taisai Seikun",
   "gui.weapons.guide.p6.name": "§e§lTaisai Seikun §6(泰歳星君)",
   "gui.weapons.guide.p6.desc": "§7God of Stars and Calamity §bDark Gathering§7.",
@@ -167,7 +158,6 @@
   "gui.weapons.guide.p6.rule2": " • §aAbsolute Ward: §fAbsorbs 100% incoming damage.",
   "gui.weapons.guide.p6.rule3": " • §bExit Barrier: §fDouble jump (Space) or Right-Click.",
   "gui.weapons.guide.p6.rule4": " • §cRequirements: §fTrue Demon Lord Awakening (Key [Z]).",
-
   "gui.weapons.guide.p7.title": "§c§l👁️ TAISAI SEIKUN: SEER FLESH",
   "gui.weapons.guide.p7.name": "§c§lSeer Flesh (Shi Rou / 視肉)",
   "gui.weapons.guide.p7.desc": "§7Immortal divine flesh cluster from Taisai Seikun.",
@@ -180,7 +170,6 @@
   "gui.weapons.guide.p7.eff2": " • §bCleanse: §fPurges Poison, Wither, Darkness, Blindness, Fire...",
   "gui.weapons.guide.p7.eff3": " • §eSalvation: §fRight-click any entity/ally/villager to cure 100% HP!",
   "gui.weapons.guide.p7.eff4": " • §dBlessing: §fGrants Regeneration III and Absorption II shields.",
-
   "gui.weapons.guide.p8.title": "§2§l👁️ TAISAI SEIKUN: SEER FLESH ARM & STAR",
   "gui.weapons.guide.p8.name": "§2§lSeer Flesh Gauntlet §f& §eExtinction Star",
   "gui.weapons.guide.p8.desc": "§7Dual-wield battle synergy form of Taisai Seikun.",
@@ -191,7 +180,6 @@
   "gui.weapons.guide.p8.eff2": " • §eExtinction Star (Right Hand): §fAuto-forms in free hand. [Left/Right-Click] fires 1-Hit kill beam.",
   "gui.weapons.guide.p8.eff3": " • §bAlly Salvation: §fRight-click any ally or villager with Seer Flesh to restore them to full health.",
   "gui.weapons.guide.p8.eff4": " • §dDivine Ward: §fReflects 50% HP and knocks back mobs. Ends after all 5 stars fired or 3 minutes.",
-
   "gui.weapons.guide.p10.title": "§4§l☄️ EXTINCTION STAR: ALKAID",
   "gui.weapons.guide.p10.name": "§c§lCataclysmic Star - Alkaid (Low Compression)",
   "gui.weapons.guide.p10.desc": "§7The ultimate annihilating move of Taisui Xingjun, releasing all celestial energy at once.",
@@ -203,7 +191,6 @@
   "gui.weapons.guide.p10.eff3": " • §e3. Spiral Cosmic Drill: §fLaunches forward at extreme speed (60 blocks/s) in a spiraling vortex.",
   "gui.weapons.guide.p10.eff4": " • §b4. 12-Block Terrain Carving: §fExcavates a massive cylindrical trench through any block.",
   "gui.weapons.guide.p10.eff5": " • §45. Total Annihilation: §fDeals 99,999 absolute damage, 90% Boss HP & triggers Supernova!",
-
   "gui.weapons.guide.p9.title": "§6§l👑 AUTHOR & PROJECT INFO",
   "gui.weapons.guide.p9.author": "§e⚡ Creator & Lead Dev: §f§lMinhPhuc00ne / Jos",
   "gui.weapons.guide.p9.studio": "§b🏢 Development: §f§lIcey Studio",
@@ -214,7 +201,6 @@
   "gui.weapons.guide.p9.quote2": "§eMay you discover thrill and joy in every mythic battle.",
   "gui.weapons.guide.p9.quote3": "§eWishing you an explosive and wonderful journey!\"",
   "gui.weapons.guide.p9.github": "§6🔗 Project Source (GitHub):",
-
   "item.weapons.primordial_grimoire": "Primordial Demon Grimoire",
   "item.weapons.demon_summoning_circle": "Demonic Summoning Circle",
   "item.weapons.primordial_pact": "Primordial Demon Pact",
@@ -225,7 +211,6 @@
   "item.weapons.primordial_pact_violet": "Primordial Pact: Violet (Purple)",
   "item.weapons.primordial_pact_bleu": "Primordial Pact: Bleu (Blue)",
   "item.weapons.primordial_pact_vert": "Primordial Pact: Vert (Green)",
-
   "item.weapons.magic_circle_noir": "Ancient Abyssal Magic Circle (Noir)",
   "item.weapons.magic_circle_rouge": "Crimson Cataclysm Magic Circle (Rouge)",
   "item.weapons.magic_circle_blanc": "Primordial White Flame Magic Circle (Blanc)",
@@ -235,7 +220,6 @@
   "item.weapons.magic_circle_violet": "Primordial Miasma Magic Circle (Violet)",
   "item.weapons.magic_circle_bleu": "Absolute Glacial Magic Circle (Bleu)",
   "item.weapons.magic_circle_vert": "Sylph Aegis Magic Circle (Vert)",
-
   "block.weapons.domain_barrier_noir": "Domain Barrier: Abyss (Noir)",
   "block.weapons.domain_barrier_rouge": "Domain Barrier: Inferno (Rouge)",
   "block.weapons.domain_barrier_blanc": "Domain Barrier: White Flame (Blanc)",
@@ -243,7 +227,6 @@
   "block.weapons.domain_barrier_violet": "Domain Barrier: Miasma (Violet)",
   "block.weapons.domain_barrier_bleu": "Domain Barrier: Glacial Frost (Bleu)",
   "block.weapons.domain_barrier_vert": "Domain Barrier: Emerald Aegis (Vert)",
-
   "entity.weapons.primordial_demon": "Primordial Demon",
   "entity.weapons.primordial_demon.rouge": "Rouge",
   "entity.weapons.primordial_demon.noir": "Noir",
@@ -251,6 +234,33 @@
   "entity.weapons.primordial_demon.jaune": "Jaune",
   "entity.weapons.primordial_demon.violet": "Violet",
   "entity.weapons.primordial_demon.bleu": "Bleu",
-  "entity.weapons.primordial_demon.vert": "Vert"
+  "entity.weapons.primordial_demon.vert": "Vert",
+  "item.weapons.artificial_skeleton": "Magisteel Artificial Skeleton",
+  "block.weapons.incubation_capsule": "Artificial Incubation Capsule",
+  "item.weapons.incubation_capsule": "Artificial Incubation Capsule",
+  "item.weapons.incubation_capsule_skeleton": "Incubation Capsule (Skeleton Loaded)",
+  "item.weapons.primordial_pact_body": "Primordial Pact: Physical Vessel",
+  "item.weapons.primordial_pact_named": "Primordial Pact: Bestowed Name",
+  "item.weapons.primordial_pact_awakened": "Primordial Pact: Full Awakening",
+  "item.weapons.primordial_pact_rouge_body": "Physical Pact: Rouge (Red)",
+  "item.weapons.primordial_pact_rouge_named": "Named Pact: Guy Crimson (Rouge (Red))",
+  "item.weapons.primordial_pact_rouge_awakened": "Awakened Pact: Demon God Guy Crimson [Body & Name]",
+  "item.weapons.primordial_pact_noir_body": "Physical Pact: Noir (Black)",
+  "item.weapons.primordial_pact_noir_named": "Named Pact: Diablo (Noir (Black))",
+  "item.weapons.primordial_pact_noir_awakened": "Awakened Pact: Demon God Diablo [Body & Name]",
+  "item.weapons.primordial_pact_blanc_body": "Physical Pact: Blanc (White)",
+  "item.weapons.primordial_pact_blanc_named": "Named Pact: Testarossa (Blanc (White))",
+  "item.weapons.primordial_pact_blanc_awakened": "Awakened Pact: Demon God Testarossa [Body & Name]",
+  "item.weapons.primordial_pact_jaune_body": "Physical Pact: Jaune (Yellow)",
+  "item.weapons.primordial_pact_jaune_named": "Named Pact: Carrera (Jaune (Yellow))",
+  "item.weapons.primordial_pact_jaune_awakened": "Awakened Pact: Demon God Carrera [Body & Name]",
+  "item.weapons.primordial_pact_violet_body": "Physical Pact: Violet (Purple)",
+  "item.weapons.primordial_pact_violet_named": "Named Pact: Ultima (Violet (Purple))",
+  "item.weapons.primordial_pact_violet_awakened": "Awakened Pact: Demon God Ultima [Body & Name]",
+  "item.weapons.primordial_pact_bleu_body": "Physical Pact: Bleu (Blue)",
+  "item.weapons.primordial_pact_bleu_named": "Named Pact: Rain (Bleu (Blue))",
+  "item.weapons.primordial_pact_bleu_awakened": "Awakened Pact: Demon God Rain [Body & Name]",
+  "item.weapons.primordial_pact_vert_body": "Physical Pact: Vert (Green)",
+  "item.weapons.primordial_pact_vert_named": "Named Pact: Misery (Vert (Green))",
+  "item.weapons.primordial_pact_vert_awakened": "Awakened Pact: Demon God Misery [Body & Name]"
 }
-

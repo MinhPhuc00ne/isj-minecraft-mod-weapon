@@ -46,6 +46,16 @@ public class ModBlocks {
     public static final RegistrySupplier<Block> DOMAIN_BARRIER_VERT = BLOCKS.register("domain_barrier_vert",
             () -> new Block(createBarrierProperties(MapColor.COLOR_LIGHT_GREEN, 14)));
 
+    public static final RegistrySupplier<Block> INCUBATION_CAPSULE = BLOCKS.register("incubation_capsule",
+            () -> new com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock(
+                    BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.METAL)
+                            .strength(3.5F, 15.0F)
+                            .sound(SoundType.GLASS)
+                            .noOcclusion()
+                            .lightLevel(state -> 8)
+            ));
+
     public static void register() {
         BLOCKS.register();
     }

@@ -55,13 +55,11 @@
   "key.weapons.select_stone": "Mở Bảng Chọn Đá Vô Cực (PgUp)",
   "key.weapons.cast_beelzebuth": "Chuyển Đổi Kỹ Năng / Tuyệt Chiêu (Z)",
   "item.weapons.celestial_tome": "Thánh Thư Thần Khí & Ma Vương",
-
   "tooltip.weapons.celestial_tome.title": "§6§l[BÍ TÍCH THẦN THOẠI]",
   "tooltip.weapons.celestial_tome.name": "§b§lThánh Thư Thần Khí & Ma Vương",
   "tooltip.weapons.celestial_tome.desc1": "§7Cuốn sách ghi chép toàn bộ công thức rèn đúc,",
   "tooltip.weapons.celestial_tome.desc2": "§7cách thức tỉnh Chân Ma Vương và bí kíp tuyệt kỹ.",
   "tooltip.weapons.celestial_tome.usage": "§e👉 Nhấn §a[Chuột Phải] §eđể mở giao diện hướng dẫn trực quan!",
-
   "gui.weapons.guide.screen_title": "Ma Đạo Thư",
   "gui.weapons.guide.page_indicator": "Trang %s / %s",
   "gui.weapons.guide.btn.prev": "◀ Trang Trước",
@@ -76,7 +74,6 @@
   "gui.weapons.guide.btn.open_github": "§6🔗 Mở Link GitHub",
   "gui.weapons.guide.btn.copy_github": "§a📋 Sao Chép Link",
   "gui.weapons.guide.copy_success": "§a✔ Đã sao chép link GitHub của MinhPhuc00ne / Jos vào Clipboard!",
-
   "gui.weapons.guide.p0.title": "§6§l📜 MA ĐẠO THƯ",
   "gui.weapons.guide.p0.greeting": "§eHI!",
   "gui.weapons.guide.p0.intro1": "§fMa Đạo thư này lưu truyền tri thức cổ xưa về cách chế tác,",
@@ -87,7 +84,6 @@
   "gui.weapons.guide.p0.control3a": " • §bPhím [Page Up]: §fChọn Đá Vô Cực",
   "gui.weapons.guide.p0.control3b": "   §fđể gắn hoặc chọn sức mạnh Đá Vô Cực.",
   "gui.weapons.guide.p0.footer": "§8👉 Bấm [Trang Sau ▶] để xem chi tiết công thức từng trang bị.",
-
   "gui.weapons.guide.p1.title": "§6§l⚔️ NGUYỆT QUANG THẦN TẾ KIẾM",
   "gui.weapons.guide.p1.name": "§6§lNguyệt Quang Thần Tế Kiếm",
   "gui.weapons.guide.p1.desc": "§7Bảo kiếm hộ vệ thánh điện.",
@@ -99,7 +95,6 @@
   "gui.weapons.guide.p1.skill3a": " 4. §6Bát Môn Thiên Phạt Trận (Lồng Giam 7 Trụ)",
   "gui.weapons.guide.p1.skill3b": " 5. §aĐại Thánh Tẩy (Quang Minh Cứu Rỗi)",
   "gui.weapons.guide.p1.skill4": " 6..10. §dMa Vương & Thái Tuế §7(Thôn Phệ, Tinh Tú, Thị Nhục)",
-
   "gui.weapons.guide.p2.title": "§d§l👑 THỨC TỈNH CHÂN MA VƯƠNG",
   "gui.weapons.guide.p2.seed_name": "§d§lHạt Giống Ma Vương",
   "gui.weapons.guide.p2.how_to_get": "§a⭐ Cách kiếm trong Survival:",
@@ -112,7 +107,6 @@
   "gui.weapons.guide.p2.perk2": " • §bTốc Độ & Kháng Cự: §fSpeed I, Resistance I vĩnh cửu",
   "gui.weapons.guide.p2.perk3": " • §5Bí Kíp Tay Không (Phím [Z]): §f6 Tuyệt Kỹ Thần Cấp (Thôn Phệ, Tinh Tú, Thị Nhục...)",
   "gui.weapons.guide.p2.perk4": " • §cKhi Mặc Đủ Giáp Thần Linh: §dKhai mở Dragon Nova!",
-
   "gui.weapons.guide.p3.title": "§e§l💎 GĂNG TAY VÔ CỰC & 6 ĐÁ",
   "gui.weapons.guide.p3.empty_name": "§e§lGăng Tay Vô Cực Trống",
   "gui.weapons.guide.p3.empty_desc1": "§7Găng tay vàng rèn từ Netherite.",
@@ -127,7 +121,6 @@
   "gui.weapons.guide.p3.boss2": " 🌌 §9Space: §fHạ Rồng Ender | ⌛ §aTime: §fHạ Elder Guardian",
   "gui.weapons.guide.p3.boss3": " 🔥 §6Soul: §fHạ Warden | 🧠 §eMind: §fHạ Evoker Mansion",
   "gui.weapons.guide.p3.backlash_warning": " §c⚠️ Cảnh Báo: §fCầm đá tay không bị phản phệ (cần Găng Trống / Giáp)!",
-
   "gui.weapons.guide.p4.title": "§6§l🛡️ THẦN LINH VŨ TRANG (DIVINE)",
   "gui.weapons.guide.p4.piece_helm": "Mũ Thần Linh Vũ Trang",
   "gui.weapons.guide.p4.piece_chest": "Áo Giáp Thần Linh Vũ Trang",
@@ -141,7 +134,6 @@
   "gui.weapons.guide.p4.imm2": " §a✔ Miễn nhiễm đòn đánh Boss: §fSonic Boom, Wither Skull...",
   "gui.weapons.guide.p4.imm3": " §d★ Hợp Nhất Chân Ma Vương: §fKhai mở §5§lDragon Nova §f(Phím [Z])",
   "gui.weapons.guide.p4.weakness": " §c✘ 3 Điểm yếu: §fSát thương Độc (Poison), Đuối Nước và Rơi Hư Vô.",
-
   "gui.weapons.guide.p5.title": "§5§l🐲 CẤM THUẬT DIỆT RỒNG: DRAGO-NOVA",
   "gui.weapons.guide.p5.name1": "§5§lCấm Thuật Diệt Rồng Cổ Đại",
   "gui.weapons.guide.p5.name2": "§dLong Tinh Bộc Viêm Bá §e(Drago-Nova)",
@@ -154,7 +146,6 @@
   "gui.weapons.guide.p5.power2": " • §cPhá Hủy Block: §fChùm tia xuyên thấu, san phẳng địa hình.",
   "gui.weapons.guide.p5.power3": " • §dSiêu Tân Tinh: §fTạo hố bom, rút §c88% Máu Đại Boss§f!",
   "gui.weapons.guide.p5.power4": " • §eĐiều Kiện: §fThức Tỉnh Chân Ma Vương + Mặc đủ 4 Món Giáp Thần Linh.",
-
   "gui.weapons.guide.p6.title": "§e§l👁️ Taisai Seikun",
   "gui.weapons.guide.p6.name": "§e§lThái Tuế Tinh Quân §6(泰歳星君)",
   "gui.weapons.guide.p6.desc": "§7Vị Thần Thống Trị Các Vì Tinh Tú §bDark Gathering§7.",
@@ -167,7 +158,6 @@
   "gui.weapons.guide.p6.rule2": " • §aLớp Phòng Ngự: §fKháng 100% sát thương.",
   "gui.weapons.guide.p6.rule3": " • §bThoát Kết Giới: §fNhấn Cách 2 lần để bay lên hoặc nhấp Chuột Phải.",
   "gui.weapons.guide.p6.rule4": " • §cĐiều Kiện: §fThức Tỉnh Chân Ma Vương (chuyển đổi qua phím [Z]).",
-
   "gui.weapons.guide.p7.title": "§c§l👁️ THÁI TUẾ TINH QUÂN: THỊ NHỤC",
   "gui.weapons.guide.p7.name": "§c§lThị Nhục (Seer Flesh / 視肉)",
   "gui.weapons.guide.p7.desc": "§7Khối thịt u linh bất tử mang huyết mạch Thần linh.",
@@ -180,7 +170,6 @@
   "gui.weapons.guide.p7.eff2": " • §bTẩy Uế: §fHóa giải toàn diện Độc tố, Khô héo, Bóng tối, Lửa cháy...",
   "gui.weapons.guide.p7.eff3": " • §eCứu Rỗi: §fChuột phải vào sinh vật/đồng minh/dân làng để cứu sống 100% HP!",
   "gui.weapons.guide.p7.eff4": " • §dPhước Lành: §fBan hiệu ứng Hồi Sinh & Hấp Thụ Khiên Máu II.",
-
   "gui.weapons.guide.p8.title": "§2§l👁️ CỘNG HƯỞNG: THỊ NHỤC & TINH TÚ",
   "gui.weapons.guide.p8.name": "§2§lThị Nhục Bọc Tay §f& §eNgôi Sao Tuyệt Diệt",
   "gui.weapons.guide.p8.desc": "§7Hình thái song tuyệt chiến đấu tối thượng của Thái Tuế Tinh Quân.",
@@ -191,7 +180,6 @@
   "gui.weapons.guide.p8.eff2": " • §eTinh Tú (Tay Phải): §fTự ngưng tụ khi tay trống. [Chuột Trái/Phải] phóng tia tất sát quái & phá vỡ block.",
   "gui.weapons.guide.p8.eff3": " • §bCứu Rỗi Đồng Đội: §fCầm Thị Nhục chuột phải vào đồng minh hoặc dân làng để trị liệu hồi phục tối đa.",
   "gui.weapons.guide.p8.eff4": " • §dThần Tính Hộ Thể: §fQuái áp sát bị dội ngược 50% HP. Hết 5 sao hoặc 3 phút sẽ kết thúc an toàn.",
-
   "gui.weapons.guide.p10.title": "§4§l☄️ DIỆT THẾ TÀ TINH: ALKAID",
   "gui.weapons.guide.p10.name": "§c§lDiệt Thế Tà Tinh - Alkaid (Low Compression)",
   "gui.weapons.guide.p10.desc": "§7Tất sát tuyệt kỹ tối thượng của Thái Tuế Tinh Quân - giải phóng toàn bộ năng lượng Tinh Tú.",
@@ -203,7 +191,6 @@
   "gui.weapons.guide.p10.eff3": " • §e3. Phóng Thẳng Dạng Xoáy Ốc: §fBắn thẳng về trước như mũi khoan vũ trụ (60 blocks/s).",
   "gui.weapons.guide.p10.eff4": " • §b4. Khoan Phá Địa Hình 12m: §fNghiền nát mọi block thành đường hầm trụ tròn khổng lồ.",
   "gui.weapons.guide.p10.eff5": " • §45. Phân Rã Tất Sát: §fGây 99,999 sát thương tuyệt đối, rút 90% HP Boss & kích nổ Supernova!",
-
   "gui.weapons.guide.p9.title": "§6§l👑 TÁC GIẢ & THÔNG TIN DỰ ÁN",
   "gui.weapons.guide.p9.author": "§e⚡ Tác Giả Sáng Lập: §f§lMinhPhuc00ne / Jos",
   "gui.weapons.guide.p9.studio": "§b🏢 Đơn Vị Phát Triển: §f§lIcey Studio",
@@ -214,7 +201,6 @@
   "gui.weapons.guide.p9.quote2": "§eHy vọng bạn sẽ tìm thấy niềm vui trong từng trận chiến.",
   "gui.weapons.guide.p9.quote3": "§eChúc bạn có một trải nghiệm thật bùng nổ và tuyệt vời!\"",
   "gui.weapons.guide.p9.github": "§6🔗 Mã Nguồn Dự Án (GitHub):",
-
   "item.weapons.primordial_grimoire": "Pháp Điển Khế Ước Thủy Tổ",
   "item.weapons.demon_summoning_circle": "Pháp Trận Triệu Hồi Ma Giới",
   "item.weapons.primordial_pact": "Khế Ước Thủy Tổ",
@@ -225,7 +211,6 @@
   "item.weapons.primordial_pact_violet": "Khế Ước Thủy Tổ: Violet (Tử Sắc)",
   "item.weapons.primordial_pact_bleu": "Khế Ước Thủy Tổ: Bleu (Lam Sắc)",
   "item.weapons.primordial_pact_vert": "Khế Ước Thủy Tổ: Vert (Lục Sắc)",
-
   "item.weapons.magic_circle_noir": "Pháp Trận Hắc Ma Cổ Tự (Noir)",
   "item.weapons.magic_circle_rouge": "Ma Trận Xích Diễm Bộc Phá (Rouge)",
   "item.weapons.magic_circle_blanc": "Pháp Trận Bạch Viêm Khởi Nguyên (Blanc)",
@@ -235,7 +220,6 @@
   "item.weapons.magic_circle_violet": "Pháp Trận Tử Độc Khởi Nguyên (Violet)",
   "item.weapons.magic_circle_bleu": "Pháp Trận Băng Tiễn Cực Hàn (Bleu)",
   "item.weapons.magic_circle_vert": "Pháp Trận Phong Ma Hộ Mệnh (Vert)",
-
   "block.weapons.domain_barrier_noir": "Khối Kết Giới Lãnh Địa: Hắc Ám (Noir)",
   "block.weapons.domain_barrier_rouge": "Khối Kết Giới Lãnh Địa: Hỏa Ngục (Rouge)",
   "block.weapons.domain_barrier_blanc": "Khối Kết Giới Lãnh Địa: Bạch Viêm (Blanc)",
@@ -243,7 +227,6 @@
   "block.weapons.domain_barrier_violet": "Khối Kết Giới Lãnh Địa: Tử Độc (Violet)",
   "block.weapons.domain_barrier_bleu": "Khối Kết Giới Lãnh Địa: Hàn Băng (Bleu)",
   "block.weapons.domain_barrier_vert": "Khối Kết Giới Lãnh Địa: Lục Bảo (Vert)",
-
   "entity.weapons.primordial_demon": "Ác Ma Thủy Tổ",
   "entity.weapons.primordial_demon.rouge": "Rouge",
   "entity.weapons.primordial_demon.noir": "Noir",
@@ -251,5 +234,33 @@
   "entity.weapons.primordial_demon.jaune": "Jaune",
   "entity.weapons.primordial_demon.violet": "Violet",
   "entity.weapons.primordial_demon.bleu": "Bleu",
-  "entity.weapons.primordial_demon.vert": "Vert"
+  "entity.weapons.primordial_demon.vert": "Vert",
+  "item.weapons.artificial_skeleton": "Khung Xương Ma Thiết Nhân Tạo",
+  "block.weapons.incubation_capsule": "Bồn Chứa Thể Xác Nhân Tạo",
+  "item.weapons.incubation_capsule": "Bồn Chứa Thể Xác Nhân Tạo",
+  "item.weapons.incubation_capsule_skeleton": "Bồn Chứa Khung Xương Nhân Tạo",
+  "item.weapons.primordial_pact_body": "Khế Ước Thủy Tổ: Thể Xác Vật Lý",
+  "item.weapons.primordial_pact_named": "Khế Ước Thủy Tổ: Đã Ban Danh Xưng",
+  "item.weapons.primordial_pact_awakened": "Khế Ước Thủy Tổ: Thức Tỉnh Toàn Diện",
+  "item.weapons.primordial_pact_rouge_body": "Khế Ước Thể Xác: Rouge (Xích Sắc)",
+  "item.weapons.primordial_pact_rouge_named": "Khế Ước Danh Xưng: Guy Crimson (Rouge (Xích Sắc))",
+  "item.weapons.primordial_pact_rouge_awakened": "Khế Ước Thức Tỉnh: Ma Thần Guy Crimson [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_noir_body": "Khế Ước Thể Xác: Noir (Hắc Sắc)",
+  "item.weapons.primordial_pact_noir_named": "Khế Ước Danh Xưng: Diablo (Noir (Hắc Sắc))",
+  "item.weapons.primordial_pact_noir_awakened": "Khế Ước Thức Tỉnh: Ma Thần Diablo [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_blanc_body": "Khế Ước Thể Xác: Blanc (Bạch Sắc)",
+  "item.weapons.primordial_pact_blanc_named": "Khế Ước Danh Xưng: Testarossa (Blanc (Bạch Sắc))",
+  "item.weapons.primordial_pact_blanc_awakened": "Khế Ước Thức Tỉnh: Ma Thần Testarossa [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_jaune_body": "Khế Ước Thể Xác: Jaune (Hoàng Sắc)",
+  "item.weapons.primordial_pact_jaune_named": "Khế Ước Danh Xưng: Carrera (Jaune (Hoàng Sắc))",
+  "item.weapons.primordial_pact_jaune_awakened": "Khế Ước Thức Tỉnh: Ma Thần Carrera [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_violet_body": "Khế Ước Thể Xác: Violet (Tử Sắc)",
+  "item.weapons.primordial_pact_violet_named": "Khế Ước Danh Xưng: Ultima (Violet (Tử Sắc))",
+  "item.weapons.primordial_pact_violet_awakened": "Khế Ước Thức Tỉnh: Ma Thần Ultima [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_bleu_body": "Khế Ước Thể Xác: Bleu (Thanh Sắc)",
+  "item.weapons.primordial_pact_bleu_named": "Khế Ước Danh Xưng: Rain (Bleu (Thanh Sắc))",
+  "item.weapons.primordial_pact_bleu_awakened": "Khế Ước Thức Tỉnh: Ma Thần Rain [Thể Xác & Tên]",
+  "item.weapons.primordial_pact_vert_body": "Khế Ước Thể Xác: Vert (Lục Sắc)",
+  "item.weapons.primordial_pact_vert_named": "Khế Ước Danh Xưng: Misery (Vert (Lục Sắc))",
+  "item.weapons.primordial_pact_vert_awakened": "Khế Ước Thức Tỉnh: Ma Thần Misery [Thể Xác & Tên]"
 }
