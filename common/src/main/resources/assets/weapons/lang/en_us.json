@@ -262,5 +262,10 @@
   "item.weapons.primordial_pact_bleu_awakened": "Awakened Pact: Demon God Rain [Body & Name]",
   "item.weapons.primordial_pact_vert_body": "Physical Pact: Vert (Green)",
   "item.weapons.primordial_pact_vert_named": "Named Pact: Misery (Vert (Green))",
-  "item.weapons.primordial_pact_vert_awakened": "Awakened Pact: Demon God Misery [Body & Name]"
+  "item.weapons.primordial_pact_vert_awakened": "Awakened Pact: Demon God Misery [Body & Name]",
+  "entity.weapons.velgrynd": "Scorch Dragon Velgrynd",
+  "item.weapons.scorch_dragon_core": "Scorch Dragon Core",
+  "item.weapons.velgrynd_feather_fan": "Dragon Feather Fan",
+  "item.weapons.dragon_seed": "Dragon Factor Seed",
+  "item.weapons.velgrynd_reverse_scale": "Crimson Reverse Scale: Oath of the Scorch Dragon"
 }

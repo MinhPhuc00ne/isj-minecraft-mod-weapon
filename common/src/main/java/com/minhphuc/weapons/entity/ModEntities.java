@@ -24,15 +24,34 @@ public class ModEntities {
                             .build("primordial_demon")
             );
 
+    public static final RegistrySupplier<EntityType<com.minhphuc.weapons.entity.tensura.VelgryndEntity>> VELGRYND =
+            ENTITY_TYPES.register("velgrynd", () ->
+                    EntityType.Builder.of(com.minhphuc.weapons.entity.tensura.VelgryndEntity::new, MobCategory.MONSTER)
+                            .sized(0.65F, 2.1F)
+                            .clientTrackingRange(16)
+                            .fireImmune()
+                            .build("velgrynd")
+            );
+
     public static void register() {
         ENTITY_TYPES.register();
         EntityAttributeRegistry.register(PRIMORDIAL_DEMON, PrimordialDemonEntity::createAttributes);
+        EntityAttributeRegistry.register(VELGRYND, com.minhphuc.weapons.entity.tensura.VelgryndEntity::createAttributes);
 
         BiomeModifications.addProperties(
                 b -> b.hasTag(BiomeTags.IS_OVERWORLD),
                 (ctx, mutable) -> mutable.getSpawnProperties().addSpawn(
                         MobCategory.MONSTER,
                         new MobSpawnSettings.SpawnerData(PRIMORDIAL_DEMON.get(), 5, 1, 1)
+                )
+        );
+
+        // Tỷ lệ xuất hiện tự nhiên của Chước Nhiệt Long Velgrynd: Hiếm hơn Ác Ma Thủy Tổ 1 bậc (Trọng số 1 so với 5)
+        BiomeModifications.addProperties(
+                b -> b.hasTag(BiomeTags.IS_OVERWORLD) || b.hasTag(BiomeTags.IS_NETHER),
+                (ctx, mutable) -> mutable.getSpawnProperties().addSpawn(
+                        MobCategory.MONSTER,
+                        new MobSpawnSettings.SpawnerData(VELGRYND.get(), 1, 1, 1)
                 )
         );
     }
