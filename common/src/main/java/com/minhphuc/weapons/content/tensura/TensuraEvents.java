@@ -1,6 +1,7 @@
 package com.minhphuc.weapons.content.tensura;
 
 import com.minhphuc.weapons.data.EntityDataHelper;
+import com.minhphuc.weapons.init.ModBlocks;
 import com.minhphuc.weapons.init.ModItems;
 import dev.architectury.event.EventResult;
 import dev.architectury.event.events.common.EntityEvent;
@@ -13,14 +14,32 @@ import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import com.minhphuc.weapons.entity.tensura.DemonType;
+import dev.architectury.event.events.common.InteractionEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.network.chat.Component;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
+import com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleManager;
+import com.minhphuc.weapons.entity.tensura.PrimordialDemonEntity;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.phys.Vec3;
+
 public class TensuraEvents {
 
     public static void register() {
         EntityEvent.LIVING_DEATH.register(TensuraEvents::onLivingDeath);
+        EntityEvent.LIVING_HURT.register(TensuraEvents::onLivingHurt);
+        InteractionEvent.RIGHT_CLICK_BLOCK.register(TensuraEvents::onRightClickBlock);
+        InteractionEvent.INTERACT_ENTITY.register(TensuraEvents::onInteractEntity);
         dev.architectury.event.events.common.PlayerEvent.PLAYER_JOIN.register(TensuraEvents::onPlayerJoin);
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(level -> {
             CarreraBulletLogic.tickVortices();
             PrimordialSummonRitual.tickRituals(level);
+            IncubationCapsuleManager.tickCapsules(level);
         });
     }
 
@@ -179,6 +198,8 @@ public class TensuraEvents {
             player = sp;
         } else if (source.getDirectEntity() instanceof ServerPlayer sp) {
             player = sp;
+        } else if (source.getEntity() instanceof PrimordialDemonEntity pde && pde.getOwner() instanceof ServerPlayer sp) {
+            player = sp;
         } else if (victim.getLastHurtByMob() instanceof ServerPlayer sp) {
             // Bao gồm quái bị người chơi đánh trúng rồi chết bởi cháy, rơi, hiệu ứng đòn quét...
             player = sp;
@@ -186,6 +207,18 @@ public class TensuraEvents {
 
         if (player != null) {
             handleMobDeathDrop(player, victim);
+
+            // Ghi nhận hiến tế Dân Làng (Villager Sacrifice) cho Ác Ma Thủy Tổ
+            if (victim instanceof net.minecraft.world.entity.npc.Villager) {
+                CompoundTag pData = EntityDataHelper.getCustomData(player);
+                int count = pData.getInt("TensuraVillagersSacrificed") + 1;
+                pData.putInt("TensuraVillagersSacrificed", count);
+                if (count < 10) {
+                    VoiceOfTheWorld.announce(player, "§4Báo cáo. Đã thu hoạch linh hồn Dân Làng hiến tế: §e" + count + "/10§4. Tích đủ 10 linh hồn để thức tỉnh Thể Xác/Danh Xưng cho Ác Ma Thủy Tổ!");
+                } else if (count == 10) {
+                    VoiceOfTheWorld.announce(player, "§6§l[TENSURA] §dĐã hoàn tất 10 linh hồn Dân Làng hiến tế! Khi triệu hồi Ác Ma tiếp theo bằng Khế Ước sẽ kích hoạt thức tỉnh!");
+                }
+            }
         }
         return EventResult.pass();
     }
@@ -232,5 +265,116 @@ public class TensuraEvents {
         // Bắt đầu Lễ Hội Thu Hoạch 4 giai đoạn kịch tính & hoành tráng!
         HarvestFestival.start(player);
         return true;
+    }
+
+    public static EventResult onLivingHurt(LivingEntity victim, DamageSource source, float amount) {
+        if (victim == null || victim.level().isClientSide()) return EventResult.pass();
+
+        // 1. Phù thủy, Dân làng, Kẻ cướp (Raider) hy sinh triệu hồi ác ma khi máu còn dưới 20%
+        if (victim instanceof net.minecraft.world.entity.monster.Witch ||
+            victim instanceof net.minecraft.world.entity.npc.Villager ||
+            victim instanceof net.minecraft.world.entity.raid.Raider) {
+
+            float currentHp = victim.getHealth();
+            float maxHp = victim.getMaxHealth();
+            if ((currentHp - amount) <= maxHp * 0.20F && !victim.getTags().contains("TensuraSacrificed")) {
+                victim.addTag("TensuraSacrificed");
+
+                if (victim.level() instanceof ServerLevel serverLevel) {
+                    serverLevel.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
+                            SoundEvents.GENERIC_EXPLODE.value(), SoundSource.HOSTILE, 2.0F, 0.8F);
+                    serverLevel.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
+                            SoundEvents.WITHER_SPAWN, SoundSource.HOSTILE, 2.0F, 1.2F);
+                    serverLevel.playSound(null, victim.getX(), victim.getY(), victim.getZ(),
+                            SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.HOSTILE, 2.0F, 0.9F);
+
+                    serverLevel.sendParticles(ParticleTypes.EXPLOSION_EMITTER, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 3, 0.5, 0.5, 0.5, 0.0);
+                    serverLevel.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 60, 0.8, 1.2, 0.8, 0.1);
+                    serverLevel.sendParticles(ParticleTypes.DRAGON_BREATH, victim.getX(), victim.getY() + 1.0D, victim.getZ(), 40, 0.6, 1.0, 0.6, 0.08);
+
+                    String chant;
+                    if (victim instanceof net.minecraft.world.entity.monster.Witch) {
+                        chant = "§5§l[Phù Thủy] §c\"Hỡi Ác Ma từ đáy vực thẳm... Ta dâng hiến linh hồn và sinh mạng này, hãy giáng thế nghiền nát kẻ thù của ta!\"";
+                    } else if (victim instanceof net.minecraft.world.entity.npc.Villager) {
+                        chant = "§e§l[Dân Làng] §c\"Thần linh đã bỏ rơi chúng ta... Vậy hãy để Ác Ma Thủy Tổ trừng phạt những kẻ tàn bạo này bằng máu và tro tàn!\"";
+                    } else {
+                        chant = "§4§l[Kẻ Cướp] §c\"Máu này... sinh mạng này dâng trọn cho Bạo Chúa Vực Sâu! Hãy hủy diệt chúng!\"";
+                    }
+
+                    for (ServerPlayer p : serverLevel.players()) {
+                        if (p.distanceToSqr(victim) <= 40.0 * 40.0) {
+                            p.displayClientMessage(Component.literal(chant), false);
+                        }
+                    }
+
+                    LivingEntity attacker = null;
+                    if (source.getEntity() instanceof LivingEntity le) {
+                        attacker = le;
+                    } else if (source.getDirectEntity() instanceof LivingEntity le) {
+                        attacker = le;
+                    }
+
+                    DemonType randomDemon = DemonType.values()[serverLevel.random.nextInt(DemonType.values().length)];
+                    PrimordialSummonRitual.startImmediate(serverLevel, victim.position(), randomDemon, attacker);
+
+                    victim.discard();
+                    return EventResult.interruptFalse();
+                }
+            }
+        }
+        return EventResult.pass();
+    }
+
+    public static EventResult onRightClickBlock(Player player, InteractionHand hand, BlockPos pos, Direction direction) {
+        if (player instanceof ServerPlayer sp) {
+            // 1. Luôn ưu tiên hiến tế pháp trận triệu hồi ác ma trước
+            if (PrimordialSummonRitual.offerSacrifice(sp, hand, Vec3.atCenterOf(pos))) {
+                return EventResult.interruptFalse();
+            }
+            // 2. Tương tác Bồn Chứa Thể Xác Nhân Tạo (hỗ trợ cả nửa trên và nửa dưới)
+            BlockPos targetPos = pos;
+            if (player.level().getBlockState(targetPos).is(ModBlocks.INCUBATION_CAPSULE.get())) {
+                var state = player.level().getBlockState(targetPos);
+                if (state.hasProperty(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF) &&
+                        state.getValue(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER) {
+                    targetPos = targetPos.below();
+                }
+                if (IncubationCapsuleManager.onInteract(sp, hand, targetPos)) {
+                    return EventResult.interruptFalse();
+                }
+            } else if (player.level().getBlockState(pos.below()).is(ModBlocks.INCUBATION_CAPSULE.get())) {
+                if (IncubationCapsuleManager.onInteract(sp, hand, pos.below())) {
+                    return EventResult.interruptFalse();
+                }
+            }
+        }
+        return EventResult.pass();
+    }
+
+    public static EventResult onInteractEntity(Player player, Entity entity, InteractionHand hand) {
+        if (player instanceof ServerPlayer sp) {
+            if (PrimordialSummonRitual.offerSacrifice(sp, hand, entity.position())) {
+                return EventResult.interruptFalse();
+            }
+
+            // Click trúng dummy bên trong bồn chứa (Skeleton dummy hoặc Demon dummy)
+            if (entity.getTags().contains("CapsuleSkeletonDummy") || entity.getTags().contains("CapsuleDemonDummy")) {
+                BlockPos capsulePos = entity.blockPosition();
+                if (!sp.level().getBlockState(capsulePos).is(ModBlocks.INCUBATION_CAPSULE.get())) {
+                    capsulePos = capsulePos.below();
+                }
+                if (sp.level().getBlockState(capsulePos).is(ModBlocks.INCUBATION_CAPSULE.get())) {
+                    var state = sp.level().getBlockState(capsulePos);
+                    if (state.hasProperty(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF) &&
+                            state.getValue(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER) {
+                        capsulePos = capsulePos.below();
+                    }
+                    if (IncubationCapsuleManager.onInteract(sp, hand, capsulePos)) {
+                        return EventResult.interruptFalse();
+                    }
+                }
+            }
+        }
+        return EventResult.pass();
     }
 }

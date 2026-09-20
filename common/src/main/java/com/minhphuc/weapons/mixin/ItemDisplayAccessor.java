@@ -11,6 +11,9 @@ public interface ItemDisplayAccessor {
     @Invoker("setItemStack")
     void weapons$setItemStack(ItemStack itemStack);
 
+    @Invoker("getItemStack")
+    ItemStack weapons$getItemStack();
+
     @Invoker("setItemTransform")
     void weapons$setItemTransform(ItemDisplayContext itemTransform);
 }

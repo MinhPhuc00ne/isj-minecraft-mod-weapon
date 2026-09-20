@@ -41,4 +41,16 @@ public class ItemStackDataHelper {
     public static void putString(ItemStack stack, String key, String value) {
         CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putString(key, value));
     }
+
+    public static float getFloat(ItemStack stack, String key, float defaultValue) {
+        CustomData customData = stack.get(DataComponents.CUSTOM_DATA);
+        if (customData != null && customData.copyTag().contains(key)) {
+            return customData.copyTag().getFloat(key);
+        }
+        return defaultValue;
+    }
+
+    public static void putFloat(ItemStack stack, String key, float value) {
+        CustomData.update(DataComponents.CUSTOM_DATA, stack, tag -> tag.putFloat(key, value));
+    }
 }

@@ -53,7 +53,7 @@ public class ServerboundSummonDemonPacket {
             }
 
             DemonType demonType = DemonType.byIndex(demonId);
-            PrimordialSummonRitual.start(player.serverLevel(), player, target, demonType, isWinged);
+            PrimordialSummonRitual.startWaitingRitual(player.serverLevel(), player, target, demonType, isWinged);
         });
     }
 }

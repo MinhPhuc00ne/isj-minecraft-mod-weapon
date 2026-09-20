@@ -66,6 +66,21 @@ public class ModMessages {
                 ServerboundSummonDemonPacket::encode,
                 ServerboundSummonDemonPacket::new,
                 ServerboundSummonDemonPacket::handle);
+
+        CHANNEL.register(ServerboundDemonCommandPacket.class,
+                ServerboundDemonCommandPacket::encode,
+                ServerboundDemonCommandPacket::new,
+                ServerboundDemonCommandPacket::handle);
+
+        CHANNEL.register(ClientboundOpenCapsuleScreenPacket.class,
+                ClientboundOpenCapsuleScreenPacket::encode,
+                ClientboundOpenCapsuleScreenPacket::new,
+                ClientboundOpenCapsuleScreenPacket::handle);
+
+        CHANNEL.register(ServerboundCapsuleEvolvePacket.class,
+                ServerboundCapsuleEvolvePacket::encode,
+                ServerboundCapsuleEvolvePacket::new,
+                ServerboundCapsuleEvolvePacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {

@@ -52,10 +52,16 @@ public class PrimordialDemonModel extends HumanoidModel<PrimordialDemonEntity> {
     public final ModelPart vertMaidBand;
     public final ModelPart vertSkirt;
 
+    // Feminine silhouette for female demons (Blanc, Jaune, Violet, Bleu, Vert)
+    public final ModelPart femaleBust;
+
     public PrimordialDemonModel(ModelPart root) {
         super(root);
         ModelPart head = root.getChild("head");
         ModelPart body = root.getChild("body");
+
+        // Feminine silhouette
+        this.femaleBust = body.getChild("female_bust");
 
         // Noir
         this.noirBangs = head.getChild("noir_bangs");
@@ -222,6 +228,11 @@ public class PrimordialDemonModel extends HumanoidModel<PrimordialDemonEntity> {
                 .texOffs(16, 36).addBox(-4.5F, 11.0F, -2.5F, 9.0F, 10.0F, 5.0F, new CubeDeformation(0.3F)),
                 PartPose.ZERO);
 
+        // --- 8. FEMININE SILHOUETTE FOR FEMALE DEMONS (Blanc, Jaune, Violet, Bleu, Vert) ---
+        body.addOrReplaceChild("female_bust", CubeListBuilder.create()
+                .texOffs(20, 21).addBox(-3.5F, 1.8F, -2.8F, 7.0F, 3.5F, 1.8F, new CubeDeformation(0.02F)),
+                PartPose.rotation(0.08F, 0.0F, 0.0F));
+
         return LayerDefinition.create(meshdefinition, 64, 64);
     }
 
@@ -240,10 +251,13 @@ public class PrimordialDemonModel extends HumanoidModel<PrimordialDemonEntity> {
         boolean isBleu = (type == DemonType.BLEU);
         boolean isVert = (type == DemonType.VERT);
 
+        // Female silhouette active only for the 5 female demons (Blanc, Jaune, Violet, Bleu, Vert)
+        this.femaleBust.visible = type.isFemale();
+
         // Noir
         this.noirBangs.visible = isNoir;
         this.noirTails.visible = isNoir;
-        this.wings.visible = entity.isWinged();
+        this.wings.visible = entity.getDemonType() == DemonType.NOIR;
 
         boolean showNoirClaws = isNoir && (entity.isCombatClawsActive() || entity.getTarget() != null || entity.swingTime > 0);
         this.noirClawsRight.visible = showNoirClaws;
@@ -278,7 +292,7 @@ public class PrimordialDemonModel extends HumanoidModel<PrimordialDemonEntity> {
         this.vertSkirt.visible = isVert;
 
         // --- ANIMATIONS ---
-        if (entity.isWinged()) {
+        if (this.wings.visible) {
             float flap = Mth.sin(ageInTicks * 0.2F) * 0.25F;
             float flapZ = Mth.cos(ageInTicks * 0.2F) * 0.15F;
             this.leftWing.yRot = 0.35F + flap;

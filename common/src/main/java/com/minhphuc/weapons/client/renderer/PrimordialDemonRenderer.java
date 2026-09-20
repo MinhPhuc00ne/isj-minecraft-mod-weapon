@@ -16,14 +16,26 @@ public class PrimordialDemonRenderer extends MobRenderer<PrimordialDemonEntity, 
 
     @Override
     public ResourceLocation getTextureLocation(PrimordialDemonEntity entity) {
-        return entity.getDemonType().getTextureLocation();
+        com.minhphuc.weapons.entity.tensura.DemonType type = entity.getDemonType();
+        if (type == null) type = com.minhphuc.weapons.entity.tensura.DemonType.NOIR;
+
+        if (entity.hasPhysicalBody() && entity.isNamed()) {
+            return type.getAwakenedTextureLocation();
+        } else if (entity.hasPhysicalBody()) {
+            return type.getBodyTextureLocation();
+        } else if (entity.isNamed()) {
+            return type.getNamedTextureLocation();
+        }
+        return type.getTextureLocation();
     }
 
     @Override
     protected void scale(PrimordialDemonEntity entity, PoseStack poseStack, float partialTickTime) {
         float baseScale = entity.getDemonType() != null ? entity.getDemonType().getScale() : 1.0F;
-        if (entity.isWinged()) {
-            baseScale *= 1.07F; // Dạng Ma Vương có cánh vươn cao lớn uy nghiêm hơn
+        if (entity.hasPhysicalBody() && entity.isNamed()) {
+            baseScale *= 1.15F; // Dạng Ma Thần Tối Thượng cao lớn uy nghiêm vượt bậc
+        } else if (entity.hasPhysicalBody() || entity.isNamed()) {
+            baseScale *= 1.07F; // Dạng tiến hóa 1 bậc cao lớn hơn
         }
         poseStack.scale(baseScale, baseScale, baseScale);
     }
