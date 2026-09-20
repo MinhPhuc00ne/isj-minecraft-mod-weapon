@@ -283,6 +283,25 @@ public class VelgryndEntity extends Monster {
 
         ServerLevel sLevel = (ServerLevel) this.level();
 
+        // Siêu Tốc Tái Sinh Long Chủng (True Dragon Ultraspeed Regeneration)
+        if (this.tickCount % 20 == 0 && this.isAlive()) {
+            if (this.getHealth() < this.getMaxHealth()) {
+                float regenAmount = (this.getTarget() == null) ? 100.0F : 50.0F; // 50 HP/s in combat, 100 HP/s out of combat
+                this.heal(regenAmount);
+                sLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY() + 1.2D, this.getZ(), 6, 0.4D, 0.6D, 0.4D, 0.05D);
+            }
+            // Long Chủng Hộ Vệ: Hồi phục sinh lực cho chủ nhân nếu là Đồng Minh
+            if (this.isAllied() && !getOwnerUUID().isEmpty()) {
+                try {
+                    ServerPlayer owner = sLevel.getServer().getPlayerList().getPlayer(UUID.fromString(getOwnerUUID()));
+                    if (owner != null && owner.isAlive() && owner.distanceToSqr(this) <= 16.0D * 16.0D && owner.getHealth() < owner.getMaxHealth()) {
+                        owner.heal(5.0F);
+                        sLevel.sendParticles(ParticleTypes.HEART, owner.getX(), owner.getY() + 1.0D, owner.getZ(), 3, 0.3D, 0.5D, 0.3D, 0.05D);
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
+
         // 1. Kiểm tra bản sao Tồn Tại Song Song: Nếu mục tiêu bị ràng buộc đã chết/rời xa -> Tự tiêu biến
         if (this.isClone()) {
             if (this.boundTargetUuid != null) {
