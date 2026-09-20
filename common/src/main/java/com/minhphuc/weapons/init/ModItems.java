@@ -262,6 +262,12 @@ public class ModItems {
             () -> new com.minhphuc.weapons.content.tensura.VelgryndReverseScaleItem(new Item.Properties()));
 
     // ==========================================
+    // MODULE: THẦN THIẾT MA THOẠI (MAGISTEEL SMARTPHONE)
+    // ==========================================
+    public static final RegistrySupplier<Item> MAGISTEEL_PHONE = ITEMS.register("magisteel_phone",
+            () -> new com.minhphuc.weapons.content.tensura.MagisteelSmartphoneItem(new Item.Properties()));
+
+    // ==========================================
     // MODULE: BỒN CHỨA & KHUNG XƯƠNG THỂ XÁC NHÂN TẠO
     // ==========================================
     public static final RegistrySupplier<Item> ARTIFICIAL_SKELETON = ITEMS.register("artificial_skeleton",
@@ -426,6 +432,7 @@ public class ModItems {
                         output.accept(VELGRYND_FEATHER_FAN.get());
                         output.accept(DRAGON_SEED.get());
                         output.accept(VELGRYND_REVERSE_SCALE.get());
+                        output.accept(MAGISTEEL_PHONE.get());
                     })
             ));
 
