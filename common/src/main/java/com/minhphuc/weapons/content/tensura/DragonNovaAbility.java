@@ -476,6 +476,13 @@ public class DragonNovaAbility {
                 for (LivingEntity victim : blastVictims) {
                     double dist = victim.position().distanceTo(hit);
                     if (dist <= 25.0D) {
+                        if (victim instanceof com.minhphuc.weapons.entity.tensura.VelgryndEntity velgrynd) {
+                            velgrynd.broadcastDialogue("Không thể nào... Năng lượng Tinh Tố này... Là Milim sao...?! Rudra...!");
+                            velgrynd.setDragonLayers(0);
+                            velgrynd.hurt(level.damageSources().playerAttack(caster), 10000.0F);
+                            continue;
+                        }
+
                         boolean isBoss = victim instanceof net.minecraft.world.entity.boss.wither.WitherBoss
                                 || victim instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon
                                 || victim instanceof net.minecraft.world.entity.monster.warden.Warden
