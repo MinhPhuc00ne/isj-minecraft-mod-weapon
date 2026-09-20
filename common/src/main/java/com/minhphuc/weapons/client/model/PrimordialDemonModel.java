@@ -257,7 +257,7 @@ public class PrimordialDemonModel extends HumanoidModel<PrimordialDemonEntity> {
         // Noir
         this.noirBangs.visible = isNoir;
         this.noirTails.visible = isNoir;
-        this.wings.visible = entity.isWinged() || (entity.hasPhysicalBody() && entity.isNamed()) || entity.getEvolutionTier() >= 3;
+        this.wings.visible = entity.getDemonType() == DemonType.NOIR;
 
         boolean showNoirClaws = isNoir && (entity.isCombatClawsActive() || entity.getTarget() != null || entity.swingTime > 0);
         this.noirClawsRight.visible = showNoirClaws;

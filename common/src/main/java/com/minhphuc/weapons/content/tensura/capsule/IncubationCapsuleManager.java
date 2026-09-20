@@ -236,6 +236,22 @@ public class IncubationCapsuleManager {
                 } else if (held.getItem() instanceof PrimordialPactItem) {
                     insertDemonToCapsule(player, held, capsule, level);
                     return true;
+                } else if (held.isEmpty() && !player.isShiftKeyDown()) {
+                    // Tự động tìm Khế Ước Ác Ma trong túi đồ nếu click tay không
+                    ItemStack foundPact = ItemStack.EMPTY;
+                    for (int i = 0; i < player.getInventory().getContainerSize(); i++) {
+                        ItemStack it = player.getInventory().getItem(i);
+                        if (!it.isEmpty() && it.getItem() instanceof PrimordialPactItem) {
+                            foundPact = it;
+                            break;
+                        }
+                    }
+                    if (!foundPact.isEmpty()) {
+                        insertDemonToCapsule(player, foundPact, capsule, level);
+                        return true;
+                    }
+                    player.displayClientMessage(Component.literal("§7[Bồn Chứa] Hãy cầm §cKhế Ước Ác Ma §7Chuột Phải vào bồn để nạp linh hồn! (Shift+Click tay không để lấy lại khung xương)"), true);
+                    return true;
                 } else if (player.isShiftKeyDown() && held.isEmpty()) {
                     // Lấy lại khung xương
                     capsule.state = CapsuleState.EMPTY;
@@ -292,6 +308,25 @@ public class IncubationCapsuleManager {
         capsule.maxHp = ItemStackDataHelper.getFloat(held, "MaxHp", (float) capsule.demonType.getMaxHealth());
         capsule.state = CapsuleState.DEMON_INFUSED;
 
+        // Nếu ác ma đang xuất thế ngoài thế giới, tự động thu hồi vào bồn chứa
+        String demonUuidStr = ItemStackDataHelper.getString(held, "DemonUUID");
+        if (!demonUuidStr.isEmpty()) {
+            try {
+                UUID id = UUID.fromString(demonUuidStr);
+                net.minecraft.world.entity.Entity e = level.getEntity(id);
+                if (e instanceof PrimordialDemonEntity pde && pde.isAlive()) {
+                    level.sendParticles(ParticleTypes.PORTAL, pde.getX(), pde.getY() + 1.0D, pde.getZ(), 30, 0.4D, 0.6D, 0.4D, 0.1D);
+                    pde.discard();
+                }
+            } catch (Exception ignored) {}
+        }
+        for (PrimordialDemonEntity pde : level.getEntitiesOfClass(PrimordialDemonEntity.class,
+                new net.minecraft.world.phys.AABB(player.blockPosition()).inflate(64.0D),
+                d -> d.isAlive() && d.isOwnedBy(player) && d.getDemonType() == capsule.demonType)) {
+            level.sendParticles(ParticleTypes.PORTAL, pde.getX(), pde.getY() + 1.0D, pde.getZ(), 30, 0.4D, 0.6D, 0.4D, 0.1D);
+            pde.discard();
+        }
+
         if (!player.isCreative()) {
             held.shrink(1);
         }
@@ -318,7 +353,7 @@ public class IncubationCapsuleManager {
         if (demonInside != null) {
             demonInside.moveTo(center.x, center.y + 0.1D, center.z, 0.0F, 0.0F);
             demonInside.setDemonType(capsule.demonType);
-            demonInside.setWinged(capsule.demonType == DemonType.NOIR || (capsule.hasPhysicalBody && capsule.isNamed));
+            demonInside.setWinged(capsule.demonType == DemonType.NOIR);
             demonInside.setPhysicalBody(capsule.hasPhysicalBody);
             demonInside.setNamed(capsule.isNamed);
             if (capsule.isNamed && !capsule.customName.isEmpty()) {

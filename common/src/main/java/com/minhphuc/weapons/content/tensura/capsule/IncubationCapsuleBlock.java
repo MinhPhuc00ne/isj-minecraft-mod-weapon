@@ -3,6 +3,7 @@ package com.minhphuc.weapons.content.tensura.capsule;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -102,6 +103,30 @@ public class IncubationCapsuleBlock extends Block {
                 IncubationCapsuleManager.createCapsule(sl, pos, placer instanceof Player p ? p : null);
             }
         }
+    }
+
+    @Override
+    protected net.minecraft.world.ItemInteractionResult useItemOn(
+            ItemStack stack, BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, net.minecraft.world.phys.BlockHitResult hitResult) {
+        if (!level.isClientSide && player instanceof net.minecraft.server.level.ServerPlayer sp) {
+            BlockPos basePos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+            if (IncubationCapsuleManager.onInteract(sp, hand, basePos)) {
+                return net.minecraft.world.ItemInteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+        return net.minecraft.world.ItemInteractionResult.PASS_TO_DEFAULT_BLOCK_INTERACTION;
+    }
+
+    @Override
+    protected net.minecraft.world.InteractionResult useWithoutItem(
+            BlockState state, Level level, BlockPos pos, Player player, net.minecraft.world.phys.BlockHitResult hitResult) {
+        if (!level.isClientSide && player instanceof net.minecraft.server.level.ServerPlayer sp) {
+            BlockPos basePos = state.getValue(HALF) == DoubleBlockHalf.UPPER ? pos.below() : pos;
+            if (IncubationCapsuleManager.onInteract(sp, InteractionHand.MAIN_HAND, basePos)) {
+                return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide);
+            }
+        }
+        return net.minecraft.world.InteractionResult.PASS;
     }
 
     @Override

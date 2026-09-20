@@ -34,8 +34,8 @@ public class PrimordialDemonRenderer extends MobRenderer<PrimordialDemonEntity, 
         float baseScale = entity.getDemonType() != null ? entity.getDemonType().getScale() : 1.0F;
         if (entity.hasPhysicalBody() && entity.isNamed()) {
             baseScale *= 1.15F; // Dạng Ma Thần Tối Thượng cao lớn uy nghiêm vượt bậc
-        } else if (entity.isWinged()) {
-            baseScale *= 1.07F; // Dạng Ma Vương có cánh vươn cao lớn uy nghiêm hơn
+        } else if (entity.hasPhysicalBody() || entity.isNamed()) {
+            baseScale *= 1.07F; // Dạng tiến hóa 1 bậc cao lớn hơn
         }
         poseStack.scale(baseScale, baseScale, baseScale);
     }

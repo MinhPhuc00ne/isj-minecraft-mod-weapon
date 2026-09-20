@@ -6,6 +6,7 @@ import com.minhphuc.weapons.entity.ModEntities;
 import com.minhphuc.weapons.entity.tensura.DemonType;
 import com.minhphuc.weapons.entity.tensura.PrimordialDemonEntity;
 import com.minhphuc.weapons.init.ModItems;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket;
@@ -220,6 +221,24 @@ public class PrimordialPactItem extends Item {
     }
 
     @Override
+    public net.minecraft.world.InteractionResult useOn(net.minecraft.world.item.context.UseOnContext context) {
+        Level level = context.getLevel();
+        BlockPos pos = context.getClickedPos();
+        net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+        if (state.is(com.minhphuc.weapons.init.ModBlocks.INCUBATION_CAPSULE.get())) {
+            Player player = context.getPlayer();
+            if (player instanceof ServerPlayer sp) {
+                BlockPos basePos = state.hasProperty(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF)
+                        && state.getValue(com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleBlock.HALF) == net.minecraft.world.level.block.state.properties.DoubleBlockHalf.UPPER
+                        ? pos.below() : pos;
+                com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleManager.onInteract(sp, context.getHand(), basePos);
+            }
+            return net.minecraft.world.InteractionResult.sidedSuccess(level.isClientSide());
+        }
+        return super.useOn(context);
+    }
+
+    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         DemonType type = getDemonType(stack);
@@ -318,47 +337,9 @@ public class PrimordialPactItem extends Item {
                 }
 
                 // ==========================================
-                // CƠ CHẾ HIẾN TẾ: 10 DÂN LÀNG HOẶC 15 LINH HỒN MA VƯƠNG
+                // TIẾN HÓA: Dùng Khung Xương / Thẻ Tên click trực tiếp vào ác ma
+                // (Cơ chế hiến tế cũ đã được thay thế)
                 // ==========================================
-                if (player instanceof ServerPlayer sp && !(hasBody && isNamed)) {
-                    CompoundTag pData = EntityDataHelper.getCustomData(sp);
-                    int villagerKills = pData.getInt("TensuraVillagersSacrificed");
-                    int soulsInInv = countSoulsInInventory(sp);
-
-                    if (soulsInInv >= 15 || villagerKills >= 10) {
-                        if (soulsInInv >= 15) {
-                            consumeSouls(sp, 15);
-                        } else {
-                            pData.putInt("TensuraVillagersSacrificed", villagerKills - 10);
-                        }
-
-                        if (!hasBody && !isNamed) {
-                            if (serverLevel.getRandom().nextBoolean()) {
-                                hasBody = true;
-                                tier = 1;
-                            } else {
-                                isNamed = true;
-                                customName = type.getRandomCanonName(serverLevel.getRandom());
-                                tier = 2;
-                            }
-                        } else if (hasBody && !isNamed) {
-                            isNamed = true;
-                            customName = type.getRandomCanonName(serverLevel.getRandom());
-                            tier = 3;
-                        } else if (!hasBody && isNamed) {
-                            hasBody = true;
-                            tier = 3;
-                        }
-
-                        serverLevel.sendParticles(ParticleTypes.SOUL, spawnX, spawnY + 1.2D, spawnZ, 60, 0.6D, 0.8D, 0.6D, 0.1D);
-                        serverLevel.sendParticles(ParticleTypes.PORTAL, spawnX, spawnY + 1.2D, spawnZ, 50, 0.8D, 1.0D, 0.8D, 0.15D);
-                        serverLevel.sendParticles(ParticleTypes.FLASH, spawnX, spawnY + 1.5D, spawnZ, 3, 0, 0, 0, 0);
-                        serverLevel.playSound(null, spawnX, spawnY, spawnZ, SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS, 2.0F, 0.9F);
-                        serverLevel.playSound(null, spawnX, spawnY, spawnZ, SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 2.0F, 1.2F);
-
-                        VoiceOfTheWorld.announce(sp, "§5§l[TENSURA] §d10 Linh Hồn Dân Làng / 15 Linh Hồn Ma Vương đã được hấp thụ! Ác ma " + type.getColorName() + " thức tỉnh hình thái mới!");
-                    }
-                }
 
                 newDemon.setPhysicalBody(hasBody);
                 newDemon.setNamed(isNamed);

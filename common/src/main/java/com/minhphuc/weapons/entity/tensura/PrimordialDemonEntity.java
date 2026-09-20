@@ -51,6 +51,8 @@ import net.minecraft.world.entity.monster.Monster;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import com.minhphuc.weapons.data.ItemStackDataHelper;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
@@ -147,6 +149,46 @@ public class PrimordialDemonEntity extends TamableAnimal {
         builder.define(DATA_IS_NAMED, false);
         builder.define(DATA_EVOLUTION_TIER, 0);
         builder.define(DATA_CUSTOM_NAME, "");
+    }
+
+    @Override
+    public net.minecraft.world.entity.SpawnGroupData finalizeSpawn(
+            net.minecraft.world.level.ServerLevelAccessor level,
+            net.minecraft.world.DifficultyInstance difficulty,
+            net.minecraft.world.entity.MobSpawnType spawnType,
+            @org.jetbrains.annotations.Nullable net.minecraft.world.entity.SpawnGroupData spawnData) {
+        spawnData = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
+
+        // Random DemonType khi spawn tự nhiên (không phải triệu hồi)
+        if (spawnType == net.minecraft.world.entity.MobSpawnType.NATURAL
+                || spawnType == net.minecraft.world.entity.MobSpawnType.CHUNK_GENERATION) {
+            // Tỷ lệ spawn theo độ hiếm (tổng = 100):
+            // Rouge: 5%  | Noir: 5%   (Hiếm nhất - Thủy Tổ mạnh nhất)
+            // Blanc: 10% | Jaune: 10% (Hiếm - Thủy Tổ mạnh)
+            // Violet: 20%             (Trung bình)
+            // Bleu: 25%  | Vert: 25%  (Phổ biến nhất - Thủy Tổ yếu hơn)
+            int roll = this.random.nextInt(100);
+            DemonType chosen;
+            if (roll < 5) {
+                chosen = DemonType.ROUGE;       // 0-4:   5%
+            } else if (roll < 10) {
+                chosen = DemonType.NOIR;        // 5-9:   5%
+            } else if (roll < 20) {
+                chosen = DemonType.BLANC;       // 10-19: 10%
+            } else if (roll < 30) {
+                chosen = DemonType.JAUNE;       // 20-29: 10%
+            } else if (roll < 50) {
+                chosen = DemonType.VIOLET;      // 30-49: 20%
+            } else if (roll < 75) {
+                chosen = DemonType.BLEU;        // 50-74: 25%
+            } else {
+                chosen = DemonType.VERT;        // 75-99: 25%
+            }
+            this.setDemonType(chosen);
+            this.setWinged(chosen == DemonType.NOIR && this.random.nextFloat() < 0.5F);
+        }
+
+        return spawnData;
     }
 
     @Override
@@ -818,6 +860,7 @@ public class PrimordialDemonEntity extends TamableAnimal {
             itemAcc.weapons$setItemTransform(ItemDisplayContext.FIXED);
             dispAcc.weapons$setBillboardConstraints(Display.BillboardConstraints.FIXED);
             display.setGlowingTag(true);
+            display.addTag("DemonMagicCircle");
             dispAcc.weapons$setGlowColorOverride(glowColor);
             dispAcc.weapons$setViewRange(6.0F);
 
@@ -850,6 +893,57 @@ public class PrimordialDemonEntity extends TamableAnimal {
         if (hand != InteractionHand.MAIN_HAND) return InteractionResult.PASS;
 
         if (this.isOwnedBy(player)) {
+            ItemStack heldItem = player.getItemInHand(hand);
+
+            // ==========================================
+            // CẦM KHUNG XƯƠNG NHÂN TẠO → TIẾN HÓA THỂ XÁC VẬT LÝ
+            // ==========================================
+            if (heldItem.is(ModItems.ARTIFICIAL_SKELETON.get())) {
+                if (this.level().isClientSide()) return InteractionResult.SUCCESS;
+                if (hasPhysicalBody()) {
+                    player.displayClientMessage(Component.literal("§c§l✦ " + getEffectiveDemonName() + " §cđã có thể xác vật lý rồi!"), true);
+                    return InteractionResult.FAIL;
+                }
+                // Grant physical body
+                boolean hadName = isNamed();
+                this.setPhysicalBody(true);
+                int newTier = hadName ? 3 : 1;
+                this.setEvolutionTier(newTier);
+                this.setWinged(getDemonType() == DemonType.NOIR);
+                if (!player.isCreative()) heldItem.shrink(1);
+                performEvolution(player, hadName ? "THỨC TỈNH HOÀN MỸ" : "NHẬN THỂ XÁC VẬT LÝ", hadName);
+                return InteractionResult.SUCCESS;
+            }
+
+            // ==========================================
+            // CẦM THẺ TÊN CÓ TÊN → TIẾN HÓA BAN DANH XƯNG
+            // ==========================================
+            if (heldItem.is(Items.NAME_TAG) && heldItem.has(net.minecraft.core.component.DataComponents.CUSTOM_NAME)) {
+                if (this.level().isClientSide()) return InteractionResult.SUCCESS;
+                String newName = heldItem.getHoverName().getString();
+                if (newName.isEmpty()) {
+                    player.displayClientMessage(Component.literal("§c§l✦ Thẻ tên chưa được đặt tên!"), true);
+                    return InteractionResult.FAIL;
+                }
+                if (isNamed()) {
+                    player.displayClientMessage(Component.literal("§c§l✦ " + getEffectiveDemonName() + " §cđã được ban danh xưng rồi!"), true);
+                    return InteractionResult.FAIL;
+                }
+                // Grant name
+                boolean hadBody = hasPhysicalBody();
+                this.setNamed(true);
+                this.setCustomDemonName(newName);
+                int newTier = hadBody ? 3 : 2;
+                this.setEvolutionTier(newTier);
+                this.setWinged(getDemonType() == DemonType.NOIR);
+                if (!player.isCreative()) heldItem.shrink(1);
+                performEvolution(player, hadBody ? "THỨC TỈNH HOÀN MỸ" : "BAN DANH XƯNG", hadBody);
+                return InteractionResult.SUCCESS;
+            }
+
+            // ==========================================
+            // SHIFT + CLICK: TOGGLE CÁNH (CHỈ NOIR)
+            // ==========================================
             if (player.isShiftKeyDown()) {
                 if (this.getDemonType() == DemonType.NOIR) {
                     boolean nowWinged = !this.isWinged();
@@ -876,6 +970,9 @@ public class PrimordialDemonEntity extends TamableAnimal {
                     return InteractionResult.SUCCESS;
                 }
             } else {
+                // ==========================================
+                // CLICK THƯỜNG: TOGGLE SIT/FOLLOW
+                // ==========================================
                 boolean newSitting = !this.isOrderedToSit();
                 this.setOrderedToSit(newSitting);
                 this.jumping = false;
@@ -890,6 +987,174 @@ public class PrimordialDemonEntity extends TamableAnimal {
             }
         }
         return super.mobInteract(player, hand);
+    }
+
+    // =========================================================================
+    // TIẾN HÓA ÁC MA: HIỆU ỨNG VÒNG TRÒN MA THUẬT + NÂNG CẤP SỨC MẠNH
+    // =========================================================================
+    private void performEvolution(Player player, String evolutionTitle, boolean isFullAwakening) {
+        if (!(this.level() instanceof ServerLevel sl)) return;
+
+        DemonType type = getDemonType();
+        String effectiveName = getEffectiveDemonName();
+
+        // 1. Cập nhật attributes theo trạng thái mới
+        updateAttributesForType(type);
+        this.setHealth(this.getMaxHealth()); // Full HP sau tiến hóa
+
+        // 2. Cập nhật kỹ năng ngẫu nhiên
+        this.ensureRandomSkills();
+
+        // 3. Spawn vòng tròn ma thuật xoay dưới chân ác ma
+        ItemStack circleStack = new ItemStack(type.getMagicCircleItem().get());
+        spawnRotatingCircle(sl, this.position().add(0, 0.05D, 0), 4.0F, 2.5F, 120, true, type.getGlowColor(), circleStack);
+
+        // 4. Hiệu ứng particle hoành tráng
+        sl.sendParticles(ParticleTypes.FLASH, this.getX(), this.getY() + 1.5D, this.getZ(), 5, 0, 0, 0, 0);
+        sl.sendParticles(ParticleTypes.TOTEM_OF_UNDYING, this.getX(), this.getY() + 1.2D, this.getZ(), 80, 0.6D, 1.0D, 0.6D, 0.2D);
+        sl.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, this.getX(), this.getY() + 0.5D, this.getZ(), 50, 0.8D, 0.8D, 0.8D, 0.1D);
+        sl.sendParticles(ParticleTypes.PORTAL, this.getX(), this.getY() + 1.0D, this.getZ(), 60, 0.5D, 0.8D, 0.5D, 0.15D);
+        sl.sendParticles(ParticleTypes.END_ROD, this.getX(), this.getY() + 0.2D, this.getZ(), 40, 0.6D, 0.6D, 0.6D, 0.08D);
+
+        if (isFullAwakening) {
+            // Hiệu ứng đặc biệt cho thức tỉnh hoàn mỹ
+            sl.sendParticles(ParticleTypes.EXPLOSION_EMITTER, this.getX(), this.getY() + 1.5D, this.getZ(), 2, 0, 0, 0, 0);
+            sl.sendParticles(ParticleTypes.DRAGON_BREATH, this.getX(), this.getY() + 1.0D, this.getZ(), 80, 0.8D, 1.2D, 0.8D, 0.1D);
+        }
+
+        // 5. Âm thanh hoành tráng
+        sl.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BEACON_ACTIVATE, SoundSource.PLAYERS, 3.0F, 0.8F);
+        sl.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.SCULK_SHRIEKER_SHRIEK, SoundSource.PLAYERS, 2.0F, 0.9F);
+        sl.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.UI_TOAST_CHALLENGE_COMPLETE, SoundSource.PLAYERS, 2.5F, 1.0F);
+        if (isFullAwakening) {
+            sl.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.LIGHTNING_BOLT_THUNDER, SoundSource.PLAYERS, 2.0F, 0.9F);
+            sl.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.PLAYER_LEVELUP, SoundSource.PLAYERS, 2.5F, 1.2F);
+        }
+
+        // 6. Title + Subtitle cho chủ nhân
+        if (player instanceof ServerPlayer sp && sp.connection != null) {
+            String titleRank;
+            if (hasPhysicalBody() && isNamed()) {
+                titleRank = "MA THẦN TỐI THƯỢNG THỨC TỈNH";
+            } else if (hasPhysicalBody()) {
+                titleRank = "THỂ XÁC VẬT LÝ HÓA";
+            } else {
+                titleRank = "BAN DANH XƯNG";
+            }
+            sp.connection.send(new ClientboundSetTitleTextPacket(Component.literal("§6§l★ " + evolutionTitle + " ★")));
+            sp.connection.send(new ClientboundSetSubtitleTextPacket(Component.literal("§e" + effectiveName + " §7(" + type.getTitleVi() + ") §atiến hóa thành công!")));
+            VoiceOfTheWorld.announce(sp, "Báo cáo. Ác ma " + effectiveName + " (" + type.getTitleVi() + ") đã " + evolutionTitle.toLowerCase() + "! Sức mạnh tăng lên đáng kể!");
+        }
+
+        // 7. Dialogue tiến hóa
+        String dialogue = getEvolutionDialogue(type, isFullAwakening);
+        broadcastNearbyDialogue(dialogue, 48.0D);
+
+        // 8. Đồng bộ lại khế ước trong inventory chủ nhân
+        syncToPactInOwnerInventory();
+    }
+
+    private String getEvolutionDialogue(DemonType type, boolean isFullAwakening) {
+        if (isFullAwakening) {
+            return switch (type) {
+                case NOIR -> "Kufufufu... Sức mạnh tuyệt đối đang tràn ngập khắp cơ thể tôi! Từ nay, bất kỳ ai dám chạm vào ngài, đều sẽ bị tôi nghiền nát!";
+                case ROUGE -> "Hmph! Cuối cùng ta cũng đã giải phóng toàn bộ sức mạnh! Ngọn lửa ta sẽ thiêu rụi cả thế giới nếu ngươi muốn!";
+                case BLANC -> "Ara ara... Thể xác và danh xưng hoàn mỹ! Ta đã trở thành tồn tại tuyệt đối rồi~";
+                case JAUNE -> "Hahaha! Sức mạnh của ma pháp hạt nhân giờ đã bùng nổ gấp bội! Thật tuyệt vời!";
+                case VIOLET -> "Hihihi~ Em cảm nhận được sức mạnh mới dâng trào khắp cơ thể! Chủ nhân, cảm ơn ngài nha~";
+                case BLEU -> "Cực hàn tuyệt đối... Sức mạnh này sẽ đóng băng cả linh hồn kẻ thù.";
+                case VERT -> "Tôi xin đội ơn chủ nhân đã ban cho tôi sức mạnh hoàn mỹ. Mọi bão tố sẽ bảo vệ ngài tuyệt đối!";
+            };
+        } else {
+            return switch (type) {
+                case NOIR -> "Kufufufu... Tôi cảm nhận được sức mạnh mới đang tràn ngập! Xin ngài hãy tiếp tục ban ân huệ cho tôi!";
+                case ROUGE -> "Hmph! Sức mạnh mới này... không tệ đâu. Ta sẽ dùng nó bảo vệ ngươi.";
+                case BLANC -> "Ara ara... Ta cảm thấy mạnh mẽ hơn rất nhiều rồi. Cảm ơn nhé~";
+                case JAUNE -> "Haha! Sức mạnh tăng lên rồi! Cho ta xài thử nào!";
+                case VIOLET -> "Hihihi~ Cảm ơn chủ nhân! Em mạnh hơn rồi nè!";
+                case BLEU -> "Sức mạnh mới... Tôi ghi nhận. Kẻ thù sẽ phải trả giá.";
+                case VERT -> "Tôi xin cảm tạ ân huệ. Sức mạnh mới sẽ bảo vệ chủ nhân tốt hơn.";
+            };
+        }
+    }
+
+    // =========================================================================
+    // ĐỒNG BỘ TRẠNG THÁI TIẾN HÓA VÀO KHẾ ƯỚC TRONG INVENTORY CHỦ NHÂN
+    // =========================================================================
+    public void syncToPactInOwnerInventory() {
+        if (!(this.getOwner() instanceof ServerPlayer owner)) return;
+        DemonType type = getDemonType();
+
+        for (int i = 0; i < owner.getInventory().getContainerSize(); i++) {
+            ItemStack stack = owner.getInventory().getItem(i);
+            if (!stack.isEmpty() && stack.getItem() instanceof PrimordialPactItem) {
+                DemonType pactType = PrimordialPactItem.getDemonType(stack);
+                String uuidStr = ItemStackDataHelper.getString(stack, "DemonUUID");
+                if (pactType == type || this.getStringUUID().equals(uuidStr)) {
+                    // Xác định tier tiến hóa hiện tại để chọn đúng item variant
+                    int currentTier = getEvolutionTier();
+                    if (currentTier == 0) {
+                        if (hasPhysicalBody() && isNamed()) currentTier = 3;
+                        else if (hasPhysicalBody()) currentTier = 1;
+                        else if (isNamed()) currentTier = 2;
+                    }
+
+                    // Kiểm tra xem item hiện tại đã đúng variant chưa
+                    net.minecraft.world.item.Item correctItem = type.getPactItemForTier(currentTier).get();
+                    if (stack.getItem() != correctItem) {
+                        // Tạo ItemStack mới với đúng variant tiến hóa
+                        ItemStack newStack = new ItemStack(correctItem);
+
+                        // Sao chép toàn bộ NBT data từ item cũ sang item mới
+                        if (stack.has(net.minecraft.core.component.DataComponents.CUSTOM_DATA)) {
+                            newStack.set(net.minecraft.core.component.DataComponents.CUSTOM_DATA,
+                                    stack.get(net.minecraft.core.component.DataComponents.CUSTOM_DATA));
+                        }
+
+                        // Cập nhật trạng thái tiến hóa lên khế ước mới
+                        ItemStackDataHelper.putString(newStack, "DemonType", type.name());
+                        ItemStackDataHelper.putBoolean(newStack, "HasPhysicalBody", hasPhysicalBody());
+                        ItemStackDataHelper.putBoolean(newStack, "IsNamed", isNamed());
+                        ItemStackDataHelper.putString(newStack, "CustomDemonName", getCustomDemonName());
+                        ItemStackDataHelper.putInt(newStack, "EvolutionTier", currentTier);
+                        ItemStackDataHelper.putFloat(newStack, "CurrentHp", this.getHealth());
+                        ItemStackDataHelper.putFloat(newStack, "MaxHp", this.getMaxHealth());
+                        ItemStackDataHelper.putBoolean(newStack, "IsSummoned", ItemStackDataHelper.getBoolean(stack, "IsSummoned"));
+                        ItemStackDataHelper.putString(newStack, "DemonUUID", ItemStackDataHelper.getString(stack, "DemonUUID"));
+                        ItemStackDataHelper.putString(newStack, "OwnerUUID", ItemStackDataHelper.getString(stack, "OwnerUUID"));
+                        ItemStackDataHelper.putString(newStack, "OwnerName", ItemStackDataHelper.getString(stack, "OwnerName"));
+
+                        // Lưu kỹ năng
+                        StringBuilder sb = new StringBuilder();
+                        for (PrimordialSkillPool.SkillEntry sk : getRandomSkills()) {
+                            if (sb.length() > 0) sb.append(",");
+                            sb.append(sk.id());
+                        }
+                        ItemStackDataHelper.putString(newStack, "PrimordialSkills", sb.toString());
+
+                        // Thay thế item trong inventory
+                        owner.getInventory().setItem(i, newStack);
+                    } else {
+                        // Item đã đúng variant, chỉ cập nhật NBT data
+                        ItemStackDataHelper.putBoolean(stack, "HasPhysicalBody", hasPhysicalBody());
+                        ItemStackDataHelper.putBoolean(stack, "IsNamed", isNamed());
+                        ItemStackDataHelper.putString(stack, "CustomDemonName", getCustomDemonName());
+                        ItemStackDataHelper.putInt(stack, "EvolutionTier", currentTier);
+                        ItemStackDataHelper.putFloat(stack, "CurrentHp", this.getHealth());
+                        ItemStackDataHelper.putFloat(stack, "MaxHp", this.getMaxHealth());
+
+                        // Lưu kỹ năng
+                        StringBuilder sb = new StringBuilder();
+                        for (PrimordialSkillPool.SkillEntry sk : getRandomSkills()) {
+                            if (sb.length() > 0) sb.append(",");
+                            sb.append(sk.id());
+                        }
+                        ItemStackDataHelper.putString(stack, "PrimordialSkills", sb.toString());
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     @Override
@@ -1894,69 +2159,138 @@ public class PrimordialDemonEntity extends TamableAnimal {
     }
 
     // =========================================================================
-    // AI CHIẾN ĐẤU: XOAY VÒNG 12 BƯỚC COMBO KỸ NĂNG CHO 7 ÁC MA
+    // AI CHIẾN ĐẤU THÔNG MINH & TỰ DO: LINH HOẠT THI TRIỂN TOÀN BỘ KỸ NĂNG
     // =========================================================================
     static class PrimordialSkillGoal extends Goal {
         private final PrimordialDemonEntity demon;
         private int warmUpTicks = 0;
-        private int comboStep = 0;
 
         public PrimordialSkillGoal(PrimordialDemonEntity demon) {
             this.demon = demon;
-            this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
+            this.setFlags(EnumSet.of(Flag.LOOK));
         }
 
         @Override
         public boolean canUse() {
             LivingEntity target = this.demon.getTarget();
-            return target != null && target.isAlive() && demon.canCastSkill() && demon.distanceToSqr(target) <= 32.0D * 32.0D;
+            return target != null && target.isAlive() && demon.canCastSkill() && demon.distanceToSqr(target) <= 36.0D * 36.0D;
         }
 
         @Override
         public void start() {
-            this.warmUpTicks = 12;
-            this.demon.getNavigation().stop();
+            this.warmUpTicks = 4; // Nhịp độ nhanh, phản xạ thần tốc (0.2s)
         }
 
         @Override
         public void tick() {
             LivingEntity target = this.demon.getTarget();
-            if (target == null) return;
+            if (target == null || !target.isAlive()) return;
 
-            this.demon.getLookControl().setLookAt(target, 30.0F, 30.0F);
+            this.demon.getLookControl().setLookAt(target, 40.0F, 40.0F);
             this.warmUpTicks--;
 
             if (this.warmUpTicks <= 0) {
-                executeComboStep(target);
-                this.comboStep = (this.comboStep + 1) % 12;
-                this.demon.triggerSkillCooldown(45);
+                executeDynamicSkill(target);
+                // Thời gian hồi chiêu linh hoạt 20-35 ticks (1.0s - 1.75s) giúp ác ma ra đòn dồn dập
+                this.demon.triggerSkillCooldown(20 + this.demon.getRandom().nextInt(15));
             }
         }
 
-        private void executeComboStep(LivingEntity target) {
+        private void executeDynamicSkill(LivingEntity target) {
             DemonType type = this.demon.getDemonType();
+            double dist = this.demon.distanceTo(target);
+            boolean isBoss = PrimordialDemonEntity.isBossTarget(target);
+            var random = this.demon.getRandom();
 
-            // Nếu ác ma có kỹ năng ngẫu nhiên và trúng 35% tỉ lệ thi triển: kích hoạt kỹ năng ngẫu nhiên!
-            List<PrimordialSkillPool.SkillEntry> skills = this.demon.getRandomSkills();
-            if (!skills.isEmpty() && this.demon.getRandom().nextFloat() < 0.35F) {
-                PrimordialSkillPool.SkillEntry randomSkill = skills.get(this.demon.getRandom().nextInt(skills.size()));
-                PrimordialSkillPool.executeSkill(this.demon, target, randomSkill);
+            // 1. Kích hoạt Lãnh Địa (Domain Expansion):
+            // Khi chưa bật lãnh địa và gặp Boss, hoặc gặp kẻ địch nguy hiểm, hoặc 15% ngẫu nhiên
+            if (this.demon.activeDomainTicks <= 0 && (isBoss || (dist <= 16.0D && random.nextFloat() < 0.15F))) {
+                demon.executeSkillFourDomain(target, type);
                 return;
             }
 
-            switch (comboStep) {
-                case 0 -> demon.executeNormalAttack(target, type);
-                case 1 -> demon.executeSkillOne(target, type);
-                case 2 -> demon.executeSignatureSkillOne(target, type);
-                case 3 -> demon.executeSkillTwo(target, type);
-                case 4 -> demon.executeSignatureSkillTwo(target, type);
-                case 5 -> demon.executeSkillThree(target, type);
-                case 6 -> demon.executeChromaticLightPillar(target, type);
-                case 7 -> demon.executeSignatureSkillThree(target, type);
-                case 8 -> demon.executeDisintegration(target, type);
-                case 9 -> demon.executeNormalAttack(target, type);
-                case 10 -> demon.executeSkillFourDomain(target, type);
-                case 11 -> demon.executeChromaticLightPillar(target, type);
+            // 2. Tự do thi triển Kỹ Năng Ngẫu Nhiên Thức Tỉnh (PrimordialSkillPool):
+            // Tỷ lệ 45% nếu đã có kỹ năng mở khóa
+            List<PrimordialSkillPool.SkillEntry> rSkills = this.demon.getRandomSkills();
+            if (!rSkills.isEmpty() && random.nextFloat() < 0.45F) {
+                // Ưu tiên hồi phục nếu ác ma hoặc chủ nhân máu dưới 50%
+                boolean needHeal = this.demon.getHealth() < this.demon.getMaxHealth() * 0.5F;
+                if (needHeal) {
+                    for (var sk : rSkills) {
+                        if (sk.id() == PrimordialSkillPool.SKILL_SOUL_DRAIN ||
+                            sk.id() == PrimordialSkillPool.SKILL_SEER_FLESH_PULSE ||
+                            sk.id() == PrimordialSkillPool.SKILL_BEELZEBUTH) {
+                            PrimordialSkillPool.executeSkill(this.demon, target, sk);
+                            return;
+                        }
+                    }
+                }
+                PrimordialSkillPool.SkillEntry chosen = rSkills.get(random.nextInt(rSkills.size()));
+                PrimordialSkillPool.executeSkill(this.demon, target, chosen);
+                return;
+            }
+
+            // 3. Phân nhánh chiến thuật theo Tình huống & Khoảng cách:
+            if (isBoss) {
+                // ƯU TIÊN SÁT THƯƠNG DIỆT BOSS
+                float bossRoll = random.nextFloat();
+                if (bossRoll < 0.30F) {
+                    demon.executeDisintegration(target, type); // Linh tử băng hoại
+                } else if (bossRoll < 0.55F) {
+                    demon.executeChromaticLightPillar(target, type); // Thất sắc thần trụ
+                } else if (bossRoll < 0.75F) {
+                    demon.executeSignatureSkillThree(target, type); // Chiêu độc bản 3
+                } else if (bossRoll < 0.90F) {
+                    demon.executeSkillThree(target, type); // Song trùng / Tam trùng ma trận
+                } else {
+                    demon.executeSignatureSkillOne(target, type); // Chiêu độc bản 1
+                }
+                return;
+            }
+
+            // Đối đầu mục tiêu thường:
+            if (dist > 12.0D) {
+                // TẦM XA: Tung ma pháo, tốc biến áp sát hoặc chùm tia
+                float farRoll = random.nextFloat();
+                if (farRoll < 0.25F) {
+                    demon.executeSkillOne(target, type); // Pháp trận ma pháo tầm xa
+                } else if (farRoll < 0.50F) {
+                    demon.executeSignatureSkillOne(target, type); // Chiêu độc bản 1 tầm xa
+                } else if (farRoll < 0.70F) {
+                    demon.executeSkillTwo(target, type); // Tốc biến / lướt áp sát mục tiêu
+                } else if (farRoll < 0.85F) {
+                    demon.executeSkillThree(target, type); // Cột ma trận từ trên trời
+                } else {
+                    demon.executeChromaticLightPillar(target, type); // Cột sáng 60m
+                }
+            } else if (dist <= 4.5D) {
+                // TẦM CẬN CHIẾN: Cào cấu, bộc phá cận thân, chém xoay
+                float meleeRoll = random.nextFloat();
+                if (meleeRoll < 0.25F) {
+                    demon.executeNormalAttack(target, type); // Đòn móng vuốt / chém
+                } else if (meleeRoll < 0.50F) {
+                    demon.executeSignatureSkillTwo(target, type); // Chiêu độc bản 2
+                } else if (meleeRoll < 0.75F) {
+                    demon.executeSignatureSkillThree(target, type); // Chiêu độc bản 3
+                } else if (meleeRoll < 0.90F) {
+                    demon.executeSkillTwo(target, type); // Tốc biến ra sau lưng / lốc xoáy
+                } else {
+                    demon.executeSkillOne(target, type); // Bộc phá cận cảnh
+                }
+            } else {
+                // TẦM TRUNG (4.5m - 12m): Phối hợp toàn diện ngẫu nhiên
+                int choice = random.nextInt(9);
+                switch (choice) {
+                    case 0 -> demon.executeSkillOne(target, type);
+                    case 1 -> demon.executeSignatureSkillOne(target, type);
+                    case 2 -> demon.executeSkillTwo(target, type);
+                    case 3 -> demon.executeSignatureSkillTwo(target, type);
+                    case 4 -> demon.executeSkillThree(target, type);
+                    case 5 -> demon.executeChromaticLightPillar(target, type);
+                    case 6 -> demon.executeSignatureSkillThree(target, type);
+                    case 7 -> demon.executeDisintegration(target, type);
+                    default -> demon.executeNormalAttack(target, type);
+                }
             }
         }
     }
