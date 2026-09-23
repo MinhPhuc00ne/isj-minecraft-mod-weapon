@@ -1,0 +1,37 @@
+{
+  "schemaVersion": 1,
+  "id": "block_factorys_bosses",
+  "version": "2.1.2",
+  "name": "Bosses' Rise",
+  "description": "Bosses' Rise ported to Fabric 1.21.1. Introduces a variety of new world bosses, weapons, and content.",
+  "authors": [
+    "Block Factory",
+    "Ported to Fabric"
+  ],
+  "contact": {
+    "homepage": "https://www.curseforge.com/minecraft/mc-mods/bossesrise"
+  },
+  "license": "All Rights Reserved",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "net.unusual.block_factorys_bosses.BossesRise"
+    ],
+    "client": [
+      "net.unusual.block_factorys_bosses.client.BossesRiseClient"
+    ]
+  },
+  "mixins": [
+    "block_factorys_bosses.mixins.json"
+  ],
+  "accessWidener": "block_factorys_bosses.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "fabric-api": "*",
+    "geckolib": ">=4.7.0"
+  },
+  "suggests": {
+    "another-mod": "*"
+  }
+}
