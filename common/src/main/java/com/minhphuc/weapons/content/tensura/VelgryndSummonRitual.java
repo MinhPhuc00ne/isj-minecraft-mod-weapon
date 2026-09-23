@@ -241,7 +241,7 @@ public class VelgryndSummonRitual {
                     velgrynd.moveTo(c.x, c.y, c.z, r.caster != null ? r.caster.getYRot() + 180.0F : 0.0F, 0.0F);
                     level.addFreshEntity(velgrynd);
 
-                    velgrynd.broadcastDialogue("Lũ giun dế hạ đẳng... Các ngươi nghĩ ai cho phép các ngươi ngẩng đầu nhìn thẳng vào Chước Nhiệt Long Velgrynd ta?!");
+                    velgrynd.broadcastDialogue("Lũ giun dế hạ đẳng... ai cho phép các ngươi ngẩng đầu nhìn thẳng vào Chước Nhiệt Long Velgrynd ta?!");
                 }
 
                 // Dư chấn tàn lửa sau khi giáng thế
