@@ -13,6 +13,5 @@ plugins {
 
 include("common")
 include("fabric")
-include("bosses_rise")
 
 rootProject.name = "mod-weapon"
