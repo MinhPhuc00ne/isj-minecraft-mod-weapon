@@ -57,7 +57,7 @@ public class HarvestFestival {
         ACTIVE_RITUALS.add(new ActiveRitual(player, level, 400));
 
         // Khởi đầu nghi thức: Trạng thái Sleep Mode (buồn ngủ không cưỡng lại được chuẩn Tensura)
-        sendTitle(player, "§d§l[LỄ HỘI THU HOẠCH]", "§7Báo cáo. Cá thể tiến vào trạng thái Ngủ Say (Sleep Mode)...");
+        sendTitle(player, "§d§l[LỄ HỘI THU HOẠCH]", "§7Báo cáo. Cá thể bắt đầu tiến vào lễ hội thu hoạch");
         VoiceOfTheWorld.announce(player, "Báo cáo. Điều kiện thức tỉnh đã thỏa mãn. Bắt đầu Lễ Hội Thu Hoạch (Harvest Festival)!");
 
         level.playSound(null, player.getX(), player.getY(), player.getZ(),
@@ -97,12 +97,12 @@ public class HarvestFestival {
                 r.player.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, 30, 0, false, false, false));
 
                 r.player.displayClientMessage(
-                    Component.literal("§d§l[LỄ HỘI THU HOẠCH] §7Báo cáo. Cá thể đang ngủ sâu... Ý thức đang chìm vào hư vô..."),
+                    Component.literal("§d§l[LỄ HỘI THU HOẠCH] §7Báo cáo. Lễ hội thu hoạch bắt đầu không thể dừng giữa chừng"),
                     true
                 );
 
                 if (elapsed == 40) {
-                    VoiceOfTheWorld.announce(r.player, "Báo cáo. Toàn bộ chức năng sinh học của cá thể chuyển sang chế độ Tĩnh Lặng... Đang bảo lưu ý thức...");
+                    VoiceOfTheWorld.announce(r.player, "Báo cáo. Toàn bộ chức năng sinh học của cá thể chuyển sang một chủng loài mới");
                 }
 
                 if (elapsed % 20 == 0) {
@@ -126,7 +126,7 @@ public class HarvestFestival {
             }
 
             if (elapsed == 150) {
-                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Bắt đầu tái cấu trúc vật chất cơ thể cá thể: Chuyển đổi thành thể Tinh Linh Quỷ Tộc (Demonic Spiritual Body)!");
+                VoiceOfTheWorld.announce(r.player, "§fBáo cáo. Bắt đầu tái cấu trúc vật chất cơ thể cá thể: Hai phần nhục thể và linh thể đã có thể biến đổi tự do theo tinh thần mong muốn!");
             }
 
             if (elapsed > 80 && elapsed <= 230) {

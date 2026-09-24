@@ -176,8 +176,10 @@ public class DivineWeaponEvents {
                 boolean isDrowning = source.is(DamageTypes.DROWN);
                 // Ngoại lệ 3: Rơi ra khỏi thế giới (Void)
                 boolean isVoid = source.is(DamageTypes.FELL_OUT_OF_WORLD);
+                // Ngoại lệ 4: Hỏa diễm Chước Nhiệt Long Velgrynd xuyên phá Thánh Giáp (mỗi 3 đòn gây 30% HP)
+                boolean isVelgryndPenetration = player.getTags().contains("VelgryndPenetrationDamage");
 
-                if (!isPoison && !isDrowning && !isVoid) {
+                if (!isPoison && !isDrowning && !isVoid && !isVelgryndPenetration) {
                     // Miễn nhiễm hoàn toàn mọi sát thương từ quái vật, người chơi, rơi, lửa, nổ, v.v.
                     return EventResult.interruptFalse();
                 }

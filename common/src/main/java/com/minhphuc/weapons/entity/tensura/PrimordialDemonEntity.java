@@ -400,6 +400,27 @@ public class PrimordialDemonEntity extends TamableAnimal {
         this.entityData.set(DATA_COMBAT_CLAWS, active);
     }
 
+    @Override
+    public void aiStep() {
+        super.aiStep();
+        if (!this.level().isClientSide() && this.isAlive()) {
+            // Siêu Tốc Tái Sinh (Primordial Demon Ultraspeed Regeneration)
+            if (this.tickCount % 20 == 0 && this.getHealth() < this.getMaxHealth()) {
+                float regenPercent = 0.02F;
+                if (hasPhysicalBody() && isNamed()) {
+                    regenPercent = 0.06F;
+                } else if (hasPhysicalBody() || isNamed()) {
+                    regenPercent = 0.04F;
+                }
+                float healAmount = this.getMaxHealth() * regenPercent;
+                this.heal(healAmount);
+                if (this.level() instanceof ServerLevel sl) {
+                    sl.sendParticles(ParticleTypes.SOUL, this.getX(), this.getY() + 1.0D, this.getZ(), 4, 0.3D, 0.5D, 0.3D, 0.02D);
+                }
+            }
+        }
+    }
+
     // =========================================================================
     // MIỄN NHIỄM TUYỆT ĐỐI CHO NGƯỜI CHƠI CẦM GĂNG TAY VÔ CỰC HOẶC MẶC GIÁP THẦN THOẠI
     // =========================================================================

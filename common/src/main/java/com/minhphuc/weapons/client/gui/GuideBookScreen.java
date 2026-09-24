@@ -15,7 +15,7 @@ import java.net.URI;
 public class GuideBookScreen extends Screen {
 
     private int currentPage = 0;
-    private static final int TOTAL_PAGES = 15;
+    private static final int TOTAL_PAGES = 17;
 
     private static final net.minecraft.resources.ResourceLocation DRAGON_NOVA_TEXTURE =
             net.minecraft.resources.ResourceLocation.fromNamespaceAndPath("weapons", "textures/gui/dragon_nova_art.png");
@@ -237,7 +237,7 @@ public class GuideBookScreen extends Screen {
         if (armorLegsBtn != null) armorLegsBtn.visible = isArmorPage;
         if (armorBootsBtn != null) armorBootsBtn.visible = isArmorPage;
 
-        boolean isAuthorPage = (currentPage == 14);
+        boolean isAuthorPage = (currentPage == 16);
         if (openGithubBtn != null) openGithubBtn.visible = isAuthorPage;
         if (copyGithubBtn != null) copyGithubBtn.visible = isAuthorPage;
     }
@@ -280,7 +280,9 @@ public class GuideBookScreen extends Screen {
             case 11 -> renderPagePrimordialsOverview(guiGraphics, left, top, mouseX, mouseY);
             case 12 -> renderPagePrimordialsPowerBoss(guiGraphics, left, top, mouseX, mouseY);
             case 13 -> renderPagePrimordialsDomain(guiGraphics, left, top, mouseX, mouseY);
-            case 14 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
+            case 14 -> renderPageVelgrynd(guiGraphics, left, top, mouseX, mouseY);
+            case 15 -> renderPageMagisteelPhone(guiGraphics, left, top, mouseX, mouseY);
+            case 16 -> renderPageAuthor(guiGraphics, left, top, mouseX, mouseY);
         }
 
         // 3. Render Tooltip nếu đang di chuột qua slot item
@@ -884,6 +886,85 @@ public class GuideBookScreen extends Screen {
         guiGraphics.drawString(font, "§7• Quái vật bên trong bị giam cầm, giật ngược vào tâm khi chạm biên giới.", left + 22, textY, 0xFFDDDDDD, false);
         textY += 11;
         guiGraphics.drawString(font, "§f• Sau 15 giây, toàn bộ khối kết giới §etự tan vỡ hoàn trả địa hình nguyên vẹn§f.", left + 22, textY, 0xFFFFFFFF, false);
+    }
+
+    private void renderPageVelgrynd(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§c§l✦ CHƯỚC NHIỆT LONG VELGRYND (ĐỆ TAM LONG) ✦", left + 14, top + 11, 0xFFFF5555, false);
+
+        int iconY = top + 32;
+        // Hiển thị 3 biểu tượng vật phẩm
+        guiGraphics.renderItem(new ItemStack(ModItems.DRAGON_SEED.get()), left + 18, iconY);
+        guiGraphics.renderItem(new ItemStack(ModItems.SCORCH_DRAGON_CORE.get()), left + 38, iconY);
+        guiGraphics.renderItem(new ItemStack(ModItems.VELGRYND_REVERSE_SCALE.get()), left + 58, iconY);
+
+        if (mouseX >= left + 18 && mouseX <= left + 36 && mouseY >= iconY && mouseY <= iconY + 18) {
+            hoveredTooltipStack = new ItemStack(ModItems.DRAGON_SEED.get());
+        } else if (mouseX >= left + 38 && mouseX <= left + 56 && mouseY >= iconY && mouseY <= iconY + 18) {
+            hoveredTooltipStack = new ItemStack(ModItems.SCORCH_DRAGON_CORE.get());
+        } else if (mouseX >= left + 58 && mouseX <= left + 76 && mouseY >= iconY && mouseY <= iconY + 18) {
+            hoveredTooltipStack = new ItemStack(ModItems.VELGRYND_REVERSE_SCALE.get());
+        }
+
+        guiGraphics.drawString(font, "§6[Long Chủng Tối Thượng - Ma Tố 74,350,000 EP]", left + 82, iconY + 4, 0xFFFFAA00, false);
+
+        int textY = top + 56;
+        guiGraphics.drawString(font, "§e⚡ 1. Nghi Lễ Triệu Hồi (Hạt Giống Long Chủng):", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• Người thường dùng: Tiêu hao §c90% Sinh Lực§7 hiện tại.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Chân Ma Vương dùng: Chỉ tiêu hao §a30% Sinh Lực§7 hiện tại.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§f• Nghi lễ 3D: Cột sáng 50m, sấm sét 8 phương và Chước Long hạ phàm.", left + 22, textY, 0xFFFFFFFF, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§c🔥 2. Cơ Chế Chiến Đấu & Khắc Chế:", left + 18, textY, 0xFFFF5555, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• 4 Tầng Vảy Rồng: Miễn nhiễm hoàn toàn mọi sát thương thông thường.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Phá Giáp Thần Thánh: Đòn đánh thứ 3 xuyên §c30% Máu Tối Đa§7 Giáp Thần.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§4• TỬ HUYỆT: Bị tiêu diệt ngay lập tức nếu trúng Long Tinh Bộc Viêm Bá!", left + 22, textY, 0xFFFF5555, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§a✨ 3. Nghịch Lân Chước Nhiệt (Đồng Minh Tuyệt Đối):", left + 18, textY, 0xFF55FF55, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§f• Hạ gục Boss rơi Nghịch Lân triệu hồi Velgrynd Đồng Minh kế thừa toàn bộ", left + 22, textY, 0xFFFFFFFF, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§ftuyệt kỹ Rimuru để bảo vệ chủ nhân và quét sạch hiểm họa xung quanh.", left + 22, textY, 0xFFFFFFFF, false);
+    }
+
+    private void renderPageMagisteelPhone(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {
+        guiGraphics.drawString(font, "§b§l✦ THẦN THIẾT MA THOẠI (MAGISTEEL SMARTPHONE) ✦", left + 14, top + 11, 0xFF55FFFF, false);
+
+        int iconY = top + 32;
+        guiGraphics.renderItem(new ItemStack(ModItems.MAGISTEEL_PHONE.get()), left + 18, iconY);
+        if (mouseX >= left + 18 && mouseX <= left + 36 && mouseY >= iconY && mouseY <= iconY + 18) {
+            hoveredTooltipStack = new ItemStack(ModItems.MAGISTEEL_PHONE.get());
+        }
+
+        guiGraphics.drawString(font, "§e[Thiết Bị Quét & Phân Tích Thực Thể Toàn Năng 3D]", left + 42, iconY + 4, 0xFFFFAA00, false);
+
+        int textY = top + 56;
+        guiGraphics.drawString(font, "§6📱 1. Hướng Dẫn Sử Dụng:", left + 18, textY, 0xFFFFDD00, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• Cầm điện thoại nhấp §a[Chuột Phải]§7 trực tiếp vào bất kỳ sinh vật nào.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• Nhấp chuột phải vào không khí để quét đối tượng trong tầm ngắm 32m.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§f• Nếu không ngắm vào ai, thiết bị sẽ phân tích chính người dùng.", left + 22, textY, 0xFFFFFFFF, false);
+
+        textY += 14;
+        guiGraphics.drawString(font, "§d⚡ 2. Các Tính Năng Đo Lường Cấp Cao:", left + 18, textY, 0xFFFF77FF, false);
+        textY += 12;
+        guiGraphics.drawString(font, "§7• §bMô hình 3D Xoay Động:§7 Trực quan hóa sinh vật trên màn hình quét.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• §eMa Tố Lượng (EP):§7 Phân tích EP thực thể chính xác chuẩn Tensura.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• §cChỉ Số Chiến Đấu:§7 Tấn công, giáp thủ, tốc độ và tốc độ tái sinh.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§7• §5Kỹ Năng Độc Bản:§7 Liệt kê toàn bộ quyền năng và tuyệt chiêu sinh vật.", left + 22, textY, 0xFFDDDDDD, false);
+        textY += 11;
+        guiGraphics.drawString(font, "§f• §9Bảng Kháng Tính:§f Kháng lửa, rơi, đuối nước, nổ và ma lực cảm tri.", left + 22, textY, 0xFFFFFFFF, false);
     }
 
     private void renderPageAuthor(GuiGraphics guiGraphics, int left, int top, int mouseX, int mouseY) {

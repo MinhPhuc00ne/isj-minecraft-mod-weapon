@@ -1,0 +1,46 @@
+plugins {
+    id "com.github.johnrengelman.shadow" version "7.1.2"
+}
+
+architectury {
+    platformSetupLoomIde()
+    fabric()
+}
+
+loom {
+    accessWidenerPath = file("src/main/resources/block_factorys_bosses.accesswidener")
+}
+
+base {
+    archivesName = "block_factorys_bosses-${rootProject.minecraft_version}-fabric"
+}
+
+repositories {
+    maven { url "https://dl.cloudsmith.io/public/geckolib3/geckolib/maven/" }
+    maven { url "https://maven.ladysnake.org/releases" }
+}
+
+dependencies {
+    modImplementation "net.fabricmc:fabric-loader:${rootProject.fabric_loader_version}"
+    modApi "net.fabricmc.fabric-api:fabric-api:${rootProject.fabric_api_version}"
+    modImplementation "software.bernie.geckolib:geckolib-fabric-1.21.1:4.7.5.1"
+    compileOnly "com.google.code.findbugs:jsr305:3.0.2"
+}
+
+processResources {
+    inputs.property "version", project.version
+
+    filesMatching("fabric.mod.json") {
+        expand "version": project.version
+    }
+}
+
+shadowJar {
+    archiveClassifier = "dev-shadow"
+    zip64 = true
+}
+
+remapJar {
+    input.set shadowJar.archiveFile
+    dependsOn shadowJar
+}

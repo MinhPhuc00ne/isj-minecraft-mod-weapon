@@ -39,7 +39,9 @@ public class TensuraEvents {
         dev.architectury.event.events.common.TickEvent.SERVER_LEVEL_POST.register(level -> {
             CarreraBulletLogic.tickVortices();
             PrimordialSummonRitual.tickRituals(level);
+            VelgryndSummonRitual.tickRituals(level);
             IncubationCapsuleManager.tickCapsules(level);
+            ResidualMagicCircleManager.tickResidualCircles(level);
         });
     }
 

@@ -66,10 +66,10 @@ public class DivineArmorItem extends ArmorItem {
 
     public static boolean isWearingFullSet(Player player) {
         if (player == null) return false;
-        return player.getItemBySlot(EquipmentSlot.HEAD).getItem() instanceof DivineArmorItem
-                && player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof DivineArmorItem
-                && player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof DivineArmorItem
-                && player.getItemBySlot(EquipmentSlot.FEET).getItem() instanceof DivineArmorItem;
+        // Chỉ cần mặc đủ Áo Giáp (CHEST) và Quần (LEGS) là nhận đủ 100% sức mạnh thần thoại
+        // Mũ và Giày là trang bị làm đẹp bổ trợ, không bắt buộc
+        return player.getItemBySlot(EquipmentSlot.CHEST).getItem() instanceof DivineArmorItem
+                && player.getItemBySlot(EquipmentSlot.LEGS).getItem() instanceof DivineArmorItem;
     }
 
     @Override
@@ -79,6 +79,7 @@ public class DivineArmorItem extends ArmorItem {
         tooltip.add(Component.literal("§7Thánh giáp hộ thể huyền thoại của Hiệp sĩ Thánh Điện."));
         tooltip.add(Component.literal(""));
         tooltip.add(Component.literal("§e⚡ Đặc Tính Thần Thánh:"));
+        tooltip.add(Component.literal("§7- §aChỉ cần mặc đủ §eÁo Giáp §a& §eQuần §alà kích hoạt trọn vẹn 100% Thần Lực! (Mũ & Giày chỉ để làm đẹp)"));
         tooltip.add(Component.literal("§7- §aKháng gần như 100% sát thương từ sinh vật, ngã từ trên cao, lửa & dung nham"));
         tooltip.add(Component.literal("§7- §aĐộ bền bất tử, không bao giờ bị phá hủy"));
         tooltip.add(Component.literal("§7- §cNhược điểm: Vẫn nhận sát thương trúng độc & không thể thở dưới nước"));

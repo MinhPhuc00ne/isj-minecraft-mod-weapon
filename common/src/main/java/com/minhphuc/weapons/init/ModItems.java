@@ -247,6 +247,27 @@ public class ModItems {
             () -> new net.minecraft.world.item.BlockItem(ModBlocks.DOMAIN_BARRIER_VERT.get(), new Item.Properties()));
 
     // ==========================================
+    // MODULE: CHƯỚC NHIỆT LONG VELGRYND (SCORCH DRAGON)
+    // ==========================================
+    public static final RegistrySupplier<Item> SCORCH_DRAGON_CORE = ITEMS.register("scorch_dragon_core",
+            () -> new com.minhphuc.weapons.content.tensura.ScorchDragonCoreItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> VELGRYND_FEATHER_FAN = ITEMS.register("velgrynd_feather_fan",
+            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+
+    public static final RegistrySupplier<Item> DRAGON_SEED = ITEMS.register("dragon_seed",
+            () -> new com.minhphuc.weapons.content.tensura.DragonSeedItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> VELGRYND_REVERSE_SCALE = ITEMS.register("velgrynd_reverse_scale",
+            () -> new com.minhphuc.weapons.content.tensura.VelgryndReverseScaleItem(new Item.Properties()));
+
+    // ==========================================
+    // MODULE: THẦN THIẾT MA THOẠI (MAGISTEEL SMARTPHONE)
+    // ==========================================
+    public static final RegistrySupplier<Item> MAGISTEEL_PHONE = ITEMS.register("magisteel_phone",
+            () -> new com.minhphuc.weapons.content.tensura.MagisteelSmartphoneItem(new Item.Properties()));
+
+    // ==========================================
     // MODULE: BỒN CHỨA & KHUNG XƯƠNG THỂ XÁC NHÂN TẠO
     // ==========================================
     public static final RegistrySupplier<Item> ARTIFICIAL_SKELETON = ITEMS.register("artificial_skeleton",
@@ -405,6 +426,13 @@ public class ModItems {
                         output.accept(PRIMORDIAL_PACT_BODY.get());
                         output.accept(PRIMORDIAL_PACT_NAMED.get());
                         output.accept(PRIMORDIAL_PACT_AWAKENED.get());
+
+                        // Chước Nhiệt Long Velgrynd
+                        output.accept(SCORCH_DRAGON_CORE.get());
+                        output.accept(VELGRYND_FEATHER_FAN.get());
+                        output.accept(DRAGON_SEED.get());
+                        output.accept(VELGRYND_REVERSE_SCALE.get());
+                        output.accept(MAGISTEEL_PHONE.get());
                     })
             ));
 
