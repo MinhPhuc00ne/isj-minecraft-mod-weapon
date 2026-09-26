@@ -1,6 +1,7 @@
 package com.minhphuc.weapons.network;
 
 import com.minhphuc.weapons.content.divine.MoonlightSwordItem;
+import com.minhphuc.weapons.content.tensura.PrimordialPlayerDataHelper;
 import com.minhphuc.weapons.data.EntityDataHelper;
 import dev.architectury.networking.NetworkManager;
 import net.minecraft.network.FriendlyByteBuf;
@@ -31,18 +32,66 @@ public class ServerboundCycleSkillPacket {
 
             ItemStack mainHand = player.getMainHandItem();
             ItemStack offHand = player.getOffhandItem();
+            ItemStack clawStack = mainHand.getItem() instanceof com.minhphuc.weapons.content.tensura.PrimordialClawItem
+                    ? mainHand
+                    : (offHand.getItem() instanceof com.minhphuc.weapons.content.tensura.PrimordialClawItem ? offHand : ItemStack.EMPTY);
+            ItemStack fanStack = mainHand.getItem() instanceof com.minhphuc.weapons.content.tensura.VelgryndFeatherFanItem
+                    ? mainHand
+                    : (offHand.getItem() instanceof com.minhphuc.weapons.content.tensura.VelgryndFeatherFanItem ? offHand : ItemStack.EMPTY);
             ItemStack swordStack = mainHand.getItem() instanceof MoonlightSwordItem
                     ? mainHand
                     : (offHand.getItem() instanceof MoonlightSwordItem ? offHand : ItemStack.EMPTY);
 
-            if (!swordStack.isEmpty()) {
+            if (!clawStack.isEmpty()) {
+                // Chuyển đổi skill cho Móng Vuốt Vực Thẳm / Hư Không
+                com.minhphuc.weapons.content.tensura.PrimordialClawItem.cycleSkill(player, clawStack);
+            } else if (!fanStack.isEmpty()) {
+                // Chuyển đổi skill cho Quạt Lông Vũ Velgrynd
+                com.minhphuc.weapons.content.tensura.VelgryndFeatherFanItem.cycleSkill(player, fanStack);
+            } else if (!swordStack.isEmpty()) {
                 // 1. Chuyển đổi skill cho Nguyệt Quang Thần Tế Kiếm
                 MoonlightSwordItem.cycleSkill(player, swordStack);
             } else {
-                // 2. Chuyển đổi skill cho Chân Ma Vương (khi không cầm kiếm)
+                // 2. Chuyển đổi skill cho Thủy Tổ Ác Ma & Chân Ma Vương (khi không cầm kiếm/vũ khí)
                 boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
-                if (isTrueDemonLord) {
-                    int maxSkills = 7; // 0: Thôn Phệ, 1: Hủ Hóa, 2: Dragon Nova, 3: Tuyệt Diệt Tinh Tú, 4: Lục Nhậm Thần Khóa, 5: Thị Nhục, 6: Alkaid
+                boolean hasCreation = EntityDataHelper.getCustomData(player).getBoolean("TensuraMaterialCreation");
+                boolean isPrimordial = PrimordialPlayerDataHelper.isPrimordial(player);
+                com.minhphuc.weapons.entity.tensura.DemonType demonType = PrimordialPlayerDataHelper.getPrimordialType(player);
+
+                if (isTrueDemonLord && isPrimordial) {
+                    // Cả Ma Vương và Thủy Tổ: 8 chiêu Ma Vương + 5 chiêu Thủy Tổ = 13 chiêu
+                    int lordSkills = hasCreation ? 8 : 7;
+                    int totalSkills = lordSkills + 5;
+                    int current = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
+                    int next = (current + 1) % totalSkills;
+                    EntityDataHelper.getCustomData(player).putInt("TensuraDemonLordSkill", next);
+
+                    String skillName;
+                    if (next < lordSkills) {
+                        skillName = switch (next) {
+                            case 0 -> "§d§l1. Bạo Thực Vương: Thôn Phệ (Predator)";
+                            case 1 -> "§c§l2. Bạo Thực Vương: Hủ Hóa & Bạo Liệt (Corrosion)";
+                            case 2 -> "§d§l3. Long Tinh Bộc Viêm Bá: Dragon Nova (竜星爆炎覇)";
+                            case 3 -> "§e§l4. Phẫn Nộ Vương: Tuyệt Diệt Tinh Tú";
+                            case 4 -> "§b§l5. Trận Đồ Cưỡng Chế Tai Ương";
+                            case 5 -> "§c§l6. Thị Nhục - Nhục Thể Bất Tử Thái Tuế (Seer Flesh)";
+                            case 6 -> "§4§l7. Diệt Thế Tà Tinh: Alkaid (ALKAID)";
+                            case 7 -> "§6§l8. Sáng Tạo Vật Chất: Ngưng Tụ Thần Khí (Material Creation)";
+                            default -> "§7Chưa chọn";
+                        };
+                    } else {
+                        int primordialSkillIdx = next - lordSkills;
+                        skillName = "§6§l" + (next + 1) + ". " + PrimordialPlayerDataHelper.getSkillName(demonType, primordialSkillIdx);
+                    }
+
+                    player.displayClientMessage(
+                        Component.literal("§d§l[MA VƯƠNG THỦY TỔ] §fKỹ năng: " + skillName + " §7(Chuột Phải để thi triển)"),
+                        true
+                    );
+                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F + (next * 0.15F));
+                } else if (isTrueDemonLord) {
+                    int maxSkills = hasCreation ? 8 : 7;
                     int current = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
                     int next = (current + 1) % maxSkills;
                     EntityDataHelper.getCustomData(player).putInt("TensuraDemonLordSkill", next);
@@ -55,20 +104,32 @@ public class ServerboundCycleSkillPacket {
                         case 4 -> "§b§l5. Trận Đồ Cưỡng Chế Tai Ương";
                         case 5 -> "§c§l6. Thị Nhục - Nhục Thể Bất Tử Thái Tuế (Seer Flesh)";
                         case 6 -> "§4§l7. Diệt Thế Tà Tinh: Alkaid (ALKAID)";
+                        case 7 -> "§6§l8. Sáng Tạo Vật Chất: Ngưng Tụ Thần Khí (Material Creation)";
                         default -> "§7Chưa chọn";
                     };
 
                     player.displayClientMessage(
-                        Component.literal("§d§l[CHÂN MA VƯƠNG] §fBáo cáo. Kỹ năng được chọn: " + skillName + " §7(Chuột Phải để thi triển)"),
+                        Component.literal("§d§l[CHÂN MA VƯƠNG] §fKỹ năng: " + skillName + " §7(Chuột Phải để thi triển)"),
                         true
                     );
 
                     float pitch = 1.0F + (next * 0.25F);
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
                             SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, pitch);
+                } else if (isPrimordial) {
+                    // Chưa là Ma Vương nhưng là Thủy Tổ: Có 5 kỹ năng Thủy Tổ
+                    int next = PrimordialPlayerDataHelper.cycleSkill(player);
+                    String skillName = PrimordialPlayerDataHelper.getSkillName(demonType, next);
+
+                    player.displayClientMessage(
+                        Component.literal("§6§l[" + demonType.name() + "] §eKỹ năng " + (next + 1) + ": §f" + skillName + " §7(Chuột Phải để thi triển)"),
+                        true
+                    );
+                    player.level().playSound(null, player.getX(), player.getY(), player.getZ(),
+                            SoundEvents.EXPERIENCE_ORB_PICKUP, SoundSource.PLAYERS, 1.0F, 1.0F + (next * 0.25F));
                 } else {
                     player.displayClientMessage(
-                        Component.literal("§c§l[THÔNG BÁO] §fBáo cáo. Cá thể chưa thức tỉnh thành Chân Ma Vương hoặc chưa cầm Nguyệt Quang Thần Tế Kiếm!"),
+                        Component.literal("§c§l[THÔNG BÁO] §fBáo cáo. Cá thể chưa thức tỉnh thành Thủy Tổ Ác Ma / Chân Ma Vương hoặc chưa cầm vũ khí đặc thù!"),
                         true
                     );
                 }
