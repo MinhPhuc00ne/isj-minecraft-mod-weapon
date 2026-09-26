@@ -262,24 +262,26 @@ public class TaisuiExtinctionStarsAbility {
                     continue;
                 }
 
-                // Hào quang hộ thể: Mob chạm vào hoặc cách 1.5 blocks mất 50% HP + đẩy lùi (không dùng Flash)
-                AABB auraBox = caster.getBoundingBox().inflate(1.6D);
-                List<LivingEntity> nearbyMobs = level.getEntitiesOfClass(LivingEntity.class, auraBox,
-                        e -> e != caster && e.isAlive());
+                // Hào quang hộ thể: Mob chạm vào hoặc cách 1.5 blocks mất 50% HP + đẩy lùi (chạy mỗi 4 ticks để giảm 75% tải getEntitiesOfClass)
+                if (state.remainingTicks % 4 == 0) {
+                    AABB auraBox = caster.getBoundingBox().inflate(1.6D);
+                    List<LivingEntity> nearbyMobs = level.getEntitiesOfClass(LivingEntity.class, auraBox,
+                            e -> e != caster && e.isAlive());
 
-                for (LivingEntity mob : nearbyMobs) {
-                    if (mob.distanceTo(caster) <= 2.2D && mob.invulnerableTime <= 10) {
-                        float damage = Math.max(25.0F, mob.getHealth() * 0.50F);
-                        mob.hurt(level.damageSources().playerAttack(caster), damage);
-                        mob.invulnerableTime = 20; // Tránh trừ máu quá dày mỗi tick
+                    for (LivingEntity mob : nearbyMobs) {
+                        if (mob.distanceTo(caster) <= 2.2D && mob.invulnerableTime <= 10) {
+                            float damage = Math.max(25.0F, mob.getHealth() * 0.50F);
+                            mob.hurt(level.damageSources().playerAttack(caster), damage);
+                            mob.invulnerableTime = 20; // Tránh trừ máu quá dày mỗi tick
 
-                        // Đẩy lùi mạnh ra xa
-                        Vec3 push = mob.position().subtract(caster.position()).normalize().add(0, 0.4D, 0).scale(2.2D);
-                        mob.setDeltaMovement(push);
+                            // Đẩy lùi mạnh ra xa
+                            Vec3 push = mob.position().subtract(caster.position()).normalize().add(0, 0.4D, 0).scale(2.2D);
+                            mob.setDeltaMovement(push);
 
-                        level.sendParticles(ParticleTypes.CRIT, mob.getX(), mob.getY() + 1.0D, mob.getZ(), 8, 0.3D, 0.3D, 0.3D, 0.1D);
-                        level.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
-                                SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS, 2.0F, 1.8F);
+                            level.sendParticles(ParticleTypes.CRIT, mob.getX(), mob.getY() + 1.0D, mob.getZ(), 8, 0.3D, 0.3D, 0.3D, 0.1D);
+                            level.playSound(null, mob.getX(), mob.getY(), mob.getZ(),
+                                    SoundEvents.LIGHTNING_BOLT_IMPACT, SoundSource.PLAYERS, 2.0F, 1.8F);
+                        }
                     }
                 }
 

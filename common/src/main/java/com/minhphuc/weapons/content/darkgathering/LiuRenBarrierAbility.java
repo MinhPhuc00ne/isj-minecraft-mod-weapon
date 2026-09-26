@@ -248,12 +248,14 @@ public class LiuRenBarrierAbility {
             Vec3 center = barrier.centerPos;
             long gameTime = level.getGameTime();
 
-            // 1. Cưỡng chế khóa vị trí tại tâm trận đồ (Rooted)
-            caster.teleportTo(center.x, center.y, center.z);
+            // 1. Cưỡng chế khóa vị trí tại tâm trận đồ (Rooted - chỉ kéo lại nếu bị đẩy văng ra xa)
             caster.setDeltaMovement(0, 0, 0);
+            if (caster.distanceToSqr(center) > 0.35D * 0.35D) {
+                caster.teleportTo(center.x, center.y, center.z);
+            }
 
-            // 2. Xoay trận đồ chậm rãi
-            if (barrier.groundArray != null && barrier.groundArray.isAlive()) {
+            // 2. Xoay trận đồ chậm rãi (cập nhật mỗi 2 ticks để giảm băng thông)
+            if (gameTime % 2 == 0 && barrier.groundArray != null && barrier.groundArray.isAlive()) {
                 Quaternionf rot = new Quaternionf()
                         .rotateX((float) Math.toRadians(90.0F))
                         .rotateZ((float) Math.toRadians(gameTime * 1.5F));
@@ -265,47 +267,49 @@ public class LiuRenBarrierAbility {
                 ));
             }
 
-            // 3. Hoạt ảnh động lơ lửng, nhịp thở và kết giới liên hoàn của 12 Thần Tướng 3D
-            for (int i = 0; i < barrier.shikigamis.size(); i++) {
-                Display.ItemDisplay s = barrier.shikigamis.get(i);
-                if (s == null || !s.isAlive()) continue;
+            // 3. Hoạt ảnh động lơ lửng, nhịp thở và kết giới liên hoàn của 12 Thần Tướng 3D (cập nhật mỗi 2 ticks)
+            if (gameTime % 2 == 0) {
+                for (int i = 0; i < barrier.shikigamis.size(); i++) {
+                    Display.ItemDisplay s = barrier.shikigamis.get(i);
+                    if (s == null || !s.isAlive()) continue;
 
-                // Hoạt ảnh bồng bềnh lơ lửng theo nhịp sin khác nhau cho từng Thần Tướng
-                float hoverY = (float) Math.sin((gameTime * 0.08F) + (i * 0.52F)) * 0.14F;
-                float pulse = 2.6F + (float) Math.sin((gameTime * 0.05F) + i) * 0.05F;
-                float swayYaw = (float) Math.sin((gameTime * 0.04F) + (i * 0.7F)) * 2.5F;
+                    // Hoạt ảnh bồng bềnh lơ lửng theo nhịp sin khác nhau cho từng Thần Tướng
+                    float hoverY = (float) Math.sin((gameTime * 0.08F) + (i * 0.52F)) * 0.14F;
+                    float pulse = 2.6F + (float) Math.sin((gameTime * 0.05F) + i) * 0.05F;
+                    float swayYaw = (float) Math.sin((gameTime * 0.04F) + (i * 0.7F)) * 2.5F;
 
-                Quaternionf swayRot = new Quaternionf().rotateY((float) Math.toRadians(swayYaw));
+                    Quaternionf swayRot = new Quaternionf().rotateY((float) Math.toRadians(swayYaw));
 
-                ((DisplayAccessor) s).weapons$setTransformation(new Transformation(
-                        new Vector3f(0.0F, hoverY, 0.0F),
-                        swayRot,
-                        new Vector3f(pulse, pulse, pulse),
-                        null
-                ));
+                    ((DisplayAccessor) s).weapons$setTransformation(new Transformation(
+                            new Vector3f(0.0F, hoverY, 0.0F),
+                            swayRot,
+                            new Vector3f(pulse, pulse, pulse),
+                            null
+                    ));
 
-                // Bụi hạt phát quang linh hồn xung quanh mỗi Thần Tướng
-                if (gameTime % 3 == 0) {
-                    level.sendParticles(ParticleTypes.END_ROD, s.getX(), s.getY() + 1.2D + hoverY, s.getZ(), 1, 0.15D, 0.25D, 0.15D, 0.01D);
-                    level.sendParticles(ELECTRIC_CYAN_DUST, s.getX(), s.getY() + 0.6D + hoverY, s.getZ(), 1, 0.2D, 0.2D, 0.2D, 0);
-                }
+                    // Bụi hạt phát quang linh hồn xung quanh mỗi Thần Tướng
+                    if (gameTime % 4 == 0) {
+                        level.sendParticles(ParticleTypes.END_ROD, s.getX(), s.getY() + 1.2D + hoverY, s.getZ(), 1, 0.15D, 0.25D, 0.15D, 0.01D);
+                        level.sendParticles(ELECTRIC_CYAN_DUST, s.getX(), s.getY() + 0.6D + hoverY, s.getZ(), 1, 0.2D, 0.2D, 0.2D, 0);
+                    }
 
-                // Xích năng lượng kết giới liên kết 360 độ giữa Thần Tướng i và Thần Tướng kế tiếp (i + 1)
-                if (gameTime % 2 == 0) {
-                    int nextIdx = (i + 1) % barrier.shikigamis.size();
-                    Display.ItemDisplay nextS = barrier.shikigamis.get(nextIdx);
-                    if (nextS != null && nextS.isAlive()) {
-                        double midX = (s.getX() + nextS.getX()) * 0.5D;
-                        double midY = center.y + 1.2D + (hoverY * 0.5D);
-                        double midZ = (s.getZ() + nextS.getZ()) * 0.5D;
-                        level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, midX, midY, midZ, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+                    // Xích năng lượng kết giới liên kết 360 độ giữa Thần Tướng i và Thần Tướng kế tiếp (i + 1)
+                    if (gameTime % 4 == 0) {
+                        int nextIdx = (i + 1) % barrier.shikigamis.size();
+                        Display.ItemDisplay nextS = barrier.shikigamis.get(nextIdx);
+                        if (nextS != null && nextS.isAlive()) {
+                            double midX = (s.getX() + nextS.getX()) * 0.5D;
+                            double midY = center.y + 1.2D + (hoverY * 0.5D);
+                            double midZ = (s.getZ() + nextS.getZ()) * 0.5D;
+                            level.sendParticles(ParticleTypes.SOUL_FIRE_FLAME, midX, midY, midZ, 1, 0.05D, 0.05D, 0.05D, 0.01D);
+                        }
                     }
                 }
             }
 
             // 4. Vòm ánh sáng ngọc bích quanh 12 Thức Thần
-            if (gameTime % 2 == 0) {
-                for (int i = 0; i < 16; i++) {
+            if (gameTime % 4 == 0) {
+                for (int i = 0; i < 16; i += 2) {
                     double ang = i * (Math.PI * 2.0D / 16.0D);
                     double px = center.x + Math.cos(ang) * 3.8D;
                     double pz = center.z + Math.sin(ang) * 3.8D;
@@ -314,18 +318,20 @@ public class LiuRenBarrierAbility {
                 }
             }
 
-            // 4. Đẩy lùi toàn bộ quái vật dám tiến vào bán kính 4.2m
-            AABB barrierBox = new AABB(center.x - 4.5D, center.y - 1.0D, center.z - 4.5D,
-                                       center.x + 4.5D, center.y + 3.5D, center.z + 4.5D);
-            List<LivingEntity> intruders = level.getEntitiesOfClass(LivingEntity.class, barrierBox,
-                    e -> e != caster && e.isAlive());
+            // 5. Đẩy lùi toàn bộ quái vật dám tiến vào bán kính 4.2m (chạy mỗi 3 ticks để giảm 66% tải getEntitiesOfClass)
+            if (gameTime % 3 == 0) {
+                AABB barrierBox = new AABB(center.x - 4.5D, center.y - 1.0D, center.z - 4.5D,
+                                           center.x + 4.5D, center.y + 3.5D, center.z + 4.5D);
+                List<LivingEntity> intruders = level.getEntitiesOfClass(LivingEntity.class, barrierBox,
+                        e -> e != caster && e.isAlive());
 
-            for (LivingEntity intruder : intruders) {
-                double dist = intruder.position().distanceTo(center);
-                if (dist <= 4.2D) {
-                    Vec3 push = intruder.position().subtract(center).normalize().scale(1.8D).add(0, 0.2D, 0);
-                    intruder.setDeltaMovement(push);
-                    level.sendParticles(ParticleTypes.FLASH, intruder.getX(), intruder.getY() + 1.0D, intruder.getZ(), 1, 0, 0, 0, 0);
+                for (LivingEntity intruder : intruders) {
+                    double dist = intruder.position().distanceTo(center);
+                    if (dist <= 4.2D) {
+                        Vec3 push = intruder.position().subtract(center).normalize().scale(1.9D).add(0, 0.25D, 0);
+                        intruder.setDeltaMovement(push);
+                        level.sendParticles(ParticleTypes.FLASH, intruder.getX(), intruder.getY() + 1.0D, intruder.getZ(), 1, 0, 0, 0, 0);
+                    }
                 }
             }
 

@@ -47,14 +47,14 @@ public class PrimordialSummonScreen extends Screen {
         super.init();
         options.clear();
 
-        options.add(new SummonOption(DemonType.ROUGE, false, "Rouge (Guy Crimson)", "xích Sắc Thủy Tổ - Ma Vương", 0xFF2211));
-        options.add(new SummonOption(DemonType.NOIR, false, "Noir (Quản Gia)", "Hắc Sắc Thủy Tổ - Diablo", 0x44444A));
-        options.add(new SummonOption(DemonType.NOIR, true, "Noir (Hắc Dực)", "Hắc Vương - Diablo", 0x111116));
-        options.add(new SummonOption(DemonType.BLANC, false, "Blanc (Testarossa)", "Bạch Sắc Thủy Tổ", 0xF0F4F8));
-        options.add(new SummonOption(DemonType.JAUNE, false, "Jaune (Carrera)", "Hoàng Sắc Thủy Tổ - Ma Pháp Hạt Nhân", 0xEAB308));
-        options.add(new SummonOption(DemonType.VIOLET, false, "Violet (Ultima)", "Tử Sắc Thủy Tổ - Độc Khởi Nguyên", 0x9333EA));
-        options.add(new SummonOption(DemonType.BLEU, false, "Bleu (Rain)", "Lam Sắc Thủy Tổ - Băng Cực", 0x2563EB));
-        options.add(new SummonOption(DemonType.VERT, false, "Vert (Misery)", "Lục Sắc Thủy Tổ - Phong Lôi", 0x16A34A));
+        options.add(new SummonOption(DemonType.ROUGE, false, "Rouge", "xích Sắc Thủy Tổ - Ma Vương", 0xFF2211));
+        options.add(new SummonOption(DemonType.NOIR, false, "Noir ", "Hắc Sắc Thủy Tổ", 0x44444A));
+        options.add(new SummonOption(DemonType.NOIR, true, "Noir (Hắc)", "Hắc Vương", 0x111116));
+        options.add(new SummonOption(DemonType.BLANC, false, "Blanc", "Bạch Sắc Thủy Tổ", 0xF0F4F8));
+        options.add(new SummonOption(DemonType.JAUNE, false, "Jaune", "Hoàng Sắc Thủy Tổ - Ma Pháp Hạt Nhân", 0xEAB308));
+        options.add(new SummonOption(DemonType.VIOLET, false, "Violet", "Tử Sắc Thủy Tổ - Độc Khởi Nguyên", 0x9333EA));
+        options.add(new SummonOption(DemonType.BLEU, false, "Bleu", "Lam Sắc Thủy Tổ - Băng Cực", 0x2563EB));
+        options.add(new SummonOption(DemonType.VERT, false, "Vert", "Lục Sắc Thủy Tổ - Phong Lôi", 0x16A34A));
     }
 
     @Override
