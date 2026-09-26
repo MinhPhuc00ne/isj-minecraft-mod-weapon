@@ -33,10 +33,20 @@ public class ModEntities {
                             .build("velgrynd")
             );
 
+    public static final RegistrySupplier<EntityType<com.minhphuc.weapons.entity.darkgathering.KuboEntity>> KUBO =
+            ENTITY_TYPES.register("kubo", () ->
+                    EntityType.Builder.of(com.minhphuc.weapons.entity.darkgathering.KuboEntity::new, MobCategory.MONSTER)
+                            .sized(2.4F, 2.4F)
+                            .clientTrackingRange(16)
+                            .fireImmune()
+                            .build("kubo")
+            );
+
     public static void register() {
         ENTITY_TYPES.register();
         EntityAttributeRegistry.register(PRIMORDIAL_DEMON, PrimordialDemonEntity::createAttributes);
         EntityAttributeRegistry.register(VELGRYND, com.minhphuc.weapons.entity.tensura.VelgryndEntity::createAttributes);
+        EntityAttributeRegistry.register(KUBO, com.minhphuc.weapons.entity.darkgathering.KuboEntity::createAttributes);
 
         BiomeModifications.addProperties(
                 b -> b.hasTag(BiomeTags.IS_OVERWORLD),
@@ -46,9 +56,9 @@ public class ModEntities {
                 )
         );
 
-        // Tỷ lệ xuất hiện tự nhiên của Chước Nhiệt Long Velgrynd: Hiếm hơn Ác Ma Thủy Tổ 1 bậc (Trọng số 1 so với 5)
+        // Tỷ lệ xuất hiện tự nhiên của Chước Nhiệt Long Velgrynd: Siêu hiếm, chỉ xuất hiện ở Overworld
         BiomeModifications.addProperties(
-                b -> b.hasTag(BiomeTags.IS_OVERWORLD) || b.hasTag(BiomeTags.IS_NETHER),
+                b -> b.hasTag(BiomeTags.IS_OVERWORLD),
                 (ctx, mutable) -> mutable.getSpawnProperties().addSpawn(
                         MobCategory.MONSTER,
                         new MobSpawnSettings.SpawnerData(VELGRYND.get(), 1, 1, 1)
