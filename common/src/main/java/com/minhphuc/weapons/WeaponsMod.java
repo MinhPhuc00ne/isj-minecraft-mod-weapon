@@ -61,6 +61,16 @@ public class WeaponsMod {
                 com.minhphuc.weapons.client.renderer.VelgryndRenderer::new
         );
 
+
+        dev.architectury.registry.client.level.entity.EntityModelLayerRegistry.register(
+                com.minhphuc.weapons.client.model.KuboModel.LAYER_LOCATION,
+                com.minhphuc.weapons.client.model.KuboModel::createBodyLayer
+        );
+        dev.architectury.registry.client.level.entity.EntityRendererRegistry.register(
+                com.minhphuc.weapons.entity.ModEntities.KUBO,
+                com.minhphuc.weapons.client.renderer.KuboRenderer::new
+        );
+
         LOGGER.info("Weapons Mod Client Setup complete!");
     }
 }

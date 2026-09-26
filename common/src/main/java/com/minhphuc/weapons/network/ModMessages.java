@@ -81,6 +81,21 @@ public class ModMessages {
                 ServerboundCapsuleEvolvePacket::encode,
                 ServerboundCapsuleEvolvePacket::new,
                 ServerboundCapsuleEvolvePacket::handle);
+
+        CHANNEL.register(ClientboundOpenMaterialCreationPacket.class,
+                ClientboundOpenMaterialCreationPacket::encode,
+                ClientboundOpenMaterialCreationPacket::new,
+                ClientboundOpenMaterialCreationPacket::handle);
+
+        CHANNEL.register(ServerboundMaterialCreationPacket.class,
+                ServerboundMaterialCreationPacket::encode,
+                ServerboundMaterialCreationPacket::new,
+                ServerboundMaterialCreationPacket::handle);
+
+        CHANNEL.register(ServerboundSelectPrimordialRebirthPacket.class,
+                ServerboundSelectPrimordialRebirthPacket::encode,
+                ServerboundSelectPrimordialRebirthPacket::new,
+                ServerboundSelectPrimordialRebirthPacket::handle);
     }
 
     public static <MSG> void sendToServer(MSG message) {

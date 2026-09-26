@@ -28,8 +28,35 @@ public class ServerboundCastBeelzebuthPacket {
             if (player == null) return;
 
             boolean isTrueDemonLord = EntityDataHelper.getCustomData(player).getBoolean("TensuraTrueDemonLord");
+            boolean isPrimordial = com.minhphuc.weapons.content.tensura.PrimordialPlayerDataHelper.isPrimordial(player);
 
-            if (isTrueDemonLord) {
+            if (isTrueDemonLord || isPrimordial) {
+                // Kiểm tra hồi chiêu kỹ năng (1.5 giây)
+                if (player.getCooldowns().isOnCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get())) {
+                    return;
+                }
+                player.getCooldowns().addCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get(), 25);
+
+                ServerLevel serverLevel = (ServerLevel) player.level();
+                boolean hasCreation = EntityDataHelper.getCustomData(player).getBoolean("TensuraMaterialCreation");
+                int lordSkills = hasCreation ? 8 : 7;
+
+                if (isTrueDemonLord && isPrimordial) {
+                    int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
+                    if (selectedSkill >= lordSkills) {
+                        // Kỹ năng của Thủy Tổ Ác Ma
+                        int primordialSkillIdx = selectedSkill - lordSkills;
+                        com.minhphuc.weapons.content.tensura.PrimordialSkillDispatcher.castSkill(serverLevel, player, primordialSkillIdx);
+                        return;
+                    }
+                } else if (!isTrueDemonLord && isPrimordial) {
+                    // Chưa là Ma Vương nhưng là Thủy Tổ Ác Ma
+                    int primordialSkillIdx = com.minhphuc.weapons.content.tensura.PrimordialPlayerDataHelper.getSelectedSkillIndex(player);
+                    com.minhphuc.weapons.content.tensura.PrimordialSkillDispatcher.castSkill(serverLevel, player, primordialSkillIdx);
+                    return;
+                }
+
+                // Thi triển Kỹ Năng Chân Ma Vương
                 int selectedSkill = EntityDataHelper.getCustomData(player).getInt("TensuraDemonLordSkill");
 
                 // Nếu đang kích hoạt Tuyệt Diệt Tinh Tú, chỉ cho phép kích hoạt thêm Thị Nhục (Chiêu 6 - index 5) hoặc Diệt Thế Tà Tinh (Chiêu 7 - index 6)
@@ -40,15 +67,11 @@ public class ServerboundCastBeelzebuthPacket {
                     );
                     return;
                 }
-
-                // Kiểm tra hồi chiêu kỹ năng (1.5 giây)
-                if (player.getCooldowns().isOnCooldown(com.minhphuc.weapons.init.ModItems.DEMON_LORD_SEED.get())) {
-                    return;
-                }
                 
-                ServerLevel serverLevel = (ServerLevel) player.level();
-                
-                if (selectedSkill == 6) {
+                if (selectedSkill == 7) {
+                    // Chiêu 8: Sáng Tạo Vật Chất - Mở Giao Diện Ngưng Tụ Thần Khí
+                    ModMessages.sendToPlayer(new ClientboundOpenMaterialCreationPacket(), player);
+                } else if (selectedSkill == 6) {
                     // Chiêu 7: Diệt Thế Tà Tinh - Alkaid (Yêu cầu đang bật Tuyệt Diệt Tinh Tú)
                     com.minhphuc.weapons.content.darkgathering.AlkaidAbility.cast(serverLevel, player);
                 } else if (selectedSkill == 5) {
@@ -72,7 +95,7 @@ public class ServerboundCastBeelzebuthPacket {
                 }
             } else {
                 player.displayClientMessage(
-                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cBáo cáo. Cá thể chưa thức tỉnh thành Chân Ma Vương!"),
+                    Component.literal("§e§l[GIỌNG NÓI THẾ GIỚI] §cBáo cáo. Cá thể chưa thức tỉnh thành Thủy Tổ Ác Ma hoặc Chân Ma Vương!"),
                     true
                 );
             }

@@ -166,6 +166,21 @@ public class ModItems {
             () -> new Item(new Item.Properties()));
 
     // ==========================================
+    // MODULE: VŨ KHÍ MÓNG VUỐT HUYỀN THOẠI (LEGENDARY CLAWS)
+    // ==========================================
+    public static final RegistrySupplier<Item> ABYSSAL_CLAW_DESPAIR = ITEMS.register("abyssal_claw_despair",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialClawItem(new Item.Properties(), "Vuốt Hắc Ám Tuyệt Vọng", "Abyssal Claw of Despair"));
+
+    public static final RegistrySupplier<Item> VOID_CLAW_CALAMITY = ITEMS.register("void_claw_calamity",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialClawItem(new Item.Properties(), "Vuốt Hư Vô Tai Ương", "Void Claw of Calamity"));
+
+    // ==========================================
+    // MODULE: DARK GATHERING - KHÔNG VONG
+    // ==========================================
+    public static final RegistrySupplier<Item> KUBO_SPAWN_EGG = ITEMS.register("kubo_spawn_egg",
+            () -> new dev.architectury.core.item.ArchitecturySpawnEggItem(com.minhphuc.weapons.entity.ModEntities.KUBO, 0x0A0512, 0x9333EA, new Item.Properties()));
+
+    // ==========================================
     // MODULE: CARRERA'S GOLDEN GUN & MA ĐẠN (TENSURA LN)
     // ==========================================
     public static final RegistrySupplier<Item> GOLDEN_GUN = ITEMS.register("golden_gun",
@@ -188,6 +203,9 @@ public class ModItems {
     // ==========================================
     public static final RegistrySupplier<Item> PRIMORDIAL_GRIMOIRE = ITEMS.register("primordial_grimoire",
             () -> new com.minhphuc.weapons.content.tensura.PrimordialGrimoireItem(new Item.Properties()));
+
+    public static final RegistrySupplier<Item> PRIMORDIAL_REBIRTH_TOME = ITEMS.register("primordial_rebirth_tome",
+            () -> new com.minhphuc.weapons.content.tensura.PrimordialRebirthTomeItem(new Item.Properties()));
 
     public static final RegistrySupplier<Item> DEMON_SUMMONING_CIRCLE = ITEMS.register("demon_summoning_circle",
             () -> new Item(new Item.Properties()));
@@ -253,7 +271,7 @@ public class ModItems {
             () -> new com.minhphuc.weapons.content.tensura.ScorchDragonCoreItem(new Item.Properties()));
 
     public static final RegistrySupplier<Item> VELGRYND_FEATHER_FAN = ITEMS.register("velgrynd_feather_fan",
-            () -> new Item(new Item.Properties().stacksTo(1).rarity(Rarity.EPIC).fireResistant()));
+            () -> new com.minhphuc.weapons.content.tensura.VelgryndFeatherFanItem(new Item.Properties()));
 
     public static final RegistrySupplier<Item> DRAGON_SEED = ITEMS.register("dragon_seed",
             () -> new com.minhphuc.weapons.content.tensura.DragonSeedItem(new Item.Properties()));
@@ -355,6 +373,7 @@ public class ModItems {
                         output.accept(DEMON_LORD_SEED.get());
                         output.accept(DEMON_LORD_SOUL.get());
                         output.accept(PRIMORDIAL_GRIMOIRE.get());
+                        output.accept(PRIMORDIAL_REBIRTH_TOME.get());
 
                         // Khế Ước Thủy Tổ
                         output.accept(PRIMORDIAL_PACT_NOIR.get());
@@ -383,6 +402,7 @@ public class ModItems {
                         output.accept(SEER_FLESH_EYE.get());
                         output.accept(SEER_FLESH_ARM.get());
                         output.accept(EXTINCTION_STAR.get());
+
 
                         // Súng Lục Hoàng Kim & Ma Đạn Carrera
                         output.accept(GOLDEN_GUN.get());
@@ -433,6 +453,11 @@ public class ModItems {
                         output.accept(DRAGON_SEED.get());
                         output.accept(VELGRYND_REVERSE_SCALE.get());
                         output.accept(MAGISTEEL_PHONE.get());
+
+                        // Vũ Khí Móng Vuốt & Thực Thể Dark Gathering
+                        output.accept(ABYSSAL_CLAW_DESPAIR.get());
+                        output.accept(VOID_CLAW_CALAMITY.get());
+                        output.accept(KUBO_SPAWN_EGG.get());
                     })
             ));
 

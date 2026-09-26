@@ -219,7 +219,7 @@ public class PrimordialSummonRitual {
         level.playSound(null, center.x, center.y, center.z, SoundEvents.ENCHANTMENT_TABLE_USE, SoundSource.PLAYERS, 2.0F, 1.0F);
 
         caster.displayClientMessage(
-                Component.literal("§c§l[PHÁP TRẬN ĐÃ MỞ] §eYêu cầu vật tế: §6" + sacrifice.displayName() + " x" + sacrifice.count() + "§e. Chuột Phải vào pháp trận để dâng nộp!"),
+                Component.literal("§c§l[PHÁP TRẬN ĐÃ MỞ] §eYêu cầu vật tế: §6" + sacrifice.displayName() + " x" + sacrifice.count() + "§e. Buộc dâng nộp!"),
                 false
         );
     }
@@ -394,7 +394,7 @@ public class PrimordialSummonRitual {
                     }
                 } else if (!held.isEmpty()) {
                     player.displayClientMessage(
-                            Component.literal("§c§l[SAI VẬT TẾ] §ePháp trận của §6" + r.demonType.getColorName() + " §eyêu cầu: §6" + req.displayName() + " x" + req.count() + "§e! (Cầm Chuột Phải hoặc ném trực tiếp vào tâm trận)"),
+                            Component.literal("§c§l[SAI VẬT TẾ] §ePháp trận của §6" + r.demonType.getColorName() + " §eyêu cầu: §6" + req.displayName() + " x" + req.count() + "§e! (buộc cống nộp)"),
                             true
                     );
                     player.level().playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.VILLAGER_NO, SoundSource.PLAYERS, 1.0F, 1.0F);
@@ -402,7 +402,7 @@ public class PrimordialSummonRitual {
                 } else {
                     // Tay không click vào pháp trận -> Nhắc nhở vật tế
                     player.displayClientMessage(
-                            Component.literal("§e§l[PHÁP TRẬN HIỆU TRIỆU] §fYêu cầu vật tế: §6" + req.displayName() + " x" + req.count() + "§e. Cầm vật phẩm Chuột Phải hoặc ném trực tiếp vào tâm trận!"),
+                            Component.literal("§e§l[PHÁP TRẬN HIỆU TRIỆU] §fYêu cầu vật tế: §6" + req.displayName() + " x" + req.count() + "§e. buộc phải dâng"),
                             true
                     );
                     return true;

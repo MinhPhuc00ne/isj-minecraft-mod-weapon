@@ -9,6 +9,8 @@ import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
+import com.minhphuc.weapons.entity.tensura.DemonType;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 
@@ -194,6 +196,15 @@ public class HarvestFestival {
 
                 // Thức tỉnh thành Chân Ma Vương
                 EntityDataHelper.getCustomData(r.player).putBoolean("TensuraTrueDemonLord", true);
+
+                // Nếu là Hoàng Sắc Thủy Tổ (Jaune), ban tặng Thần Khí Súng Lục Hoàng Kim
+                if (PrimordialPlayerDataHelper.getPrimordialType(r.player) == DemonType.JAUNE) {
+                    ItemStack gun = new ItemStack(com.minhphuc.weapons.init.ModItems.GOLDEN_GUN.get());
+                    if (!r.player.getInventory().add(gun)) {
+                        r.player.drop(gun, false);
+                    }
+                    VoiceOfTheWorld.announce(r.player, "§6§l[TIẾN HÓA MA VƯƠNG] §eBan tặng Thần Khí: §6§lSúng Lục Hoàng Kim (Golden Gun) §echo Hoàng Sắc Thủy Tổ!");
+                }
 
                 // Phát âm thanh và hiệu ứng bùng nổ cuối cùng
                 r.level.playSound(null, r.player.getX(), r.player.getY(), r.player.getZ(),

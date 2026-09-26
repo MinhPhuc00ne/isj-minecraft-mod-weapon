@@ -20,9 +20,21 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ResidualMagicCircleManager {
+
+    private static final Set<Display.ItemDisplay> ACTIVE_CIRCLES = Collections.newSetFromMap(new ConcurrentHashMap<>());
+
+    public static void registerCircle(Display.ItemDisplay display) {
+        if (display != null) {
+            ACTIVE_CIRCLES.add(display);
+        }
+    }
 
     public static boolean isMagicCircleItem(Item item) {
         return item == ModItems.MAGIC_CIRCLE_NOIR.get() ||
@@ -49,19 +61,19 @@ public class ResidualMagicCircleManager {
     }
 
     public static void tickResidualCircles(ServerLevel level) {
-        // Quét các ItemDisplay trong toàn bộ server level (chạy mỗi 4 ticks để tối ưu hiệu năng)
+        if (ACTIVE_CIRCLES.isEmpty()) return;
+        // Chạy mỗi 4 ticks để tối ưu hiệu năng
         if (level.getGameTime() % 4 != 0) return;
 
-        List<Display.ItemDisplay> circles = new ArrayList<>();
-        for (net.minecraft.world.entity.Entity entity : level.getAllEntities()) {
-            if (entity instanceof Display.ItemDisplay display && isResidualMagicCircle(display)) {
-                circles.add(display);
+        Iterator<Display.ItemDisplay> it = ACTIVE_CIRCLES.iterator();
+        while (it.hasNext()) {
+            Display.ItemDisplay circle = it.next();
+            if (circle == null || !circle.isAlive() || circle.level() != level) {
+                if (circle != null && !circle.isAlive()) {
+                    it.remove();
+                }
+                continue;
             }
-        }
-
-        for (Display.ItemDisplay circle : circles) {
-            if (!circle.isAlive()) continue;
-
             Vec3 cPos = circle.position();
             double triggerRadius = 2.4D;
 
@@ -77,6 +89,7 @@ public class ResidualMagicCircleManager {
                 LivingEntity victim = steppers.get(0);
                 triggerTrap(level, circle, cPos, victim);
                 circle.discard();
+                it.remove();
             } else {
                 // Hiệu ứng hạt nhấp nháy báo hiệu bẫy ma thuật còn hoạt động
                 if (level.random.nextFloat() < 0.15F) {

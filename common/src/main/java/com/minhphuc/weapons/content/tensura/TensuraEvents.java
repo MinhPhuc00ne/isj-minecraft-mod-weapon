@@ -24,6 +24,7 @@ import net.minecraft.sounds.SoundEvents;
 import net.minecraft.sounds.SoundSource;
 import com.minhphuc.weapons.content.tensura.capsule.IncubationCapsuleManager;
 import com.minhphuc.weapons.entity.tensura.PrimordialDemonEntity;
+import com.minhphuc.weapons.entity.tensura.VelgryndEntity;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.phys.Vec3;
@@ -42,6 +43,7 @@ public class TensuraEvents {
             VelgryndSummonRitual.tickRituals(level);
             IncubationCapsuleManager.tickCapsules(level);
             ResidualMagicCircleManager.tickResidualCircles(level);
+            DeathStreakAbility.tickStreaks(level);
         });
     }
 
@@ -151,6 +153,14 @@ public class TensuraEvents {
                 playerData.putInt("TensuraCollectedSouls", nbtSouls);
                 int totalAfter = getAvailableSouls(player);
 
+                // Kiểm tra Thể Xác Vật Lý (40 Linh Hồn) cho người chơi Thủy Tổ Ác Ma
+                if (PrimordialPlayerDataHelper.isPrimordial(player) && !PrimordialPlayerDataHelper.hasPhysicalBody(player) && totalAfter >= 40) {
+                    PrimordialPlayerDataHelper.setPhysicalBody(player, true);
+                    VoiceOfTheWorld.announce(player, "§d§l[GIỌNG NÓI THẾ GIỚI] §bBáo cáo. Cá thể đã thu thập đủ 40 Linh Hồn Ma Vương! Quá trình kiến tạo Thể Xác Vật Lý thành công.");
+                    level.playSound(null, player.getX(), player.getY(), player.getZ(),
+                            net.minecraft.sounds.SoundEvents.PLAYER_LEVELUP, net.minecraft.sounds.SoundSource.PLAYERS, 2.0F, 1.0F);
+                }
+
                 if (totalAfter % 10 == 0) {
                     VoiceOfTheWorld.announce(player, "Báo cáo. Tiến độ thu thập Linh Hồn Ma Vương: " + totalAfter + "/64.");
                 }
@@ -193,7 +203,15 @@ public class TensuraEvents {
 
     public static EventResult onLivingDeath(LivingEntity victim, DamageSource source) {
         if (victim.level().isClientSide()) return EventResult.pass();
-        if (victim instanceof Player) return EventResult.pass(); // Không tính khi chết người chơi
+
+        // Nếu người chơi chết: Reset toàn bộ thân phận Thủy Tổ Ác Ma theo luật chơi
+        if (victim instanceof ServerPlayer deadPlayer) {
+            if (PrimordialPlayerDataHelper.isPrimordial(deadPlayer)) {
+                PrimordialPlayerDataHelper.resetOnDeath(deadPlayer);
+                VoiceOfTheWorld.announce(deadPlayer, "§c§l[TỬ TRẬN] §4Báo cáo. Cá thể đã tử trận! Toàn bộ căn nguyên Thủy Tổ Ác Ma đã tan biến.");
+            }
+            return EventResult.pass();
+        }
 
         ServerPlayer player = null;
         if (source.getEntity() instanceof ServerPlayer sp) {
@@ -316,7 +334,21 @@ public class TensuraEvents {
                         attacker = le;
                     }
 
-                    DemonType randomDemon = DemonType.values()[serverLevel.random.nextInt(DemonType.values().length)];
+                    // Loại bỏ Ác Ma trùng với loại mà người chơi trên server đang chuyển sinh thành
+                    java.util.List<DemonType> availableDemons = new java.util.ArrayList<>(java.util.List.of(DemonType.values()));
+                    for (ServerPlayer sp : serverLevel.players()) {
+                        DemonType playerType = PrimordialPlayerDataHelper.getPrimordialType(sp);
+                        if (playerType != null) {
+                            availableDemons.remove(playerType);
+                        }
+                    }
+                    DemonType randomDemon;
+                    if (!availableDemons.isEmpty()) {
+                        randomDemon = availableDemons.get(serverLevel.random.nextInt(availableDemons.size()));
+                    } else {
+                        randomDemon = DemonType.values()[serverLevel.random.nextInt(DemonType.values().length)];
+                    }
+
                     PrimordialSummonRitual.startImmediate(serverLevel, victim.position(), randomDemon, attacker);
 
                     victim.discard();
@@ -324,11 +356,102 @@ public class TensuraEvents {
                 }
             }
         }
+
+        // =========================================================================
+        // 2. CƠ CHẾ MIỄN NHIỄM SÁT THƯƠNG KHI NGƯỜI CHƠI LÀ THỦY TỔ ÁC MA (VICTIM)
+        // =========================================================================
+        if (victim instanceof ServerPlayer player && PrimordialPlayerDataHelper.isPrimordial(player)) {
+            // Miễn nhiễm hoàn toàn sát thương ngã (Fall damage)
+            if (source.is(net.minecraft.world.damagesource.DamageTypes.FALL)) {
+                return EventResult.interruptFalse();
+            }
+
+            boolean isDemonLord = PrimordialPlayerDataHelper.isDemonLord(player);
+            boolean hasBody = PrimordialPlayerDataHelper.hasPhysicalBody(player);
+
+            // GIAI ĐOẠN 3: Đã là Ma Vương + có thể xác -> BẤT TỬ TUYỆT ĐỐI, CHỈ chịu sát thương từ Chước Nhiệt Long Velgrynd
+            if (isDemonLord && hasBody) {
+                boolean isFromVelgrynd = (source.getEntity() instanceof VelgryndEntity) || (source.getDirectEntity() instanceof VelgryndEntity);
+                if (!isFromVelgrynd) {
+                    return EventResult.interruptFalse();
+                }
+            } else if (!hasBody) {
+                // GIAI ĐOẠN 1: Ác ma linh thể (chưa có thể xác)
+                // Các sinh vật bình thường KHÔNG THỂ gây sát thương cho người chơi.
+                // NGOẠI LỆ ĐƯỢC PHÉP GÂY SÁT THƯƠNG:
+                // 1. Creeper
+                // 2. Tự nổ/tự đánh bản thân
+                // 3. Ravager (trâu của kẻ cắp)
+                // 4. Các Ác ma khác (PrimordialDemonEntity)
+                // 5. Boss (Wither, Warden, Ender Dragon, Iron Golem, Elder Guardian)
+                // 6. Chước Nhiệt Long (VelgryndEntity)
+                Entity attacker = source.getEntity();
+                Entity direct = source.getDirectEntity();
+
+                boolean isCreeper = (attacker instanceof net.minecraft.world.entity.monster.Creeper) || (direct instanceof net.minecraft.world.entity.monster.Creeper);
+                boolean isSelf = (attacker == player) || (direct == player);
+                boolean isRavager = (attacker instanceof net.minecraft.world.entity.monster.Ravager) || (direct instanceof net.minecraft.world.entity.monster.Ravager);
+                boolean isDemon = (attacker instanceof PrimordialDemonEntity) || (direct instanceof PrimordialDemonEntity);
+                boolean isBoss = (attacker instanceof net.minecraft.world.entity.boss.wither.WitherBoss)
+                        || (attacker instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon)
+                        || (attacker instanceof net.minecraft.world.entity.monster.warden.Warden)
+                        || (attacker instanceof net.minecraft.world.entity.animal.IronGolem)
+                        || (attacker instanceof net.minecraft.world.entity.monster.ElderGuardian);
+                boolean isVelgrynd = (attacker instanceof VelgryndEntity) || (direct instanceof VelgryndEntity);
+
+                if (!isCreeper && !isSelf && !isRavager && !isDemon && !isBoss && !isVelgrynd) {
+                    // Chặn triệt để sát thương từ quái vật/sinh vật thường
+                    return EventResult.interruptFalse();
+                }
+            }
+            // Giai đoạn 2 (có thể xác nhưng chưa là Ma Vương): Quái thường có thể gây sát thương bình thường
+        }
+
+        // =========================================================================
+        // 3. CƠ CHẾ SÁT THƯƠNG CỦA NGƯỜI CHƠI THỦY TỔ ÁC MA KHI TẤN CÔNG (ATTACKER)
+        // =========================================================================
+        if (source.getEntity() instanceof ServerPlayer attackerPlayer && PrimordialPlayerDataHelper.isPrimordial(attackerPlayer)) {
+            boolean isDemonLord = PrimordialPlayerDataHelper.isDemonLord(attackerPlayer);
+            boolean hasBody = PrimordialPlayerDataHelper.hasPhysicalBody(attackerPlayer);
+
+            boolean isBoss = (victim instanceof net.minecraft.world.entity.boss.wither.WitherBoss)
+                    || (victim instanceof net.minecraft.world.entity.boss.enderdragon.EnderDragon)
+                    || (victim instanceof net.minecraft.world.entity.monster.warden.Warden)
+                    || (victim instanceof net.minecraft.world.entity.animal.IronGolem)
+                    || (victim instanceof net.minecraft.world.entity.monster.ElderGuardian);
+
+            if (hasBody || isDemonLord) {
+                // Giai đoạn 2 & 3: Cực mạnh - chỉ cần 2 lần tấn công là kết liễu Boss!
+                if (isBoss) {
+                    float halfBossHp = victim.getMaxHealth() * 0.52F;
+                    if (amount < halfBossHp) {
+                        victim.hurt(attackerPlayer.damageSources().magic(), halfBossHp);
+                        return EventResult.interruptFalse();
+                    }
+                } else if (!(victim instanceof VelgryndEntity) && !(victim instanceof PrimordialDemonEntity)) {
+                    // Quái thường lập tức tan biến
+                    victim.hurt(attackerPlayer.damageSources().magic(), victim.getMaxHealth() * 3.0F);
+                    return EventResult.interruptFalse();
+                }
+            } else {
+                // Giai đoạn 1 (Linh thể): Mạnh hơn quái thường & Người Sắt (~50 sát thương), nhưng yếu hơn Boss
+                if (!isBoss && !(victim instanceof VelgryndEntity) && !(victim instanceof PrimordialDemonEntity)) {
+                    if (amount < 48.0F) {
+                        victim.hurt(attackerPlayer.damageSources().magic(), 48.0F);
+                        return EventResult.interruptFalse();
+                    }
+                }
+            }
+        }
+
         return EventResult.pass();
     }
 
     public static EventResult onRightClickBlock(Player player, InteractionHand hand, BlockPos pos, Direction direction) {
         if (player instanceof ServerPlayer sp) {
+            // Kiểm tra rương tự nhiên để chèn Sách Cổ Khởi Nguyên Thủy Tổ
+            TomeLootManager.onOpenContainer(sp, pos);
+
             // 1. Luôn ưu tiên hiến tế pháp trận triệu hồi ác ma trước
             if (PrimordialSummonRitual.offerSacrifice(sp, hand, Vec3.atCenterOf(pos))) {
                 return EventResult.interruptFalse();

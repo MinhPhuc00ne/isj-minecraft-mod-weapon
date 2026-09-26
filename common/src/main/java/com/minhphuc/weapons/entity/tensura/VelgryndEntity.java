@@ -105,6 +105,54 @@ public class VelgryndEntity extends Monster {
     }
 
     @Override
+    public boolean checkSpawnRules(net.minecraft.world.level.LevelAccessor level, MobSpawnType spawnType) {
+        if (spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION) {
+            // 1. TUYỆT ĐỐI KHÔNG spawn dưới Địa Ngục (Nether) hoặc chiều không gian không phải Overworld
+            if (level instanceof ServerLevel sl) {
+                if (sl.dimension() != Level.OVERWORLD) {
+                    return false;
+                }
+            }
+            // 2. Phải là vị trí lộ thiên ngoài trời (thấy bầu trời, Y >= 60)
+            BlockPos pos = this.blockPosition();
+            if (!level.canSeeSky(pos) || pos.getY() < 60) {
+                return false;
+            }
+            // 3. Tăng tối đa độ hiếm: Chỉ có 5% cơ hội thành công khi hệ thống chọn spawn Velgrynd (giảm 95%)
+            if (this.random.nextFloat() > 0.05F) {
+                return false;
+            }
+        }
+        return super.checkSpawnRules(level, spawnType);
+    }
+
+    @Override
+    public SpawnGroupData finalizeSpawn(
+            net.minecraft.world.level.ServerLevelAccessor level,
+            net.minecraft.world.DifficultyInstance difficulty,
+            MobSpawnType spawnType,
+            @org.jetbrains.annotations.Nullable SpawnGroupData spawnData) {
+        spawnData = super.finalizeSpawn(level, difficulty, spawnType, spawnData);
+
+        if (spawnType == MobSpawnType.NATURAL || spawnType == MobSpawnType.CHUNK_GENERATION) {
+            if (level.getLevel().dimension() != Level.OVERWORLD) {
+                this.discard();
+                return spawnData;
+            }
+            BlockPos pos = this.blockPosition();
+            if (!level.canSeeSky(pos) || pos.getY() < 60) {
+                this.discard();
+                return spawnData;
+            }
+            if (this.random.nextFloat() > 0.05F) {
+                this.discard();
+                return spawnData;
+            }
+        }
+        return spawnData;
+    }
+
+    @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(DATA_HOLDING_FAN, true);
@@ -137,12 +185,27 @@ public class VelgryndEntity extends Monster {
         this.entityData.set(DATA_IS_ALLIED, allied);
     }
 
+    private UUID cachedOwnerUuid = null;
+
     public String getOwnerUUID() {
         return this.entityData.get(DATA_OWNER_UUID);
     }
 
+    public UUID getParsedOwnerUUID() {
+        if (this.cachedOwnerUuid == null) {
+            String s = getOwnerUUID();
+            if (s != null && !s.isEmpty()) {
+                try {
+                    this.cachedOwnerUuid = UUID.fromString(s);
+                } catch (Exception ignored) {}
+            }
+        }
+        return this.cachedOwnerUuid;
+    }
+
     public void setOwnerUUID(String uuid) {
         this.entityData.set(DATA_OWNER_UUID, uuid != null ? uuid : "");
+        this.cachedOwnerUuid = null;
     }
 
     public void setAlliedSummon(ServerPlayer owner) {
@@ -291,9 +354,9 @@ public class VelgryndEntity extends Monster {
                 sLevel.sendParticles(ParticleTypes.HAPPY_VILLAGER, this.getX(), this.getY() + 1.2D, this.getZ(), 6, 0.4D, 0.6D, 0.4D, 0.05D);
             }
             // Long Chủng Hộ Vệ: Hồi phục sinh lực cho chủ nhân nếu là Đồng Minh
-            if (this.isAllied() && !getOwnerUUID().isEmpty()) {
+            if (this.isAllied() && getParsedOwnerUUID() != null) {
                 try {
-                    ServerPlayer owner = sLevel.getServer().getPlayerList().getPlayer(UUID.fromString(getOwnerUUID()));
+                    ServerPlayer owner = sLevel.getServer().getPlayerList().getPlayer(getParsedOwnerUUID());
                     if (owner != null && owner.isAlive() && owner.distanceToSqr(this) <= 16.0D * 16.0D && owner.getHealth() < owner.getMaxHealth()) {
                         owner.heal(5.0F);
                         sLevel.sendParticles(ParticleTypes.HEART, owner.getX(), owner.getY() + 1.0D, owner.getZ(), 3, 0.3D, 0.5D, 0.3D, 0.05D);
@@ -320,33 +383,45 @@ public class VelgryndEntity extends Monster {
         // 1.5. Xử lý logic ĐỒNG MINH (Allied Summon từ Nghịch Lân)
         if (this.isAllied()) {
             ServerPlayer owner = null;
-            if (!getOwnerUUID().isEmpty()) {
+            UUID ownerUid = getParsedOwnerUUID();
+            if (ownerUid != null) {
                 try {
-                    owner = sLevel.getServer().getPlayerList().getPlayer(UUID.fromString(getOwnerUUID()));
+                    owner = sLevel.getServer().getPlayerList().getPlayer(ownerUid);
                 } catch (Exception ignored) {}
             }
 
-            Vec3 anchor = (owner != null) ? owner.position() : this.position();
-            AABB searchArea = new AABB(anchor.x - 48.0D, anchor.y - 20.0D, anchor.z - 48.0D,
-                    anchor.x + 48.0D, anchor.y + 20.0D, anchor.z + 48.0D);
+            // Tối ưu hiệu năng: Chỉ quét tìm mục tiêu mới mỗi 10 ticks hoặc khi mục tiêu hiện tại đã chết/null
+            boolean needsTargetScan = (this.getTarget() == null || !this.getTarget().isAlive() || this.tickCount % 10 == 0);
 
-            final ServerPlayer finalOwner = owner;
-            List<LivingEntity> hostileThreats = sLevel.getEntitiesOfClass(LivingEntity.class, searchArea, e -> {
-                if (e == this || e == finalOwner || !e.isAlive()) return false;
-                // TUYỆT ĐỐI KHÔNG TẤN CÔNG ÁC MA ĐÃ KÝ KHẾ ƯỚC CỦA CHỦ NHÂN
-                if (e instanceof PrimordialDemonEntity demon && demon.isTame()) {
-                    if (finalOwner != null && demon.getOwnerUUID() != null && demon.getOwnerUUID().equals(finalOwner.getUUID())) {
-                        return false;
+            if (needsTargetScan) {
+                Vec3 anchor = (owner != null) ? owner.position() : this.position();
+                // Thu gọn phạm vi từ 96x40x96 xuống 56x24x56 để giảm 80% tải quét chunk
+                AABB searchArea = new AABB(anchor.x - 28.0D, anchor.y - 12.0D, anchor.z - 28.0D,
+                        anchor.x + 28.0D, anchor.y + 12.0D, anchor.z + 28.0D);
+
+                final ServerPlayer finalOwner = owner;
+                List<LivingEntity> hostileThreats = sLevel.getEntitiesOfClass(LivingEntity.class, searchArea, e -> {
+                    if (e == this || e == finalOwner || !e.isAlive()) return false;
+                    // TUYỆT ĐỐI KHÔNG TẤN CÔNG ÁC MA ĐÃ KÝ KHẾ ƯỚC CỦA CHỦ NHÂN
+                    if (e instanceof PrimordialDemonEntity demon && demon.isTame()) {
+                        if (finalOwner != null && demon.getOwnerUUID() != null && demon.getOwnerUUID().equals(finalOwner.getUUID())) {
+                            return false;
+                        }
                     }
+                    return e instanceof Enemy || (finalOwner != null && ((e instanceof Mob mob && mob.getTarget() == finalOwner) || e.getLastHurtByMob() == finalOwner));
+                });
+
+                if (!hostileThreats.isEmpty()) {
+                    this.alliedSafeTicks = 0;
+                    this.setTarget(hostileThreats.get(0));
+                } else if (this.getTarget() != null && !this.getTarget().isAlive()) {
+                    this.setTarget(null);
                 }
-                return e instanceof Enemy || (finalOwner != null && ((e instanceof Mob mob && mob.getTarget() == finalOwner) || e.getLastHurtByMob() == finalOwner));
-            });
+            }
 
-            if (!hostileThreats.isEmpty()) {
+            LivingEntity currentEnemy = this.getTarget();
+            if (currentEnemy != null && currentEnemy.isAlive()) {
                 this.alliedSafeTicks = 0;
-                LivingEntity currentEnemy = hostileThreats.get(0);
-                this.setTarget(currentEnemy);
-
                 // Luân phiên thi triển kỹ năng tối thượng của người chơi
                 if (this.alliedPlayerSkillCooldown > 0) {
                     this.alliedPlayerSkillCooldown--;
@@ -363,7 +438,6 @@ public class VelgryndEntity extends Monster {
                 }
             } else {
                 // Không có bất kỳ mối nguy hại nào quanh chủ nhân
-                this.setTarget(null);
                 this.alliedSafeTicks++;
                 if (this.alliedSafeTicks >= 100) { // 5 giây an toàn
                     this.broadcastDialogue("Toàn bộ mối nguy hại xung quanh ngươi đã bị ta tiêu diệt sạch sẽ! Lời thề Nghịch Lân kết thúc tại đây. Muốn gặp lại ta, hãy tìm Hạt Giống Long Chủng và đánh thắng ta một lần nữa!");
@@ -382,8 +456,8 @@ public class VelgryndEntity extends Monster {
         long currentTickTime = this.level().getGameTime();
         recentAttackers.entrySet().removeIf(entry -> (currentTickTime - entry.getValue()) > 200L);
 
-        // 3. Cơ chế TỒN TẠI SONG SONG (Nếu không phải bản sao và bị >= 2 đối thủ đánh)
-        if (!this.isClone() && (this.activeClone == null || !this.activeClone.isAlive())) {
+        // 3. Cơ chế TỒN TẠI SONG SONG (Nếu không phải bản sao và bị >= 2 đối thủ đánh - chạy mỗi 20 ticks thay vì mỗi tick)
+        if (this.tickCount % 20 == 0 && !this.isClone() && (this.activeClone == null || !this.activeClone.isAlive())) {
             List<LivingEntity> validAttackers = new ArrayList<>();
             for (UUID uid : recentAttackers.keySet()) {
                 Entity e = sLevel.getEntity(uid);
@@ -433,13 +507,15 @@ public class VelgryndEntity extends Monster {
                 sLevel.playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.END_PORTAL_SPAWN, SoundSource.HOSTILE, 4.0F, 0.75F);
             }
 
-            // Đóng băng toàn bộ thực thể trong 25m
-            AABB freezeBox = this.getBoundingBox().inflate(25.0D);
-            List<LivingEntity> victims = sLevel.getEntitiesOfClass(LivingEntity.class, freezeBox, e -> e != this && e.isAlive());
-            for (LivingEntity v : victims) {
-                v.setDeltaMovement(Vec3.ZERO);
-                v.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 255, false, false));
-                v.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30, 2, false, false));
+            // Đóng băng thực thể trong 18m mỗi 8 ticks thay vì quét mỗi tick
+            if (activeSkillTicks % 8 == 0) {
+                AABB freezeBox = this.getBoundingBox().inflate(18.0D);
+                List<LivingEntity> victims = sLevel.getEntitiesOfClass(LivingEntity.class, freezeBox, e -> e != this && e.isAlive());
+                for (LivingEntity v : victims) {
+                    v.setDeltaMovement(Vec3.ZERO);
+                    v.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 30, 255, false, false));
+                    v.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 30, 2, false, false));
+                }
             }
 
             // Vết nứt không gian hạt ma thuật
@@ -475,7 +551,9 @@ public class VelgryndEntity extends Monster {
                 }
 
                 // Sát thương bạo liệt
-                for (LivingEntity v : victims) {
+                AABB blastBox = this.getBoundingBox().inflate(18.0D);
+                List<LivingEntity> blastVictims = sLevel.getEntitiesOfClass(LivingEntity.class, blastBox, e -> e != this && e.isAlive());
+                for (LivingEntity v : blastVictims) {
                     v.hurt(sLevel.damageSources().mobAttack(this), 65.0F);
                     v.setDeltaMovement(new Vec3(0, 1.2D, 0));
                 }
